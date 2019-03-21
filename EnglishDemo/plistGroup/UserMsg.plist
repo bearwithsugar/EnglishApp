@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<array>
+		<dict>
+			<key>title</key>
+			<string>剩余学分</string>
+			<key>picture</key>
+			<string>icon_qianbao</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>充值记录</string>
+			<key>picture</key>
+			<string>icon_chongzhijilu</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>学分使用说明</string>
+			<key>picture</key>
+			<string>icon_xuefenshiyongshuoming</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>设备管理</string>
+			<key>picture</key>
+			<string>icon_shebeiguanli</string>
+		</dict>
+	</array>
+	<array>
+		<dict>
+			<key>title</key>
+			<string>软件版本</string>
+			<key>picture</key>
+			<string>icon_banben</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>分享本软件</string>
+			<key>picture</key>
+			<string>icon_fenxiangbenruanjian</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>关于本软件</string>
+			<key>picture</key>
+			<string>icon_guanyubenruanjian</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>意见和问题反馈</string>
+			<key>picture</key>
+			<string>icon_yijianfankui</string>
+		</dict>
+		<dict>
+			<key>title</key>
+			<string>更多软件推荐</string>
+			<key>picture</key>
+			<string>Shape</string>
+		</dict>
+	</array>
+</array>
+</plist>
