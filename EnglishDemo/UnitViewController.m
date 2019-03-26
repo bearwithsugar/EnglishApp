@@ -145,13 +145,10 @@
 -(void)pushToLearningView{
     if (learningView==nil) {
         learningView = [[LearningViewController alloc]init];
-        //临时办法
-        learningView.bookId=_bookId;
-        learningView.unitId=unitId;
-    }else{
-        learningView.bookId=_bookId;
-        learningView.unitId=unitId;
     }
+    learningView.bookId=_bookId;
+    learningView.unitId=unitId;
+    learningView.bookName=_bookName;
     [self.navigationController pushViewController:learningView animated:true];
     
 }

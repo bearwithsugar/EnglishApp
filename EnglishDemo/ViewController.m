@@ -25,7 +25,6 @@
 #import "Common/LoadGif.h"
 #import "AppDelegate.h"
 #import "Functions/DataFilter.h"
-
 #import "Functions/FixValues.h"
 
 //使控制台打印完整信息
@@ -111,11 +110,8 @@
 
 -(void)viewDidLoad {
     [super viewDidLoad];
-    //打印一些基本信息
-    NSLog(@"%@",NSStringFromCGSize([UIScreen mainScreen].bounds.size));
-    //打印沙盒路径
-    NSLog(@"沙盒路径：%@",[DocuOperate homeDirectory]);
     
+    //初始化、分配空间
     userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
     myShelfView=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
     synchronousPractice=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
@@ -130,6 +126,7 @@
     loadGifForRecentBook=[LoadGif imageViewStartAnimating:CGRectMake(100, 250, 30, 30)];
     loadGifForProcess=[LoadGif imageViewStartAnimating:CGRectMake(290, 230, 30, 30)];
     
+    //开始加载界面
     [self synchronousPracticeShow];
     [self.view addSubview:myShelfView];
     [self.navigationController setNavigationBarHidden:true];
@@ -144,10 +141,104 @@
         [self chooseBookinit];
         [self chooseBook];
     }
+    
+    //其他信息初始化方法
+    [self initForFirstLogin];
+
+    
+}
+-(void)viewWillAppear:(BOOL)animated{
+//每当页面出现时，
+//        1.判断是否存在用户信息，不存在要求登录，存在进行下一步
+//        2.判断第一个接口请求信息返回code是否是401，如果是提示账号在其他设备登录，如果不是进行下一步
+//        3.加载最近学习信息和最近学习书本，
+
+    //用户是否登陆过
+    if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
+        
+        userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+
+        //判断账号是否其他设备登录
+        if ([[[ConnectionFunction recentLearnMsg:[userInfo valueForKey:@"userKey"]] valueForKey:@"code"]intValue]==401) {
+            
+            NSLog(@"账号在别处登录");
+            
+            //警告窗
+            [self presentViewController:
+             [WarningWindow transToLogin:@"您的账号在别处登录请重新登录！"
+                              Navigation:self.navigationController]
+                               animated:YES
+                             completion:nil];
+            
+        }else{
+            //如果没有其他设备登录则进行数据加载---------------------------------------------------------------
+            
+            //最近学习情况
+            recentLearnMsg=[ConnectionFunction recentLearnMsg:[userInfo valueForKey:@"userKey"]];
+            
+            recentBook=[[recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
+            
+            if ([recentBook isKindOfClass:[NSNull class]]||![recentBook count]) {
+                NSLog(@"最近学习信息为空");
+                
+                
+            }else{
+                
+                [self myProgressUnfixed];
+                
+                //如果不是第一次下载本软件则直接加载
+                if (![[processDic valueForKey:@"picture"]isEqualToString:@"a"]) {
+                    
+                    [self myGradeUnfixed];
+                    
+                }
+                
+                dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                    
+                    [self getReq];
+                    
+                });
+                
+                
+            }
+           
+            //----------------------------------------------------------------------------------------
+            
+        }
+        
+    }else{
+        [bookPicView removeFromSuperview];
+        [processDetails addSubview:noRecordLabel];
+        [processFixView removeFromSuperview];
+        [refreshPanelProcess removeFromSuperview];
+        [bookScanView removeFromSuperview];
+        
+        //提示框
+        [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
+                           animated:YES
+                         completion:nil];
+    }
+
+
+    //释放对象以便于重新创建对象
+    unitMsg=nil;
+    sentenceListening=nil;
+    wordsTest=nil;
+
+}
+
+//初始化一些其他信息
+-(void)initForFirstLogin{
+    //打印一些基本信息
+    NSLog(@"%@",NSStringFromCGSize([UIScreen mainScreen].bounds.size));
+    //打印沙盒路径
+    NSLog(@"沙盒路径：%@",[DocuOperate homeDirectory]);
+    
     //加载gif动画
     [self.view addSubview:loadGifForRecentBook];
     [self.view addSubview:loadGifForProcess];
     
+    //写入进度文件，方便绕开接口相应时间达到实时刷新
     if([DocuOperate fileExistInPath:@"process.plist"]){
         NSDictionary* dic=[DocuOperate readFromPlist:@"process.plist"];
         for (int i=0; i<[dic allKeys].count; i++) {
@@ -165,107 +256,16 @@
         [DocuOperate writeIntoPlist:@"process.plist" dictionary:processDic];
         NSLog(@"写入文件");
     }
-    // [self getTimer];
-    
-}
--(void)viewWillAppear:(BOOL)animated{
-    //每当页面出现时，
-//        1.判断是否存在用户信息，不存在要求登录，存在进行下一步
-//        2.判断第一个接口请求信息返回code是否是401，如果是提示账号在其他设备登录，如果不是进行下一步
-//        3.加载最近学习信息和最近学习书本，
-//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//        // 处理耗时操作的代码块...
-//
-//        //通知主线程刷新
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            //回调或者说是通知主线程刷新，
-//
-//
-//        });
-//
-//    });
-    if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
-        userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-
-        //判断token是否过期
-        NSDictionary* dic=[ConnectionFunction recentLearnMsg:[userInfo valueForKey:@"userKey"]];
-        if ([[dic valueForKey:@"code"]intValue]==401) {
-            NSLog(@"账号在别处登录");
-            [self
-             presentViewController:
-             [WarningWindow transToLogin:@"您的账号在别处登录请重新登录！" Navigation:self.navigationController]
-             animated:YES
-             completion:nil];
-            
-        }else{
-            //如果没过期则进行数据加载---------------------------------------------------------------
-            //最近学习情况
-            recentLearnMsg=[ConnectionFunction recentLearnMsg:[userInfo valueForKey:@"userKey"]];
-            recentBook=[[recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
-            
-            if ([recentBook isKindOfClass:[NSNull class]]||![recentBook count]) {
-                NSLog(@"最近学习信息为空");
-                [self myProgressUnfixed];
-                
-                
-            }else{
-                //加载下面三个书架
-                [self myProgressUnfixed];
-                
-
-                if (![[processDic valueForKey:@"picture"]isEqualToString:@"a"]) {
-                    [self myGradeUnfixed];
-                }
-                
-//                dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//                    // 处理耗时操作的代码块...
-//                    //刷新学习进度
-//                    [self getReq];
-//                    //通知主线程刷新
-//                    dispatch_async(dispatch_get_main_queue(), ^{
-//                        //回调或者说是通知主线程刷新，
-//
-//
-//                    });
-//
-//                });
-                [self getReq];
-                
-            }
-           
-            //----------------------------------------------------------------------------------------
-            
-        }
-        
-    }else{
-        [bookPicView removeFromSuperview];
-        [processDetails addSubview:noRecordLabel];
-        [processFixView removeFromSuperview];
-        [refreshPanelProcess removeFromSuperview];
-        [bookScanView removeFromSuperview];
-        
-        
-        //提示框
-        [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
-                           animated:YES
-                         completion:nil];
-    }
-
-
-    //释放对象以便于重新创建对象
-    unitMsg=nil;
-    sentenceListening=nil;
-    wordsTest=nil;
-
 }
 
 //刷新最近学习的书本信息和学习进度
 -(void)getReq{
+    
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"user_bookinfo"];
     url=[url URLByAppendingPathComponent:[recentBook valueForKey:@"bookId"]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    NSURLSession *session=[NSURLSession sharedSession];
+    NSURLSession* session =[NSURLSession sharedSession];
     NSLog(@"get方法中url是：%@",url);
     //添加请求头
     NSDictionary *headers = @{@"English-user": [userInfo valueForKey:@"userKey"]};
@@ -276,25 +276,35 @@
     NSURLSessionDataTask *dataTask=[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         
-        //NSLog(@"网络响应：response：%@",response);
-        // NSLog(@"返回数据：response：%@",data);
         NSLog(@"错误：%@",error);
         NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
         NSLog(@"数据为：%@",html);
-        //dispatch_async(dispatch_get_main_queue(), ^{
-            self->learnProcess=[dictionary valueForKey:@"data"];
-            NSLog(@"learnprocess的内容是（上）%@",self->learnProcess);
+        
+        self->learnProcess=[dictionary valueForKey:@"data"];
+        NSLog(@"learnprocess的内容是（上）%@",self->learnProcess);
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            
             [self->processDic setValue:[self->learnProcess valueForKey:@"grade"] forKey:@"zhunquelv"];
-//            NSLog(@"%@",[self->learnProcess valueForKey:@"userbook"]);
+            
             [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningRate"] forKey:@"tingkewen"];
             [self->processDic setValue:[self->learnProcess valueForKey:@"rank_rate"] forKey:@"percentage"];
             [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
             [self->processDic setValue:[self->learnProcess valueForKey:@"sentenceRate"] forKey:@"dujuzi"];
             [self->processDic setValue:[self->learnProcess valueForKey:@"rank"] forKey:@"zongpaiming"];
             [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningTime"] forKey:@"zongshichang"];
-            [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
-            [self myGradeUnfixed];
-        //});
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
+    
+                [self loadGrade];
+    
+            });
+            
+            
+        });
+ 
     }];
     [dataTask resume];
     
@@ -393,51 +403,83 @@
     
 }
 -(void)myGradeUnfixed{
-//    if (userInfo==nil) {
-//        [processDetails addSubview:noRecordLabel];
-//    }
+    
     [noRecordLabel removeFromSuperview];
-    NSArray* titleArray=@[@"听课文",@"读句子",@"准确率",@"总时长",@"总排名"];
     
     [processFixView removeFromSuperview];
+    
     processFixView=[[UIView alloc]initWithFrame:CGRectMake(220.80, 23.17, 171.11, 238.34)];
+    
     [myProgress addSubview:processFixView];
     
+    NSArray* titleArray=@[@"听课文",@"读句子",@"准确率",@"总时长",@"总排名"];
+    
     for (NSString* title in titleArray) {
+        
         float y=22.06+27.57*[titleArray indexOfObject:title];
+        
         tingkewen=[[UILabel alloc]initWithFrame:CGRectMake(4.41, y, 59.61, 18.75)];
+        
         tingkewen.text=title;
+        
         tingkewen.textColor=[UIColor blackColor];
+        
         tingkewen.font=[UIFont systemFontOfSize:12];
+        
         tingkewen.textAlignment=NSTextAlignmentCenter;
+        
         [processFixView addSubview:tingkewen];
     
     //中部横线
     UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(11.04, 164.41, 149.04, 2)];
+        
     lineView.layer.borderColor=ssRGBHex(0x979797).CGColor;
+        
     lineView.layer.borderWidth=1;
+        
     [processDetails addSubview:lineView];
         
     }
     
-    [refreshPanelProcess removeFromSuperview];
-    refreshPanelProcess=[[UIView alloc]initWithFrame:CGRectMake(220.80, 23.17, 171.11, 238.34)];
-    [myProgress addSubview:refreshPanelProcess];
-    
     //书籍图片
     bookPicView=[[UIView alloc]initWithFrame:CGRectMake(22.08, 14.34, 176.63, 247.18)];
+    
     bookPicView.backgroundColor=[UIColor whiteColor];
+    
     bookPicView.layer.borderWidth=1.0;
+    
     bookPicView.layer.borderColor=ssRGBHex(0x979797).CGColor;
+    
     [myProgress addSubview:bookPicView];
+    
     if (userInfo==nil) {
-        UIImageView* bookpic=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 176.63,247.18)];
-        bookpic.image=[UIImage imageNamed:@"group_book_1_unlogged"];
-        [bookPicView addSubview:bookpic];
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            
+            UIImageView* bookpic=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 176.63,247.18)];
+            
+            bookpic.image=[UIImage imageNamed:@"group_book_1_unlogged"];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self->bookPicView addSubview:bookpic];
+                
+            });
+        });
+        
     }else{
-        //登录状态下才添加手势
-        UITapGestureRecognizer* clickBook=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(recentBookPushToUnit)];
-        [bookPicView addGestureRecognizer:clickBook];
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            
+            //登录状态下才添加手势
+            UITapGestureRecognizer* clickBook=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(recentBookPushToUnit)];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self->bookPicView addGestureRecognizer:clickBook];
+                
+            });
+            
+        });
         
         UIImageView* bookpic=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 176.63,247.18)];
         
@@ -449,6 +491,17 @@
     }
     
     
+    [self loadGrade];
+    
+}
+
+-(void)loadGrade{
+    
+    [refreshPanelProcess removeFromSuperview];
+    
+    refreshPanelProcess=[[UIView alloc]initWithFrame:CGRectMake(220.80, 23.17, 171.11, 238.34)];
+    
+    [myProgress addSubview:refreshPanelProcess];
     
     ProcessLine* tingkewenProcess=[[ProcessLine alloc]initWithFrame:CGRectMake(64.03, 26.48, 94.94, 13.24)];
     [tingkewenProcess percentLabel:[[processDic valueForKey:@"tingkewen"]floatValue]];
@@ -489,6 +542,7 @@
     rankTip.numberOfLines=0;
     rankTip.font=[UIFont systemFontOfSize:12];
     [refreshPanelProcess addSubview:rankTip];
+    
     
     //加载完成，取消加载圈
     [loadGifForRecentBook removeFromSuperview];
@@ -536,43 +590,56 @@
 -(void)myProgressUnfixed{
    
     [bookScanView removeFromSuperview];
+    
     bookScanView=[[UIView alloc]initWithFrame:CGRectMake(0, 57.36, 414, 154.49)];
+
     [myShelfThree addSubview:bookScanView];
     
     bookshelfArray=[[ConnectionFunction getBookShelf:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
+    
     NSLog(@"bookshelfArray:%@",bookshelfArray);
+    
     NSInteger size=bookshelfArray.count;
+    
     float width=105.98*size+17.66*(size-1)+61.8;
     
     UIScrollView* shelfView=[[UIScrollView alloc]initWithFrame:CGRectMake(0,0, 414, 154.49)];
-    shelfView.contentSize=CGSizeMake(width, 154.49);
-    [bookScanView addSubview:shelfView];
     
-//    if (size>3) {
-//        size=3;
-//    }
+    shelfView.contentSize=CGSizeMake(width, 154.49);
+        
+    [self->bookScanView addSubview:shelfView];
+        
     for (int i=0; i<size; i++) {
+        
         double x=i*105.98+(i+1)*17.66+13.24;
+        
         UIButton* bookShelfScanView=[[UIButton alloc]initWithFrame:CGRectMake(x, 0, 105.98, 154.49)];
+        
         bookShelfScanView.backgroundColor=[UIColor whiteColor];
+        
         bookShelfScanView.layer.borderWidth=1.0;
+        
         bookShelfScanView.layer.borderColor=ssRGBHex(0x979797).CGColor;
-//            NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[bookshelfArray objectAtIndex:i]valueForKey:@"coverPicture"]]];
-//            [bookPicView setBackgroundImage:[UIImage imageWithData:imgData] forState:UIControlStateNormal];
-        //NSLog(@"测试数据：当前取数组中第%d个值,bookshelfArray：%@",i,bookshelfArray);
-        NSDictionary* msgForImage=[bookshelfArray objectAtIndex:i];
-        [bookShelfScanView setBackgroundImage:
-         [LocalDataOperation getImage:[[msgForImage valueForKey:@"userBook"]
-                                       valueForKey:@"bookId"]
-                              httpUrl:[msgForImage valueForKey:@"coverPicture"]]
-                               forState:UIControlStateNormal];
-        bookShelfScanView.tag=i;
-        //临时图片
-                   // [bookPicView setBackgroundImage:[UIImage imageNamed: @"group_book_learning"] forState:UIControlStateNormal];
-        [bookShelfScanView addTarget:self action:@selector(pushToUnit:) forControlEvents:UIControlEventTouchUpInside];
-        [shelfView addSubview:bookShelfScanView];
+        
+        NSDictionary* msgForImage=[self->bookshelfArray objectAtIndex:i];
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+
+            UIImage* backImage=[LocalDataOperation getImage:[[msgForImage valueForKey:@"userBook"]
+                                                             valueForKey:@"bookId"]
+                                                    httpUrl:[msgForImage valueForKey:@"coverPicture"]];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [bookShelfScanView setBackgroundImage:backImage forState:UIControlStateNormal];
+                
+                bookShelfScanView.tag=i;
+                
+                [bookShelfScanView addTarget:self action:@selector(pushToUnit:) forControlEvents:UIControlEventTouchUpInside];
+                
+                [shelfView addSubview:bookShelfScanView];
+            });
+        });
     }
- //   }
 }
 
 -(void)action{

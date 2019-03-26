@@ -141,6 +141,7 @@
 		5910AC6321806A4E0024768A /* ChoosePublishTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChoosePublishTableViewCell.h; sourceTree = "<group>"; };
 		5910AC6421806A4E0024768A /* ChoosePublishTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoosePublishTableViewCell.m; sourceTree = "<group>"; };
 		5910AC6521806A4E0024768A /* ChoosePublishTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoosePublishTableViewCell.xib; sourceTree = "<group>"; };
+		591D6D962249EC78000186CA /* UnitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitViewController.h; sourceTree = "<group>"; };
 		59344ADA21C24AF700198E8F /* load.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = load.gif; sourceTree = "<group>"; };
 		59477BAE216F3FC5000205A5 /* EnglishDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EnglishDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59477BB1216F3FC5000205A5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -154,7 +155,6 @@
 		59477BC0216F3FC6000205A5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		59477C0721719179000205A5 /* UserMsg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UserMsg.h; sourceTree = "<group>"; };
 		59477C0821719179000205A5 /* UserMsg.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UserMsg.m; sourceTree = "<group>"; };
-		59477C0D2171D73E000205A5 /* UnitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitViewController.h; sourceTree = "<group>"; };
 		59477C0E2171D73E000205A5 /* UnitViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UnitViewController.m; sourceTree = "<group>"; };
 		59477C102171E07F000205A5 /* LoginViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
 		59477C112171E07F000205A5 /* LoginViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoginViewController.m; sourceTree = "<group>"; };
@@ -418,7 +418,7 @@
 				59477BB7216F3FC5000205A5 /* Main.storyboard */,
 				59477BBA216F3FC6000205A5 /* Assets.xcassets */,
 				59477BBC216F3FC6000205A5 /* LaunchScreen.storyboard */,
-				59477C0D2171D73E000205A5 /* UnitViewController.h */,
+				591D6D962249EC78000186CA /* UnitViewController.h */,
 				59477C0E2171D73E000205A5 /* UnitViewController.m */,
 				59DE421521780D78008D65CC /* MyShelfViewController.h */,
 				59DE421621780D78008D65CC /* MyShelfViewController.m */,

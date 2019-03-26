@@ -134,7 +134,7 @@
 }
 -(void)titleShow{
     UILabel* title=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.06, 414, 66.2)];
-    title.text=@"人教版PEP 三年级上册";
+    title.text=_bookName;
     title.textColor=[UIColor whiteColor];
     title.backgroundColor=ssRGBHex(0xFF7474);
     title.font=[UIFont systemFontOfSize:18];

@@ -60,7 +60,7 @@
     
     usernameTextField=[[UITextField alloc]initWithFrame:CGRectMake(115.91, 126.89, 200, 25)];
     usernameTextField.placeholder=@"请输入手机号码";
-    usernameTextField.text=@"18273120195";
+    usernameTextField.text=@"13417512970";
     [usernameTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     [self.view addSubview:usernameTextField];
     

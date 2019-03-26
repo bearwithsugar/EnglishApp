@@ -38,13 +38,14 @@ static UINavigationController* navigation;
     [titleView setUserInteractionEnabled:YES];
     
     UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(5, 15,35, 35)];
-    //touchField.backgroundColor=[UIColor blackColor];
+    touchField.backgroundColor=[UIColor blackColor];
     [touchField setUserInteractionEnabled:YES];
     [titleView addSubview:touchField];
     
     UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(10.45, 7.06, 10.7, 22.62)];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
+    [returnBtn addTarget:self action:@selector(popBack:) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
