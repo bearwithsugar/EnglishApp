@@ -19,7 +19,6 @@
 
 @interface UnitViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
-    LearningViewController* learningView;
     //存储用户信息
     NSDictionary* userInfo;
     //存储全部单元信息
@@ -164,20 +163,23 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     unitId=[[unitArray objectAtIndex:indexPath.row] valueForKey:@"unitId"];
-    [self pushToLearningView];
+    [self pushToLearningView:indexPath.row];
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 52.96;
 }
 
 
--(void)pushToLearningView{
+-(void)pushToLearningView:(NSInteger)clickedUnit{
+    LearningViewController* learningView;
     if (learningView==nil) {
         learningView = [[LearningViewController alloc]init];
     }
     learningView.bookId=_bookId;
     learningView.unitId=unitId;
     learningView.bookName=_bookName;
+    learningView.defaultUnit=clickedUnit;
+    
     [self.navigationController pushViewController:learningView animated:true];
     
 }

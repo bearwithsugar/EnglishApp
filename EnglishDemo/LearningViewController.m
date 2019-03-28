@@ -86,6 +86,8 @@
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
 @end
 
+
+
 @implementation LearningViewController
 
 -(void)viewDidLoad {
@@ -122,6 +124,8 @@
     
     contentDetailView=[[UIScrollView alloc]initWithFrame:CGRectMake(136.89, 0, 300, 603.58)];
     [contentView addSubview:contentDetailView];
+    
+    [self showChooseLessonView];
     
     //录音所用
     //self.progressView.progress = 0;
@@ -277,12 +281,17 @@
     lessontitle.clipsToBounds = YES;
     //打开button父组件的人机交互
     [lessontitle setUserInteractionEnabled:YES];
-    UIButton* angleBtn=[[UIButton alloc]initWithFrame:CGRectMake(186.57, 9.93, 20.97, 12.13)];
-    [angleBtn setBackgroundImage:[UIImage imageNamed:@"btn_down"] forState:UIControlStateNormal];
-    [angleBtn setBackgroundImage:[UIImage imageNamed:@"icon_Rectangle_up"] forState:UIControlStateSelected];
-    [angleBtn addTarget:self action:@selector(showChooseLessonView:) forControlEvents:UIControlEventTouchUpInside];
-    [lessontitle addSubview:angleBtn];
+    
+//    UIButton* angleBtn=[[UIButton alloc]initWithFrame:CGRectMake(186.57, 9.93, 20.97, 12.13)];
+//    [angleBtn setBackgroundImage:[UIImage imageNamed:@"btn_down"] forState:UIControlStateNormal];
+//    [angleBtn setBackgroundImage:[UIImage imageNamed:@"icon_Rectangle_up"] forState:UIControlStateSelected];
+//    [angleBtn addTarget:self action:@selector(showChooseLessonView:) forControlEvents:UIControlEventTouchUpInside];
+//    [lessontitle addSubview:angleBtn];
+    
     [presentLession addSubview:lessontitle];
+    
+    UITapGestureRecognizer* showLineGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showChooseLessonView)];
+    [lessontitle addGestureRecognizer:showLineGesture];
 }
 //左侧显示书封面
 -(void)learningBook{
@@ -813,19 +822,20 @@
     settingShow=!settingShow;
     
 }
+#pragma mark --下拉按钮
 //点击下拉按钮
--(void)showChooseLessonView:(UIButton*)button{
+-(void)showChooseLessonView{
     if (chooseLessonShow) {
         [self.view addSubview:chooseLessonView];
     }else{
         if (chooseLessonView.unitName!=nil&&chooseLessonView.className!=nil) {
             lessonArray=chooseLessonView.lessonArray;
             //classid：在这个dataArray中很多字典中都可以返回id，此处拿其中一个字典：bookSentences
-            [self showContent:
-             [chooseLessonView.dataArray valueForKey:@"bookPictures"]
-              senArray:[chooseLessonView.dataArray valueForKey:@"bookSentences"]
-              classId:[[[chooseLessonView.dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"] unitName:chooseLessonView.unitName
-                    className:chooseLessonView.className];
+            [self showContent:[chooseLessonView.dataArray valueForKey:@"bookPictures"]
+                     senArray:[chooseLessonView.dataArray valueForKey:@"bookSentences"]
+                      classId:[[[chooseLessonView.dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
+                     unitName:chooseLessonView.unitName
+                    className:chooseLessonView.className]; 
             
         }else{
             [chooseLessonView removeFromSuperview];
@@ -833,7 +843,7 @@
         
     }
     chooseLessonShow=!chooseLessonShow;
-    button.selected=!button.selected;
+    //button.selected=!button.selected;
     
 }
 //点击收起按钮，显示内容
@@ -919,8 +929,7 @@
 #pragma mark --chooseLesson
 -(void)chooseLessonViewInit{
     
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId];
-    NSLog(@"chooseLessonView.bookId是%@",chooseLessonView.bookId);
+    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:_defaultUnit];
     
 }
 -(void)popBack{
@@ -1043,6 +1052,9 @@
     //震动
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     [self.player play];
+}
+-(void)dealloc{
+    NSLog(@"我被销毁了");
 }
 
 #pragma mark - UIGestureRecognizerDelegate

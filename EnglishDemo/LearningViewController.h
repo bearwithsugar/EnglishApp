@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,copy)NSString* unitId;
 @property(nonatomic,copy)NSString* bookName;
 @property (nonatomic, retain)AVAudioPlayer *player;
+@property NSInteger defaultUnit;
 @end
 
 NS_ASSUME_NONNULL_END

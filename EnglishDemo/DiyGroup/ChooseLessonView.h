@@ -25,7 +25,12 @@ NS_ASSUME_NONNULL_BEGIN
 //单元下的课数组
 @property(nonatomic,copy)NSArray* lessonArray;
 
--(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid;
+@property NSInteger defaultUnit;
+
+-(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit;
+
+typedef void (^ShowContentBlock) (NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname);
+
 @end
 
 

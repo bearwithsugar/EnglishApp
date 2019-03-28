@@ -39,23 +39,33 @@
 @end
 
 @implementation ChooseLessonView
--(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid{
+-(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit{
     self=[super initWithFrame:frame];
     if (self) {
         self.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
         _bookId=bookid;
+        _defaultUnit=defaultunit;
         [self unitMsgInit];
         //初始化数组
         _lessonArray=[[NSArray alloc]init];
         _dataArray=[[NSArray alloc]init];
         sentenceArray=[[NSArray alloc]init];
-        
+    
         UITableView* unitsList=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, 150, 397.24)];
         unitsList.dataSource=self;
         unitsList.delegate=self;
         unitsList.tag=1;
+//        [self tableView:unitsList didSelectRowAtIndexPath:[NSIndexPath indexPathForItem:3 inSection:0]];
         [self addSubview:unitsList];
+//        [unitsList reloadData];
+        NSLog(@"_defaultUnit是%ld",_defaultUnit);
+        NSIndexPath* _lastIndex = [NSIndexPath indexPathForRow:_defaultUnit inSection:0];
+        [unitsList selectRowAtIndexPath:_lastIndex animated:YES scrollPosition:UITableViewScrollPositionNone];
+        NSIndexPath *path = [NSIndexPath indexPathForItem:_defaultUnit inSection:0];
+        [self tableView:unitsList didSelectRowAtIndexPath:path];
+        
+        
         
         lessonList=[[UITableView alloc]initWithFrame:CGRectMake(150, 0, 264, 397.24)];
         lessonList.dataSource=self;

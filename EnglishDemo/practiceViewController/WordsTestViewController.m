@@ -162,7 +162,7 @@
 }
 //选择菜单的初始化
 -(void)chooseLessonViewInit{
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_recentBookId];
+    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_recentBookId DefaultUnit:0];
 }
 
 #pragma mark --上一课下一课

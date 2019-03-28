@@ -116,7 +116,7 @@
     [title addSubview:setBtn];
 }
 -(void)chooseLessonViewInit{
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId];
+    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:0];
 }
 //上一课下一课
 -(void)chooseLesson{
