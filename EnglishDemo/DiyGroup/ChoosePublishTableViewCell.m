@@ -39,7 +39,7 @@
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
     //self.title.textColor=[UIColor blackColor];
-    self.title.textColor = selected?ssRGBHex(0x9B9B9B) : [UIColor whiteColor];
+    self.title.textColor = selected?[UIColor whiteColor]:ssRGBHex(0x9B9B9B)  ;
 }
 
 @end

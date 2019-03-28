@@ -20,7 +20,9 @@
     NSDictionary* userInfo;
     NSArray* deviceArray;
     UILabel* deviceLabel;
+    UIView* deviceShowView;
     LoginViewController* loginAndRegister;
+    UnloginMsgView* unloginView;
 }
 
 @end
@@ -38,13 +40,15 @@
     
 }
 -(void)viewWillAppear:(BOOL)animated{
-    [deviceLabel removeFromSuperview];
+    [deviceShowView removeFromSuperview];
+    [unloginView removeFromSuperview];
+    
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
         [self dataInit];
         [self deviceShow];
     }else{
-        UnloginMsgView* unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
+        unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
         [self.view addSubview:unloginView];
     }
 }
@@ -64,20 +68,20 @@
     NSLog(@"拿到的设备信息是%@",deviceArray);
 }
 -(void)deviceShow{
+    deviceShowView=[[UIView alloc]initWithFrame:CGRectMake(0, 174.34, 414, 400)];
+    
     if (deviceArray.count==0) {
-        deviceLabel=[[UILabel alloc]initWithFrame:CGRectMake(40, 170, 414, 52.96)];
+        deviceLabel=[[UILabel alloc]initWithFrame:CGRectMake(40, 0, 414, 52.96)];
         deviceLabel.text=@"您尚未登录，请在登录后查看绑定设备！";
         deviceLabel.textColor=ssRGBHex(0x4A4A4A);
         deviceLabel.font=[UIFont systemFontOfSize:14];
-        [self.view addSubview:deviceLabel];
+        [deviceShowView addSubview:deviceLabel];
     }else{
         for (NSDictionary* device in deviceArray) {
-            float y=174.34+52.96*[deviceArray indexOfObject:device];
+            float y=0+52.96*[deviceArray indexOfObject:device];
             deviceLabel=[[UILabel alloc]initWithFrame:CGRectMake(17.66, y, 414, 52.96)];
             [deviceLabel setUserInteractionEnabled:YES];
             NSString* deviceName=[device valueForKey:@"deviceName"];
-            //        NSLog(@"当前设备是%@",[device valueForKey:@"deviceId"]);
-            //        NSLog(@"当前设备是%@",[[UIDevice currentDevice] name]);
             UIButton* releaseBtn=[[UIButton alloc]initWithFrame:CGRectMake(303.60, 14.34, 70.65, 22.06)];
             [releaseBtn setTitle:@"解绑" forState:UIControlStateNormal];
             releaseBtn.titleLabel.font=[UIFont systemFontOfSize:10];
@@ -93,30 +97,35 @@
             deviceLabel.text=deviceName;
             deviceLabel.textColor=ssRGBHex(0x4A4A4A);
             deviceLabel.font=[UIFont systemFontOfSize:14];
-            [self.view addSubview:deviceLabel];
+            [deviceShowView addSubview:deviceLabel];
             
             
         }
     }
+    [self.view addSubview:deviceShowView];
     
 }
 -(void)releaseDevice:(UIButton*)btn{
     if ([ConnectionFunction deleteBinding:[userInfo valueForKey:@"userKey"] DeviceId:[[deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]]) {
-        if ([DocuOperate deletePlist:@"userInfo.plist"]) {
-            NSLog(@"解除绑定成功");
-            if ([[[deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
-                [self pushToLogin];
-            }else{
-                [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定成功！"] animated:YES completion:nil];
-            }
+
+        NSLog(@"解除绑定成功");
+        if ([[[deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
+            //如果是当前设备
+            NSLog(@"是当前设备");
+            [DocuOperate deletePlist:@"userInfo.plist"];
+            [self pushToLogin];
         }else{
-            NSLog(@"解绑失败，请稍后再试");
-             [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定失败！请稍后再试！"] animated:YES completion:nil];
+            //[[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定成功！"] animated:YES completion:nil];
+            [self popBack];
         }
+        
     }else{
-        NSLog(@"解绑失败，请稍后再试");
-        [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定失败！请稍后再试！"] animated:YES completion:nil];
+        NSLog(@"不是当前设备");
+        NSLog(@"解除绑定成功");
+        [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定失败！"] animated:YES completion:nil];
     }
+    
+    
   
 }
 -(void)pushToLogin{

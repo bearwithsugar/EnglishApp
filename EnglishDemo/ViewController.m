@@ -26,6 +26,7 @@
 #import "AppDelegate.h"
 #import "Functions/DataFilter.h"
 #import "Functions/FixValues.h"
+#import "Functions/ConnectionInstance.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -157,9 +158,11 @@
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+        
+        ConnectionInstance* recentInstance=[[ConnectionInstance alloc]init];
 
         //判断账号是否其他设备登录
-        if ([[[ConnectionFunction recentLearnMsg:[userInfo valueForKey:@"userKey"]] valueForKey:@"code"]intValue]==401) {
+        if ([[[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]]valueForKey:@"code"]intValue]==401) {
             
             NSLog(@"账号在别处登录");
             
@@ -174,7 +177,7 @@
             //如果没有其他设备登录则进行数据加载---------------------------------------------------------------
             
             //最近学习情况
-            recentLearnMsg=[ConnectionFunction recentLearnMsg:[userInfo valueForKey:@"userKey"]];
+            recentLearnMsg=[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]];
             
             recentBook=[[recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
             
@@ -261,6 +264,38 @@
 //刷新最近学习的书本信息和学习进度
 -(void)getReq{
     
+//    ConnectionInstance* refreshReq=[[ConnectionInstance alloc]init];
+//
+//    RefreshBlock executeBlock=^(NSDictionary* reqDic){
+//        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//            self->learnProcess=[reqDic valueForKey:@"data"];
+//            [self->processDic setValue:[self->learnProcess valueForKey:@"grade"] forKey:@"zhunquelv"];
+//
+//            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningRate"] forKey:@"tingkewen"];
+//            [self->processDic setValue:[self->learnProcess valueForKey:@"rank_rate"] forKey:@"percentage"];
+//            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
+//            [self->processDic setValue:[self->learnProcess valueForKey:@"sentenceRate"] forKey:@"dujuzi"];
+//            [self->processDic setValue:[self->learnProcess valueForKey:@"rank"] forKey:@"zongpaiming"];
+//            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningTime"] forKey:@"zongshichang"];
+//
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//
+//                [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
+//
+//                [self loadGrade];
+//
+//            });
+//
+//
+//        });
+//    };
+//
+//    NSURL* url=[FixValues getUrl];
+//    url=[url URLByAppendingPathComponent:@"user_bookinfo"];
+//    url=[url URLByAppendingPathComponent:[recentBook valueForKey:@"bookId"]];
+//
+//    [refreshReq getRequest:url Block:executeBlock];
+    
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"user_bookinfo"];
     url=[url URLByAppendingPathComponent:[recentBook valueForKey:@"bookId"]];
@@ -271,40 +306,36 @@
     NSDictionary *headers = @{@"English-user": [userInfo valueForKey:@"userKey"]};
     [request setHTTPMethod:@"GET"];
     [request setAllHTTPHeaderFields:headers];
-    
+
     static NSDictionary* dictionary;
     NSURLSessionDataTask *dataTask=[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        
+
         NSLog(@"错误：%@",error);
         NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
         NSLog(@"数据为：%@",html);
-        
+
         self->learnProcess=[dictionary valueForKey:@"data"];
-        NSLog(@"learnprocess的内容是（上）%@",self->learnProcess);
-        
+
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            
+
             [self->processDic setValue:[self->learnProcess valueForKey:@"grade"] forKey:@"zhunquelv"];
-            
+
             [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningRate"] forKey:@"tingkewen"];
             [self->processDic setValue:[self->learnProcess valueForKey:@"rank_rate"] forKey:@"percentage"];
             [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
             [self->processDic setValue:[self->learnProcess valueForKey:@"sentenceRate"] forKey:@"dujuzi"];
             [self->processDic setValue:[self->learnProcess valueForKey:@"rank"] forKey:@"zongpaiming"];
             [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningTime"] forKey:@"zongshichang"];
-            
+
             dispatch_async(dispatch_get_main_queue(), ^{
-                
+
                 [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
-    
+
                 [self loadGrade];
-    
+
             });
-            
-            
         });
- 
     }];
     [dataTask resume];
     
@@ -489,7 +520,6 @@
 
         [bookPicView addSubview:bookpic];
     }
-    
     
     [self loadGrade];
     
@@ -830,9 +860,9 @@
                 [cell loadData:[publicationMsg valueForKey:@"categoryName"]];
                 cell.tag=[[publicationMsg valueForKey:@"categoryId"]intValue];
             }
-            cell.backgroundColor=ssRGBHex(0xFD7272);
+            cell.backgroundColor=[UIColor whiteColor];
             UIView *backgroundViews = [[UIView alloc]initWithFrame:cell.frame];
-            backgroundViews.backgroundColor = [UIColor whiteColor];
+            backgroundViews.backgroundColor = ssRGBHex(0xFD7272);
             [cell setSelectedBackgroundView:backgroundViews];
         }
         return cell;
@@ -849,14 +879,19 @@
                  cell.textLabel.text=[gradeMsg valueForKey:@"categoryName"];
                  NSLog(@"获取到的出版社id%@",[gradeMsg valueForKey:@"categoryId"]);
                  cell.tag=[[gradeMsg valueForKey:@"categoryId"]integerValue];
-                 NSLog(@"id转换成tag的值%@",[NSString stringWithFormat: @"%ld", cell.tag] );
-                 NSLog(@"id转换成tag的值%ld",(long)cell.tag);
+//                 NSLog(@"id转换成tag的值%@",[NSString stringWithFormat: @"%ld", cell.tag] );
+//                 NSLog(@"id转换成tag的值%ld",(long)cell.tag);
              }
             cell.textLabel.font=[UIFont systemFontOfSize:12];
             cell.textLabel.textColor=ssRGBHex(0x4A4A4A);
+            
             UIView *backgroundViews = [[UIView alloc]initWithFrame:cell.frame];
             backgroundViews.backgroundColor = [UIColor whiteColor];
+            
+            //cell选中颜色
             [cell setSelectedBackgroundView:backgroundViews];
+            
+            //cell选中字体颜色
             cell.textLabel.highlightedTextColor=ssRGBHex(0xFD7272);
          }
         return cell;
@@ -911,11 +946,13 @@
         [book setUserInteractionEnabled:YES];
         [shelfView addSubview:book];
         
-        UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
-        [loadBtn setBackgroundImage:[UIImage imageNamed:@"icon_weitianjiadaoshujia"] forState:UIControlStateNormal];
-        [loadBtn addTarget:self action:@selector(addBook:) forControlEvents:UIControlEventTouchUpInside];
-        loadBtn.tag=i;
-        [book addSubview:loadBtn];
+        if ([[bookArray[i]valueForKey:@"boughtState"]intValue]==0) {
+            UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
+            [loadBtn setBackgroundImage:[UIImage imageNamed:@"icon_weitianjiadaoshujia"] forState:UIControlStateNormal];
+            [loadBtn addTarget:self action:@selector(addBook:) forControlEvents:UIControlEventTouchUpInside];
+            loadBtn.tag=i;
+            [book addSubview:loadBtn];
+        }
     }
 
 }
@@ -931,7 +968,7 @@
             [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
         }else{
             [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加成功!"] animated:YES completion:nil];
-            
+            [self myProgressUnfixed];
         }
     }else{
         [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];
@@ -949,75 +986,97 @@
     if (userMsg==nil) {
         userMsg = [[UserMsg alloc]init];
     }
-    [self.navigationController pushViewController:userMsg animated:true];
+    if(![self.navigationController.topViewController isKindOfClass:[userMsg class]]) {
+        [self.navigationController pushViewController:userMsg animated:true];
+    }
 }
 
 -(void)pushToUnit:(UIButton*)btn{
     if (unitMsg==nil) {
         unitMsg = [[UnitViewController alloc]init];
     }
-    NSLog(@"被点击的书架的id是%@",[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]);
-    [processDic setValue:[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
-    [DocuOperate replacePlist:@"process.plist" dictionary:processDic];
-//    NSDictionary* dic=[ConnectionFunction getBookLearnMsg:[userInfo valueForKey:@"userKey"] Id:[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]];
-//    NSLog(@"新接口的信息是%@",[dic valueForKey:@"data"]);
+    if(![self.navigationController.topViewController isKindOfClass:[unitMsg class]]) {
+        NSLog(@"被点击的书架的id是%@",[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]);
+        [processDic setValue:[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
+        [DocuOperate replacePlist:@"process.plist" dictionary:processDic];
+        //    NSDictionary* dic=[ConnectionFunction getBookLearnMsg:[userInfo valueForKey:@"userKey"] Id:[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]];
+        //    NSLog(@"新接口的信息是%@",[dic valueForKey:@"data"]);
+        
+        //这个接口中还没有书籍名称这一条信息，
+        
+        unitMsg.bookId=[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"];
+        unitMsg.bookName=[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"bookName"];
+        unitMsg.recentLesson=[[[[ConnectionFunction recentLearnMsgByBook:[userInfo valueForKey:@"userKey"] Id:unitMsg.bookId] valueForKey:@"data"] valueForKey:@"article"]valueForKey:@"articleName" ];
+        NSLog(@"点击书本的最新学习信息%@",unitMsg.recentLesson);
+        [self.navigationController pushViewController:unitMsg animated:true];
+    }
     
-    //这个接口中还没有书籍名称这一条信息，
-   
-    unitMsg.bookId=[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"];
-    unitMsg.bookName=[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"bookName"];
-    unitMsg.recentLesson=[[[[ConnectionFunction recentLearnMsgByBook:[userInfo valueForKey:@"userKey"] Id:unitMsg.bookId] valueForKey:@"data"] valueForKey:@"article"]valueForKey:@"articleName" ];
-    NSLog(@"点击书本的最新学习信息%@",unitMsg.recentLesson);
    
     
-    [self.navigationController pushViewController:unitMsg animated:true];
+    
+    
 }
 -(void)recentBookPushToUnit{
     if (unitMsg==nil) {
         unitMsg = [[UnitViewController alloc]init];
     }
+    if(![self.navigationController.topViewController isKindOfClass:[unitMsg class]]) {
     unitMsg.bookId=[recentBook valueForKey:@"bookId"];
     unitMsg.bookName=[recentBook valueForKey:@"bookName"];
     unitMsg.recentLesson=[[[recentLearnMsg valueForKey:@"data"]valueForKey:@"article"]valueForKey:@"articleName"];
     NSLog(@"书本信息%@",recentBook);
     [self.navigationController pushViewController:unitMsg animated:true];
+    }
 }
 
 -(void)pushToLoginView{
     if (loginView==nil) {
         loginView = [[LoginViewController alloc]init];
     }
-    [self.navigationController pushViewController:loginView animated:true];
+    if(![self.navigationController.topViewController isKindOfClass:[LoginViewController class]]) {
+        [self.navigationController pushViewController:loginView animated:true];
+    }
 }
 
 -(void)pushToMyShelfView{
     if (myShelfVC==nil) {
         myShelfVC = [[MyShelfViewController alloc]init];
     }
-    [self.navigationController pushViewController:myShelfVC animated:true];
+    if(![self.navigationController.topViewController isKindOfClass:[myShelfVC class]]) {
+        [self.navigationController pushViewController:myShelfVC animated:true];
+    }
 }
 
 -(void)pushToMoreRecommend{
     if (moreRecommend==nil) {
         moreRecommend = [[MoreRecommendViewController alloc]init];
     }
-    [self.navigationController pushViewController:moreRecommend animated:true];
+    if(![self.navigationController.topViewController isKindOfClass:[moreRecommend class]]) {
+        [self.navigationController pushViewController:moreRecommend animated:true];
+    }
+
 }
 
 -(void)pushToWordsListen{
     if (wordsListening==nil) {
         wordsListening = [[WordsListeningViewController alloc]init];
     }
-    wordsListening.bookId=[recentBook valueForKey:@"bookId"];
-    [self.navigationController pushViewController:wordsListening animated:true];
+    if(![self.navigationController.topViewController isKindOfClass:[wordsListening class]]) {
+        wordsListening.bookId=[recentBook valueForKey:@"bookId"];
+        
+        [self.navigationController pushViewController:wordsListening animated:true];
+    }
 }
 
 -(void)pushToSentenceListen{
     if (sentenceListening==nil) {
         sentenceListening = [[SentenceListeningViewController alloc]init];
     }
-    sentenceListening.bookId=[recentBook valueForKey:@"bookId"];;
-    [self.navigationController pushViewController:sentenceListening animated:true];
+    if(![self.navigationController.topViewController isKindOfClass:[sentenceListening class]]) {
+        sentenceListening.bookId=[recentBook valueForKey:@"bookId"];;
+        [self.navigationController pushViewController:sentenceListening animated:true];
+    }
+    
 }
 
 -(void)pushToWordsTest:(UIButton*)btn{
@@ -1025,20 +1084,26 @@
         wordsTest = [[WordsTestViewController alloc]init];
         wordsTest.recentBookId=[recentBook valueForKey:@"bookId"];
     }
-    if (btn.tag==1) {
-        wordsTest.testType=@"word";
-    }else{
-        wordsTest.testType=@"sentence";
+    if(![self.navigationController.topViewController isKindOfClass:[wordsTest class]]) {
+        if (btn.tag==1) {
+            wordsTest.testType=@"word";
+        }else{
+            wordsTest.testType=@"sentence";
+        }
+        [self.navigationController pushViewController:wordsTest animated:true];
     }
-    [self.navigationController pushViewController:wordsTest animated:true];
+    
 }
 -(void)pushToWrong{
     if (wrongNoteView==nil) {
         wrongNoteView = [[WrongNotesViewController alloc]init];
         wrongNoteView.recentBookId=[recentBook valueForKey:@"bookId"];
     }
-    wrongNoteView.testType=@"wrong";
-    [self.navigationController pushViewController:wrongNoteView animated:true];
+    if(![self.navigationController.topViewController isKindOfClass:[wrongNoteView class]]) {
+        wrongNoteView.testType=@"wrong";
+        [self.navigationController pushViewController:wrongNoteView animated:true];
+    }
+    
 }
 
 //-(void)pushToSentencesTest{

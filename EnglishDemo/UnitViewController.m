@@ -15,6 +15,7 @@
 #import "Common/HeadView.h"
 #import "Functions/WarningWindow.h"
 #import "Common/HeadView.h"
+#import "Functions/ConnectionInstance.h"
 
 @interface UnitViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -44,9 +45,9 @@
     unitArray=[[NSArray alloc]init];
     unitProcessArray=[[NSArray alloc]init];
     
-    [self unitInit];
-    [self titleShow];
     
+    
+    [self unitInit];
     NSLog(@"unitArray的值是%@",unitArray);
     //此处用单元进度数组来判断token是否过期，因为单元数组接口不能验证
     if (unitProcessArray.count==0) {
@@ -58,14 +59,42 @@
         [self progressView];
     }
     
+//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//        [self unitInit];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSLog(@"unitArray的值是%@",self->unitArray);
+//            //此处用单元进度数组来判断token是否过期，因为单元数组接口不能验证
+//            if (self->unitProcessArray.count==0) {
+//                //提示框
+//                [self presentViewController:[WarningWindow transToLogin:@"您的账号在别处登录，请重新登录！" Navigation:self.navigationController]
+//                                   animated:YES
+//                                 completion:nil];
+//            }else{
+//                [self progressView];
+//            }
+//        });
+//    });
+    [self titleShow];
+    
 }
 -(void)viewWillAppear:(BOOL)animated{
     [processMsg reloadData];
 }
 -(void)unitInit{
-    NSDictionary* dataDic=[ConnectionFunction getUnitMsg:_bookId UserKey:[userInfo valueForKey:@"userKey"]];
+    
+    ConnectionInstance* getUnitMsgInstance=[[ConnectionInstance alloc]init];
+    
+    ConnectionInstance* unitProcessInstance=[[ConnectionInstance alloc]init];
+    
+    NSDictionary* dataDic=[getUnitMsgInstance getUnitMsg:_bookId UserKey:[userInfo valueForKey:@"userKey"]];
+    
+    //[ConnectionFunction getUnitMsg:_bookId UserKey:[userInfo valueForKey:@"userKey"]];
+    
     unitArray=[dataDic valueForKey:@"data"];
-    unitProcessArray=[[ConnectionFunction unitProcess:_bookId UserKey:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
+    
+    unitProcessArray=[[unitProcessInstance unitProcess:_bookId UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
+    
+//    [[ConnectionFunction unitProcess:_bookId UserKey:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
     NSLog(@"显示单元进度数组%@",unitProcessArray);
 }
 -(void)titleShow{

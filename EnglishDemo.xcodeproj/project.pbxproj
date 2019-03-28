@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5901E49B2192C5270084156E /* DocuOperate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5901E49A2192C5270084156E /* DocuOperate.m */; };
+		590CA3D2224B84B6004D1AFD /* ConnectionInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 590CA3D1224B84B6004D1AFD /* ConnectionInstance.m */; };
 		5910AC42217DC3970024768A /* ProcessLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC41217DC3970024768A /* ProcessLine.m */; };
 		5910AC46217DD93F0024768A /* UnitsListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC44217DD93F0024768A /* UnitsListTableViewCell.m */; };
 		5910AC47217DD93F0024768A /* UnitsListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5910AC45217DD93F0024768A /* UnitsListTableViewCell.xib */; };
@@ -90,6 +91,7 @@
 		59A88A6C221BB36C00F16742 /* LoadGif.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A6B221BB36C00F16742 /* LoadGif.m */; };
 		59A88A70221C404000F16742 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A88A6F221C404000F16742 /* Images.xcassets */; };
 		59A88A76221E2C1C00F16742 /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A75221E2C1C00F16742 /* HeadView.m */; };
+		59B0929B224C47A000B571A0 /* RequestInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B0929A224C47A000B571A0 /* RequestInstance.m */; };
 		59D4616E21F6CB7E00CF29D8 /* FixValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4616D21F6CB7E00CF29D8 /* FixValues.m */; };
 		59D4617121F6CF1D00CF29D8 /* WarningWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4617021F6CF1D00CF29D8 /* WarningWindow.m */; };
 		59D4617421F6D20B00CF29D8 /* JumpToSomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4617321F6D20B00CF29D8 /* JumpToSomeView.m */; };
@@ -121,6 +123,8 @@
 /* Begin PBXFileReference section */
 		5901E4992192C5270084156E /* DocuOperate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocuOperate.h; sourceTree = "<group>"; };
 		5901E49A2192C5270084156E /* DocuOperate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DocuOperate.m; sourceTree = "<group>"; };
+		590CA3D0224B84B6004D1AFD /* ConnectionInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionInstance.h; sourceTree = "<group>"; };
+		590CA3D1224B84B6004D1AFD /* ConnectionInstance.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConnectionInstance.m; sourceTree = "<group>"; };
 		5910AC40217DC3970024768A /* ProcessLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessLine.h; sourceTree = "<group>"; };
 		5910AC41217DC3970024768A /* ProcessLine.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProcessLine.m; sourceTree = "<group>"; };
 		5910AC43217DD93F0024768A /* UnitsListTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitsListTableViewCell.h; sourceTree = "<group>"; };
@@ -259,6 +263,8 @@
 		59A88A6F221C404000F16742 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		59A88A74221E2C1C00F16742 /* HeadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeadView.h; sourceTree = "<group>"; };
 		59A88A75221E2C1C00F16742 /* HeadView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeadView.m; sourceTree = "<group>"; };
+		59B09299224C47A000B571A0 /* RequestInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestInstance.h; sourceTree = "<group>"; };
+		59B0929A224C47A000B571A0 /* RequestInstance.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestInstance.m; sourceTree = "<group>"; };
 		59D4616C21F6CB7E00CF29D8 /* FixValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixValues.h; sourceTree = "<group>"; };
 		59D4616D21F6CB7E00CF29D8 /* FixValues.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FixValues.m; sourceTree = "<group>"; };
 		59D4616F21F6CF1D00CF29D8 /* WarningWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WarningWindow.h; sourceTree = "<group>"; };
@@ -365,6 +371,10 @@
 				596E4B8021F8C5AD0046F215 /* AgentFunction.m */,
 				596E4B8721F984A00046F215 /* QQLogin.h */,
 				596E4B8821F984A00046F215 /* QQLogin.m */,
+				590CA3D0224B84B6004D1AFD /* ConnectionInstance.h */,
+				590CA3D1224B84B6004D1AFD /* ConnectionInstance.m */,
+				59B09299224C47A000B571A0 /* RequestInstance.h */,
+				59B0929A224C47A000B571A0 /* RequestInstance.m */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -745,6 +755,7 @@
 			files = (
 				597392A021C63B2F0050CA1B /* file_output.cpp in Sources */,
 				596D7F402193D2D2000AA637 /* DataFilter.m in Sources */,
+				590CA3D2224B84B6004D1AFD /* ConnectionInstance.m in Sources */,
 				5910AC57218050F40024768A /* UserMsgTableViewCell.m in Sources */,
 				5967211D21F16A8200409403 /* QueationView.m in Sources */,
 				596E4BB321FB15E60046F215 /* UnloginMsgView.m in Sources */,
@@ -768,6 +779,7 @@
 				59DE422F217C0A58008D65CC /* WordsListeningViewController.m in Sources */,
 				594B246821EADEC900807A4A /* VoiceChooseChn.m in Sources */,
 				597392A221C63B2F0050CA1B /* id3_parser.cpp in Sources */,
+				59B0929B224C47A000B571A0 /* RequestInstance.m in Sources */,
 				59DE4223217961B8008D65CC /* LearningViewController.m in Sources */,
 				5973929F21C63B2F0050CA1B /* audio_queue.cpp in Sources */,
 				5967216121F31DB500409403 /* getUserMsg.m in Sources */,

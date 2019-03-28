@@ -14,5 +14,7 @@
 @interface ViewController : UIViewController
 @property (nonatomic,strong) UIButton *selectedBtn;
 
+typedef void (^RefreshBlock) (NSDictionary*);
+
 @end
 
