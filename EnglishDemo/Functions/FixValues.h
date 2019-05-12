@@ -31,6 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 //获取当前活动的navigationViewController
 + (UINavigationController *)navigationViewController;
 
+//获取设备唯一识别
++(NSString*)getUniqueId;
+
 @end
 
 NS_ASSUME_NONNULL_END

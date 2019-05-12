@@ -87,13 +87,16 @@
     if ([[dic valueForKey:@"message"]isEqualToString:@"token认证失败"]) {
         NSLog(@"您的账号在别处登录，请重新登录！");
         //提示框
-       [[self theTopviewControler]
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [[self theTopviewControler]
              presentViewController:
              //[WarningWindow MsgWithoutTrans:@"啊啊啊！"]
              [WarningWindow transToLogin:@"您的账号在别处登录，请重新登录！"
                               Navigation:[[UIApplication sharedApplication].delegate window].rootViewController.navigationController]
              animated:YES
              completion:nil];
+        });
+       
        return true;
     }
     else{

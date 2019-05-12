@@ -104,11 +104,7 @@
     answer1.titleLabel.font=[UIFont systemFontOfSize:20];
     answer1.tag=0;
     
-    if (answer1.tag==rightAnswer) {
-        [answer1 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    }else{
-        [answer1 setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateSelected];
-    }
+    [answer1 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     [answer1 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
     [answerView addSubview:answer1];
     
@@ -119,15 +115,10 @@
     answer2.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     [answer2 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
     [answer2 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [answer2 setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateSelected];
+    [answer2 setTitleColor:[UIColor whiteColor]forState:UIControlStateSelected];
     answer2.titleLabel.font=[UIFont systemFontOfSize:20];
     answer2.tag=1;
     
-    if (answer2.tag==rightAnswer) {
-        [answer2 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    }else{
-        [answer2 setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateSelected];
-    }
     [answer2 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
     [answerView addSubview:answer2];
     
@@ -138,15 +129,10 @@
     answer3.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     [answer3 setTitleEdgeInsets:UIEdgeInsetsMake(5, 5, 5, 5)];
     [answer3 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [answer3 setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateSelected];
+    [answer3 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     answer3.titleLabel.font=[UIFont systemFontOfSize:20];
     answer3.tag=2;
     
-    if (answer3.tag==rightAnswer) {
-        [answer3 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    }else{
-        [answer3 setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateSelected];
-    }
     [answer3 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
     [answerView addSubview:answer3];
     
@@ -157,15 +143,10 @@
     answer4.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     [answer4 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
     [answer4 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [answer4 setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateSelected];
+    [answer4 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     answer4.titleLabel.font=[UIFont systemFontOfSize:20];
     answer4.tag=3;
     
-    if (answer4.tag==rightAnswer) {
-        [answer4 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    }else{
-        [answer4 setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateSelected];
-    }
     [answer4 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
     [answerView addSubview:answer4];
 }
@@ -175,10 +156,11 @@
     if (super.clickable) {
         if (btn.tag==rightAnswer) {
             NSLog(@"选择正确");
-            btn.backgroundColor=ssRGBHex(0xFF7474);
-            
+            btn.backgroundColor=ssRGBHex(0x00CC00);
+            super.clickable=false;
         }else{
             NSLog(@"错误");
+            btn.backgroundColor=ssRGBHex(0xFF7474);
             NSString* subjectType;
             if ([super.testType isEqualToString:@"word"]) {
                 subjectType=@"2";
@@ -188,10 +170,9 @@
             NSDictionary* dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"wordId"]] Type:subjectType];
             NSLog(@"testarray是%@",[super.testArray objectAtIndex:super.testFlag]);
             NSLog(@"错题添加结果%@",dic);
-            [self highlightAnswer];
+            //[self highlightAnswer];
         }
         btn.selected=true;
-        super.clickable=false;
     }
     
     

@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 +(UIImageView*)imageViewStartAnimating:(CGRect)cgrect;
 
+//喇叭循环动画
++(UIImageView*)imageViewfForPlaying:(CGRect)cgrect;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface SentenceListeningViewController : UIViewController
 @property(nonatomic,copy)NSString* bookId;
+typedef void (^ShowContentBlock) (NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname);
 @end
 
 NS_ASSUME_NONNULL_END

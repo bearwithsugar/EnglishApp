@@ -16,7 +16,6 @@
 #import "Functions/WarningWindow.h"
 #import "Common/LoadGif.h"
 
-
 //使控制台打印完整信息
 //#ifdef DEBUG
 //#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
@@ -81,6 +80,9 @@
     NSString* classId;
     //音频数组
     NSMutableArray* voiceArray;
+    
+    //喇叭图标
+    UIImageView* laba;
     
 }
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
@@ -317,19 +319,11 @@
         [theBook setUserInteractionEnabled:YES];
         theBook.tag=i;
         
-        NSDictionary* bookDic=[bookPicArray objectAtIndex:i];
-        //NSLog(@"bookDic%@",bookDic);
-        NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
-//        //路径中有特殊字符，转换一下
-        picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-//        NSURL* url=[NSURL URLWithString:picUrl];
-//        NSData *imgData = [NSData dataWithContentsOfURL:url];
-//        theBook.image=[UIImage imageWithData:imgData];
-        theBook.image=[LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
-        
         //暂时用其他图片代替
         //theBook.image=[UIImage imageNamed:@"group_book_learning"];
-        [bookPicView addSubview:theBook];
+        
+        
+        [self->bookPicView addSubview:theBook];
         
         UILabel* showBigPic=[[UILabel alloc]initWithFrame:CGRectMake(16.55, 11.03, 77.27, 17.65)];
         [showBigPic setUserInteractionEnabled:YES];
@@ -345,24 +339,36 @@
         UITapGestureRecognizer* clickClassPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showContent:)];
         [theBook addGestureRecognizer:clickClassPic];
         
-        UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPic:)];
+        UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPicGesture:)];
         [showBigPic addGestureRecognizer:clickBigPic];
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            
+            NSDictionary* bookDic=[self->bookPicArray objectAtIndex:i];
+            //NSLog(@"bookDic%@",bookDic);
+            NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
+            //        //路径中有特殊字符，转换一下
+            picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                theBook.image=[LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
+            });
+        });
    }
 }
 
--(void)showBigPic:(UITapGestureRecognizer*)sender{
+-(void)showBigPicGesture:(UITapGestureRecognizer*)sender{
     
+    [self showBigPic:sender.view.tag];
+}
+-(void)showBigPic:(NSInteger)tag{
     bigPicView=[[UIView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58)];
     theBigPic=nil;
-    theBigPic=[[UIImageView alloc]initWithImage:[LocalDataOperation getImage:[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"pictureId"] httpUrl:[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"pictureUrl"]]];
-    //NSLog(@"图片大小%@",NSStringFromCGSize(theBigPic.frame.size));
+    theBigPic=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 414, 603.58)];
+    theBigPic.image=[LocalDataOperation getImage:[[bookPicArray objectAtIndex:tag]valueForKey:@"pictureId"]
+                                         httpUrl:[[bookPicArray objectAtIndex:tag]valueForKey:@"pictureUrl"]];
     
-    UIScrollView* bigPicScroll=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 414, 603.58)];
-    bigPicScroll.contentSize=CGSizeMake(530, 769);
-    bigPicScroll.backgroundColor=[UIColor grayColor];
-    [bigPicScroll addSubview:theBigPic];
-    
-    [bigPicView addSubview:bigPicScroll];
+    [bigPicView addSubview:theBigPic];
     
     UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(exitShowBigPic:)];
     [bigPicView addGestureRecognizer:clickBigPic];
@@ -393,11 +399,11 @@
     //强转一下类型，不然出来的类型对不上
     NSString* page=[NSString stringWithFormat:@"%@",[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"page"]];
     [contentDetailView removeFromSuperview];
-    [self learningContent:page];
+    [self learningContent:page PicTag:sender.view.tag];
 }
 
 //内容界面
--(void)learningContent:(NSString*)page{
+-(void)learningContent:(NSString*)page PicTag:(NSInteger)picTag{
     contentDetailView=[[UIScrollView alloc]initWithFrame:CGRectMake(136.89, 0, 300, 603.58)];
     
     NSUInteger contentDetailHeight = 0;
@@ -416,7 +422,9 @@
         contentDetailHeight=titleArray.count*73+130;
         NSLog(@"页面长度是%lu",(unsigned long)contentDetailHeight);
         if (contentDetailHeight==130) {
-            [self presentViewController:[WarningWindow MsgWithoutTrans:@"当前页面还没有句子！" ] animated:YES completion:nil];
+            //[self presentViewController:[WarningWindow MsgWithoutTrans:@"当前页面还没有句子！" ] animated:YES completion:nil];
+            //如果没有句子显示大图
+            [self showBigPic:picTag];
         }
     }
     contentDetailView.contentSize=CGSizeMake(124, contentDetailHeight);
@@ -445,8 +453,8 @@
         [content addSubview:progressLabel];
         
         //喇叭图标
-        UIImageView* laba=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 32, 17.66, 16.55)];
-        laba.image=[UIImage imageNamed:@"icon_laba"];
+        laba=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 32, 17.66, 16.55)];
+        laba.image=[UIImage imageNamed:@"icon_laba2"];
         [content addSubview:laba];
         
         //学习内容
@@ -495,6 +503,10 @@
         followReadBtn.tag=i;
         [content addSubview:followReadBtn];
         
+//        LabaImageBlock myLabaImageBlock = ^{
+//            [playBtn removeFromSuperview];
+//        };
+        
         //添加点击事件
         clickRecognize=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickContent:)];
 //        //r重写手势代理
@@ -508,7 +520,7 @@
 }
 //点击内容展示收缩
 -(void)clickContent:(UITapGestureRecognizer*)sender{
-    
+
     //获取句子id
     NSInteger id=sender.view.tag;
 
@@ -517,17 +529,6 @@
     if (id>=100) {
         id-=100;
     }
-    
-    //播放声音
-    //音频播放空间分配
-    //NSString* playUrl=[[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    NSString* playUrl=[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"];
-    playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-    //播放句子路径是
-    //NSLog(@"播放句子路径是%@",playUrl);
-    voiceplayer=[[VoicePlayer alloc]init];
-    voiceplayer.url=playUrl;
-    [voiceplayer.audioStream play];
     
     //修改录音所用的句子id
     NSDictionary* dic=[sentenceArray objectAtIndex:id];
@@ -553,12 +554,17 @@
         }
     }
 
+    LabaImageBlock myblock;
     
     for (UIView* label in contentArray) {
         //1.获取原始的frame
         CGRect originFrame = label.frame;
         //获取label中n/n的标签，一会用于变颜色
         UILabel* progressLabel=label.subviews[0];
+        
+        //获取喇叭图标
+        UIImageView* labaView = label.subviews[1];
+        
         //找到点击的label
         if (sender.self.view.tag==label.tag) {
             //2.修改高
@@ -573,6 +579,17 @@
             //去除手势
             //[label removeGestureRecognizer:clickRecognize];
             progressLabel.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
+            
+            //把喇叭换成动图
+            [labaView removeFromSuperview];
+            UIImageView* labaWithLoop = [LoadGif imageViewfForPlaying:CGRectMake(17.66, 32, 17.66, 16.55)];
+            [label addSubview:labaWithLoop];
+            
+            myblock = ^{
+                NSLog(@"播放完成");
+                [labaWithLoop removeFromSuperview];
+                [label addSubview:labaView];
+            };
         }
         else{
             progressLabel.layer.backgroundColor=ssRGBHex(0x9B9B9B).CGColor;
@@ -593,6 +610,19 @@
         }
     
     }
+    
+    //播放声音
+    //音频播放空间分配
+    //NSString* playUrl=[[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    NSString* playUrl=[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"];
+    playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+
+    
+    voiceplayer=[[VoicePlayer alloc]init];
+    voiceplayer.url=playUrl;
+    voiceplayer.myblock = myblock;
+    [voiceplayer.audioStream play];
+    
     flag=true;
     
 }
@@ -830,6 +860,7 @@
     }else{
         if (chooseLessonView.unitName!=nil&&chooseLessonView.className!=nil) {
             lessonArray=chooseLessonView.lessonArray;
+            //NSLog(@"lessonArray:%@",lessonArray);
             //classid：在这个dataArray中很多字典中都可以返回id，此处拿其中一个字典：bookSentences
             [self showContent:[chooseLessonView.dataArray valueForKey:@"bookPictures"]
                      senArray:[chooseLessonView.dataArray valueForKey:@"bookSentences"]
@@ -846,7 +877,9 @@
     //button.selected=!button.selected;
     
 }
-//点击收起按钮，显示内容
+////点击收起按钮，显示内容
+
+
 -(void)showContent:(NSArray*)bookpicarray senArray:(NSArray*)sentencearray classId:(NSString*)classid unitName:(NSString*)unitname className:(NSString*)classname{
     
     //刷新内容界面
@@ -928,8 +961,13 @@
 
 #pragma mark --chooseLesson
 -(void)chooseLessonViewInit{
+    ShowContentBlock showContentBlock=^(NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname){
+        __weak LearningViewController*  weakSelf=self;
+        [weakSelf showContent:bookpicarray senArray:sentencearray classId:classid unitName:unitname className:classname];
+        self->chooseLessonShow=!self->chooseLessonShow;
+    };
     
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:_defaultUnit];
+    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:_defaultUnit ShowBlock:showContentBlock];
     
 }
 -(void)popBack{

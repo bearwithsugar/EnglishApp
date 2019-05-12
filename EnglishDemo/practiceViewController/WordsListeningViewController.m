@@ -116,8 +116,19 @@
     [title addSubview:setBtn];
 }
 -(void)chooseLessonViewInit{
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:0];
+    ShowContentBlock showContentBlock=^(NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname){
+        __weak WordsListeningViewController*  weakSelf=self;
+        
+        [weakSelf showContent:unitname
+                    className:classname
+                   wordsArray:[[ConnectionFunction getTestWordMsg:self->chooseLessonView.articleId
+                                                          UserKey:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
+                      classId:classid];
+        self->chooseLessonShow=!self->chooseLessonShow;
+    };
+    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:0 ShowBlock:showContentBlock];
 }
+
 //上一课下一课
 -(void)chooseLesson{
     presentLession=[[UIView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 44.13)];

@@ -114,7 +114,24 @@
 }
 
 -(void)chooseLessonViewInit{
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:0];
+    ShowContentBlock showContentBlock=^(NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname){
+        __weak SentenceListeningViewController*  weakSelf=self;
+        int i=0;
+        for (NSDictionary* dic in self->lessonArray) {
+            NSLog(@"此时的classid%@",self->classId);
+            NSLog(@"lessonArray单个元素的内容%@",dic);
+            if ([[dic valueForKey:@"articleId"]isEqualToString: self->classId]) {
+                break;
+            }
+            i++;
+        }
+        [weakSelf showContent:unitname
+                    className:classname
+                sentenceArray:[[ConnectionFunction getTestSentenceMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
+                      classId:classid];
+        self->chooseLessonShow=!self->chooseLessonShow;
+    };
+    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:0 ShowBlock:showContentBlock];
 }
 //上一课下一课
 -(void)chooseLesson{

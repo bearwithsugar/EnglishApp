@@ -120,7 +120,6 @@
     }else{
         testDetails=[DocuOperate readFromPlist:@"testDetails.plist"];
     }
-    _testFunction=[testDetails valueForKey:@"testFunc"];
     testFlag=[[testDetails valueForKey:@"testFlag"]intValue];
 }
 
@@ -162,7 +161,18 @@
 }
 //选择菜单的初始化
 -(void)chooseLessonViewInit{
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_recentBookId DefaultUnit:0];
+    ShowContentBlock showContentBlock=^(NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname){
+        __weak WordsTestViewController*  weakSelf=self;
+        NSArray* testarray;
+        if ([self->_testType isEqualToString:@"word"]) {
+            testarray=[[ConnectionFunction getTestWordMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
+        }else{
+            testarray=[[ConnectionFunction getTestSentenceMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
+        }
+        [weakSelf showContent:unitname className:classname testArray:testarray classId:classid];
+        self->chooseLessonShow=!self->chooseLessonShow;
+    };
+    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_recentBookId DefaultUnit:0 ShowBlock:showContentBlock];
 }
 
 #pragma mark --上一课下一课
@@ -381,7 +391,6 @@
     }
 }
 
-
 #pragma mark --设置
 //设置界面👇
 -(void)settingView{
@@ -505,17 +514,17 @@
 
 -(void)addQAview{
     NSString* testFunc=[testDetails valueForKey:@"testFunc"];
+    NSLog(@"testArray%@",testArray);
     if ([testFunc isEqualToString:@"0"]) {
-        questionAndAnswerView=[[VoiceChooseChn alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:2 TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[[VoiceChooseChn alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }else if([testFunc isEqualToString:@"1"]){
-        questionAndAnswerView=[[EngChooseChi alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:2 TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[[EngChooseChi alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }else if([testFunc isEqualToString:@"2"]){
-        questionAndAnswerView=[[ChnChooseEng alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:2 TestArray:testArray TestType:_testType UserInfo:userInfo];
-    }else if([testFunc isEqualToString:@"3"]){
-        questionAndAnswerView=[[ChinSpellEnglish alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:2 TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[[ChnChooseEng alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }else{
-        
+        questionAndAnswerView=[[ChinSpellEnglish alloc]initWithFrame:CGRectMake(0, 172, 414, 563.86) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }
+    
     [processTip removeFromSuperview];
     [self processTip];
     [self.view addSubview:questionAndAnswerView];

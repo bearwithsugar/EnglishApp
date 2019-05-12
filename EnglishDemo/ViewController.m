@@ -68,7 +68,7 @@
     UIView* startChooseView;
    
     //当前进行联系的课本的label
-    UILabel* practiceBook;
+    //UILabel* practiceBook;
     //暂无学习记录
     UILabel* noRecordLabel;
     //听课文读句子等标签
@@ -190,11 +190,13 @@
                 [self myProgressUnfixed];
                 
                 //如果不是第一次下载本软件则直接加载
-                if (![[processDic valueForKey:@"picture"]isEqualToString:@"a"]) {
-                    
-                    [self myGradeUnfixed];
-                    
-                }
+//                if (![[processDic valueForKey:@"picture"]isEqualToString:@"a"]) {
+//
+//                    [self myGradeUnfixed];
+//
+//                }
+                
+                [self myGradeUnfixed];
                 
                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
                     
@@ -765,14 +767,14 @@
 
 -(void)synchronousPracticeShow{
     synchronousPractice.backgroundColor=ssRGBHex(0xFCF8F7);
-    practiceBook=[[UILabel alloc]initWithFrame:CGRectMake(0, 5.51, 414, 44.13)];
-    practiceBook.text=@"    暂无课本";
-    practiceBook.backgroundColor=[UIColor whiteColor];
-    practiceBook.textAlignment=NSTextAlignmentLeft;
-    practiceBook.textColor=ssRGBHex(0x9B9B9B);
-    practiceBook.font=[UIFont systemFontOfSize:14];
-    practiceBook.textAlignment=NSTextAlignmentCenter;
-    [synchronousPractice addSubview:practiceBook];
+//    practiceBook=[[UILabel alloc]initWithFrame:CGRectMake(0, 5.51, 414, 44.13)];
+//    practiceBook.text=@"暂无课本";
+//    practiceBook.backgroundColor=[UIColor whiteColor];
+//    practiceBook.textAlignment=NSTextAlignmentLeft;
+//    practiceBook.textColor=ssRGBHex(0x9B9B9B);
+//    practiceBook.font=[UIFont systemFontOfSize:14];
+//    practiceBook.textAlignment=NSTextAlignmentCenter;
+//    [synchronousPractice addSubview:practiceBook];
     
     UIView* functionView=[[UIView alloc]initWithFrame:CGRectMake(0, 49.65, 414, 92.68)];
     functionView.backgroundColor=[UIColor whiteColor];

@@ -88,6 +88,9 @@
 		597392AD21C63B2F0050CA1B /* http_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5973929C21C63B2F0050CA1B /* http_stream.cpp */; };
 		597392AE21C63B2F0050CA1B /* FSParseRssPodcastFeedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5973929D21C63B2F0050CA1B /* FSParseRssPodcastFeedRequest.m */; };
 		598B21642189EADC002E84AF /* ConnectionFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 598B21632189EADC002E84AF /* ConnectionFunction.m */; };
+		598E16A72269730D00DDF959 /* GSKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E16A42269730D00DDF959 /* GSKey.m */; };
+		598E16A82269730D00DDF959 /* UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E16A62269730D00DDF959 /* UUID.m */; };
+		598E16AB2269AA0B00DDF959 /* Sources in Resources */ = {isa = PBXBuildFile; fileRef = 598E16AA2269AA0A00DDF959 /* Sources */; };
 		59A88A6C221BB36C00F16742 /* LoadGif.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A6B221BB36C00F16742 /* LoadGif.m */; };
 		59A88A70221C404000F16742 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A88A6F221C404000F16742 /* Images.xcassets */; };
 		59A88A76221E2C1C00F16742 /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A75221E2C1C00F16742 /* HeadView.m */; };
@@ -258,6 +261,12 @@
 		5973929D21C63B2F0050CA1B /* FSParseRssPodcastFeedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSParseRssPodcastFeedRequest.m; sourceTree = "<group>"; };
 		598B21622189EADC002E84AF /* ConnectionFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionFunction.h; sourceTree = "<group>"; };
 		598B21632189EADC002E84AF /* ConnectionFunction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConnectionFunction.m; sourceTree = "<group>"; };
+		598E16A32269730D00DDF959 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
+		598E16A42269730D00DDF959 /* GSKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GSKey.m; sourceTree = "<group>"; };
+		598E16A52269730D00DDF959 /* GSKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GSKey.h; sourceTree = "<group>"; };
+		598E16A62269730D00DDF959 /* UUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UUID.m; sourceTree = "<group>"; };
+		598E16A92269A98D00DDF959 /* EnglishDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EnglishDemo.entitlements; sourceTree = "<group>"; };
+		598E16AA2269AA0A00DDF959 /* Sources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sources; sourceTree = "<group>"; };
 		59A88A6A221BB36C00F16742 /* LoadGif.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadGif.h; sourceTree = "<group>"; };
 		59A88A6B221BB36C00F16742 /* LoadGif.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoadGif.m; sourceTree = "<group>"; };
 		59A88A6F221C404000F16742 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -409,6 +418,8 @@
 		59477BB0216F3FC5000205A5 /* EnglishDemo */ = {
 			isa = PBXGroup;
 			children = (
+				598E16A92269A98D00DDF959 /* EnglishDemo.entitlements */,
+				598E16A2226972F300DDF959 /* UUID */,
 				59A88A69221BB34200F16742 /* Common */,
 				5973927A21C63B080050CA1B /* FreeStreamer */,
 				59344ADC21C24B0F00198E8F /* loadgif */,
@@ -564,6 +575,18 @@
 			path = FreeStreamer;
 			sourceTree = "<group>";
 		};
+		598E16A2226972F300DDF959 /* UUID */ = {
+			isa = PBXGroup;
+			children = (
+				598E16AA2269AA0A00DDF959 /* Sources */,
+				598E16A52269730D00DDF959 /* GSKey.h */,
+				598E16A42269730D00DDF959 /* GSKey.m */,
+				598E16A32269730D00DDF959 /* UUID.h */,
+				598E16A62269730D00DDF959 /* UUID.m */,
+			);
+			path = UUID;
+			sourceTree = "<group>";
+		};
 		59A88A69221BB34200F16742 /* Common */ = {
 			isa = PBXGroup;
 			children = (
@@ -701,6 +724,11 @@
 				TargetAttributes = {
 					59477BAD216F3FC5000205A5 = {
 						CreatedOnToolsVersion = 10.0;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -732,6 +760,7 @@
 				5910AC62218063F30024768A /* NewVersonTableViewCell.xib in Resources */,
 				59344ADB21C24AF700198E8F /* load.gif in Resources */,
 				59DE4237217C189D008D65CC /* WordsListeningTableViewCell.xib in Resources */,
+				598E16AB2269AA0B00DDF959 /* Sources in Resources */,
 				59DE42062174A22F008D65CC /* UserMsg.plist in Resources */,
 				59477BBB216F3FC6000205A5 /* Assets.xcassets in Resources */,
 				596721BA21F40FEE00409403 /* OrderTableViewCell.xib in Resources */,
@@ -755,6 +784,7 @@
 			files = (
 				597392A021C63B2F0050CA1B /* file_output.cpp in Sources */,
 				596D7F402193D2D2000AA637 /* DataFilter.m in Sources */,
+				598E16A82269730D00DDF959 /* UUID.m in Sources */,
 				590CA3D2224B84B6004D1AFD /* ConnectionInstance.m in Sources */,
 				5910AC57218050F40024768A /* UserMsgTableViewCell.m in Sources */,
 				5967211D21F16A8200409403 /* QueationView.m in Sources */,
@@ -790,6 +820,7 @@
 				59A88A76221E2C1C00F16742 /* HeadView.m in Sources */,
 				597392A921C63B2F0050CA1B /* file_stream.cpp in Sources */,
 				5967211521F09BD800409403 /* WrongNotesViewController.m in Sources */,
+				598E16A72269730D00DDF959 /* GSKey.m in Sources */,
 				59D4616E21F6CB7E00CF29D8 /* FixValues.m in Sources */,
 				59DE421721780D78008D65CC /* MyShelfViewController.m in Sources */,
 				59D4617421F6D20B00CF29D8 /* JumpToSomeView.m in Sources */,
@@ -974,6 +1005,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KQAW6PTN47;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -996,7 +1028,7 @@
 					"-all_load",
 					"-fobjc-arc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = xueban;
+				PRODUCT_BUNDLE_IDENTIFIER = FF3W9T8H43.com.suuben.english;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1007,6 +1039,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KQAW6PTN47;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1029,7 +1062,7 @@
 					"-all_load",
 					"-fobjc-arc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = xueban;
+				PRODUCT_BUNDLE_IDENTIFIER = FF3W9T8H43.com.suuben.english;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

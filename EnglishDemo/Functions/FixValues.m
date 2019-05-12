@@ -7,6 +7,7 @@
 //
 
 #import "FixValues.h"
+#import "../UUID/UUID.h"
 
 @implementation FixValues
 
@@ -25,6 +26,9 @@
     return [NSURL URLWithString:@"https://api.weixin.qq.com/sns/userinfo"];
 }
 
++(NSString*)getUniqueId{
+    return [UUID getUUID];
+}
 //微信端appid
 +(NSString*)getAppId{
     return @"wx792dd85564113966";

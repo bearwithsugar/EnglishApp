@@ -16,7 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WordsTestViewController : UIViewController
 @property(nonatomic,copy)NSString* recentBookId;
 @property(nonatomic,copy)NSString* testType;
-@property(nonatomic,copy)NSString* testFunction;
+typedef void (^ShowContentBlock) (NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname);
+
 @end
 
 NS_ASSUME_NONNULL_END

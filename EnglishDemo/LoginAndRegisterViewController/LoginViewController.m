@@ -10,13 +10,14 @@
 #import "PhonenumberLoginViewController.h"
 #import "RegisterViewController.h"
 #import "ForgetPassViewController.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../../WeChatSDK1.8.3/WXApi.h"
 #import "../AppDelegate.h"
+#import "../Functions/ConnectionFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../Functions/DataFilter.h"
-#import "../../WeChatSDK1.8.3/WXApi.h"
 #import "../Functions/QQLogin.h"
 #import "../Functions/WarningWindow.h"
+#import "../Functions/FixValues.h"
 #import "../Common/HeadView.h"
 
 @interface LoginViewController (){
@@ -60,13 +61,14 @@
     
     usernameTextField=[[UITextField alloc]initWithFrame:CGRectMake(115.91, 126.89, 200, 25)];
     usernameTextField.placeholder=@"请输入手机号码";
-    usernameTextField.text=@"13417512970";
+    usernameTextField.text=@"13142220635";
+    //@"13417512970";
     [usernameTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     [self.view addSubview:usernameTextField];
     
     passwordTextField=[[UITextField alloc]initWithFrame:CGRectMake(115.91, 179.86, 200, 25)];
     passwordTextField.placeholder=@"请输入登录密码";
-    passwordTextField.text=@"cheng";
+    passwordTextField.text=@"1111";
     [passwordTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     passwordTextField.secureTextEntry = YES;
     [self.view addSubview:passwordTextField];
@@ -181,7 +183,7 @@
     [ConnectionFunction login_password:[usernameTextField.text longLongValue]
                                   Pass:passwordTextField.text
                                   Name:[[UIDevice currentDevice] name]
-                                    Id:[[[UIDevice currentDevice] identifierForVendor] UUIDString]];
+                                    Id:[FixValues getUniqueId]];
     NSLog(@"登录结果是：%@",loginDic);
     //如果登录成功，获取s用户数据并写入文件然后跳转页面
     if ([[loginDic valueForKey:@"message"]isEqualToString:@"success"]) {
@@ -195,13 +197,13 @@
         }
         
         
-    }else if([[loginDic valueForKey:@"message"]isEqualToString:@"该账号绑定设备已达上限，请先用已绑定设备登录，解绑后再重新尝试。"]){
-        [self warnMsg:[loginDic valueForKey:@"message"]];
+    }else if([[loginDic valueForKey:@"message"]isEqualToString:@"该账号已在其他设备登录，是否确认登录？"]){
+        [self warnMsgWithOpe:[loginDic valueForKey:@"message"]];
     }else if([[loginDic valueForKey:@"message"]isEqualToString:@"账号或密码错误"]){
         [self presentViewController:[WarningWindow MsgWithoutTrans:@"账号或密码错误"] animated:YES completion:nil];
     }else
     {
-        [self warnMsgWithOpe:[loginDic valueForKey:@"message"]];
+        [self warnMsg:[loginDic valueForKey:@"message"]];
     }
 
 }

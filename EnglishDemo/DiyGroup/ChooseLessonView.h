@@ -27,9 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property NSInteger defaultUnit;
 
--(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit;
-
 typedef void (^ShowContentBlock) (NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname);
+
+@property ShowContentBlock showContentBlock;
+
+-(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock;
 
 @end
 

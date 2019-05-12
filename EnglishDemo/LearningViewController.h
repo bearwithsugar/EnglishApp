@@ -21,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,copy)NSString* bookName;
 @property (nonatomic, retain)AVAudioPlayer *player;
 @property NSInteger defaultUnit;
+
+typedef void (^ShowContentBlock) (NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname);
+
 @end
 
 NS_ASSUME_NONNULL_END

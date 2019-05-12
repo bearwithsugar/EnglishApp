@@ -31,7 +31,7 @@
     NSMutableString* tag=[NSMutableString stringWithFormat:@"%d",percent];
     [tag appendString:@"%"];
     percentNumber.text=tag;
-    if (number<=60) {
+    if (number<=54) {
         percentNumber.textColor=[UIColor blackColor];
     }else{
         percentNumber.textColor=[UIColor whiteColor];

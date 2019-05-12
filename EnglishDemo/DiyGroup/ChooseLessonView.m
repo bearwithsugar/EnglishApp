@@ -39,13 +39,14 @@
 @end
 
 @implementation ChooseLessonView
--(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit{
+-(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock{
     self=[super initWithFrame:frame];
     if (self) {
         self.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
         _bookId=bookid;
         _defaultUnit=defaultunit;
+        _showContentBlock=showContentBlock;
         [self unitMsgInit];
         //初始化数组
         _lessonArray=[[NSArray alloc]init];
@@ -59,13 +60,10 @@
 //        [self tableView:unitsList didSelectRowAtIndexPath:[NSIndexPath indexPathForItem:3 inSection:0]];
         [self addSubview:unitsList];
 //        [unitsList reloadData];
-        NSLog(@"_defaultUnit是%ld",_defaultUnit);
         NSIndexPath* _lastIndex = [NSIndexPath indexPathForRow:_defaultUnit inSection:0];
         [unitsList selectRowAtIndexPath:_lastIndex animated:YES scrollPosition:UITableViewScrollPositionNone];
         NSIndexPath *path = [NSIndexPath indexPathForItem:_defaultUnit inSection:0];
         [self tableView:unitsList didSelectRowAtIndexPath:path];
-        
-        
         
         lessonList=[[UITableView alloc]initWithFrame:CGRectMake(150, 0, 264, 397.24)];
         lessonList.dataSource=self;
@@ -161,6 +159,8 @@
         _dataArray=[dataDic valueForKey:@"data"];
         NSDictionary* lessonMsg=_lessonArray[indexPath.row];
         _className=[lessonMsg valueForKey:@"articleName"];
+        
+        _showContentBlock([_dataArray valueForKey:@"bookPictures"],[_dataArray valueForKey:@"bookSentences"],[[[_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],_unitName,_className);
     }
     
 }
