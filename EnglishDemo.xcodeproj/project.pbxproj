@@ -23,6 +23,7 @@
 		5910AC6621806A4E0024768A /* ChoosePublishTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC6421806A4E0024768A /* ChoosePublishTableViewCell.m */; };
 		5910AC6721806A4E0024768A /* ChoosePublishTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5910AC6521806A4E0024768A /* ChoosePublishTableViewCell.xib */; };
 		59344ADB21C24AF700198E8F /* load.gif in Resources */ = {isa = PBXBuildFile; fileRef = 59344ADA21C24AF700198E8F /* load.gif */; };
+		593D8EF422D2205A0064FBD1 /* DownloadAudioService.m in Sources */ = {isa = PBXBuildFile; fileRef = 593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */; };
 		59477BB3216F3FC5000205A5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 59477BB2216F3FC5000205A5 /* AppDelegate.m */; };
 		59477BB6216F3FC5000205A5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59477BB5216F3FC5000205A5 /* ViewController.m */; };
 		59477BB9216F3FC5000205A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59477BB7216F3FC5000205A5 /* Main.storyboard */; };
@@ -150,6 +151,8 @@
 		5910AC6521806A4E0024768A /* ChoosePublishTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoosePublishTableViewCell.xib; sourceTree = "<group>"; };
 		591D6D962249EC78000186CA /* UnitViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UnitViewController.h; sourceTree = "<group>"; };
 		59344ADA21C24AF700198E8F /* load.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = load.gif; sourceTree = "<group>"; };
+		593D8EF222D2205A0064FBD1 /* DownloadAudioService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadAudioService.h; sourceTree = "<group>"; };
+		593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadAudioService.m; sourceTree = "<group>"; };
 		59477BAE216F3FC5000205A5 /* EnglishDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EnglishDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59477BB1216F3FC5000205A5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		59477BB2216F3FC5000205A5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -384,6 +387,8 @@
 				590CA3D1224B84B6004D1AFD /* ConnectionInstance.m */,
 				59B09299224C47A000B571A0 /* RequestInstance.h */,
 				59B0929A224C47A000B571A0 /* RequestInstance.m */,
+				593D8EF222D2205A0064FBD1 /* DownloadAudioService.h */,
+				593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -852,6 +857,7 @@
 				59DE421D217871D0008D65CC /* AboutSoftwareViewController.m in Sources */,
 				5967212321F2E88300409403 /* BackgroundImageWithColor.m in Sources */,
 				597392AD21C63B2F0050CA1B /* http_stream.cpp in Sources */,
+				593D8EF422D2205A0064FBD1 /* DownloadAudioService.m in Sources */,
 				59E3F35A21B3F1D400DA4B01 /* AudioRecorder.m in Sources */,
 				59DE4240217CACE7008D65CC /* WordsTestViewController.m in Sources */,
 				59477BB3216F3FC5000205A5 /* AppDelegate.m in Sources */,

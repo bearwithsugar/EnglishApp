@@ -15,6 +15,7 @@
 #import "Functions/LocalDataOperation.h"
 #import "Functions/WarningWindow.h"
 #import "Common/LoadGif.h"
+#import "Functions/DownloadAudioService.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -232,7 +233,12 @@
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
-        if ([classId isEqualToString:[[lessonArray objectAtIndex:(lessonArray.count-1)]valueForKey:@"articleId"]]){
+        if(!lessonArray){
+            lessonArray=chooseLessonView.lessonArray;
+        }
+        if ([classId isEqualToString:
+             [[lessonArray objectAtIndex:(lessonArray.count-1)]valueForKey:@"articleId"]
+             ]){
             NSLog(@"这是当前单元的最后一课！没有下一课了！");
             //提示框
             [self presentViewController:
@@ -616,7 +622,6 @@
     //NSString* playUrl=[[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
     NSString* playUrl=[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"];
     playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-
     
     voiceplayer=[[VoicePlayer alloc]init];
     voiceplayer.url=playUrl;
@@ -921,10 +926,33 @@
         [loadPic removeFromSuperview];
     }
     
+    [self loadAudioMsg];
     
 
     
 }
+
+-(void)loadAudioMsg{
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        if (![DocuOperate fileExistInPath:@"audioFile"]) {
+            [DocuOperate createDir:[DocuOperate cacheDirectory] directoryName:@"audioFile"];
+        }
+        if (self->sentenceArray != nil) {
+            
+            for (NSObject *object in self->sentenceArray) {
+                NSString* playUrl=[object valueForKey:@"engUrl"];
+                playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
+            }
+            
+        }
+       
+    
+    });
+
+}
+
+
 #pragma mark 用户提示框
 -(UIAlertController*)warnWindow:(NSString*)message{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
@@ -1030,8 +1058,10 @@
     [[AudioRecorder shareInstance] setRecorderDelegate:self];
     
     //自动停止录音
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wunused-variable"
     NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:4.0 target:self selector:@selector(stopRecord) userInfo:nil repeats:NO];
-
+    #pragma clang diagnostic pop
 }
 
 //停止录音

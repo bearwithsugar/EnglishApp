@@ -7,7 +7,21 @@
 //
 
 #import "DownloadAudioService.h"
+#import "DocuOperate.h"
+
 
 @implementation DownloadAudioService
+
++(void)toLoadAudio:(NSString*)url FileName:(NSString*)name{
+    
+    NSData * mp3Data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
+    NSString *filePath = [[[DocuOperate cacheDirectory] stringByAppendingPathComponent:@"audioFile"]
+                          stringByAppendingPathComponent:
+                          [name stringByAppendingString:@".mp3"]];
+    if ([DocuOperate isExitInPath:filePath]) {
+        return;
+    }
+    [mp3Data writeToFile:filePath options:NSDataWritingAtomic error:nil];
+}
 
 @end
