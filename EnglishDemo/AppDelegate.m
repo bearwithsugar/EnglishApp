@@ -14,6 +14,7 @@
 #import "Functions/WarningWindow.h"
 #import <TencentOpenAPI/TencentOAuth.h>
 #import <TencentOpenAPI/QQApiInterface.h>
+#import <AVFoundation/AVFoundation.h>
 
 
 
@@ -29,6 +30,9 @@
   
     [NSThread sleepForTimeInterval:3.0];
     [WXApi registerApp:[FixValues getAppId]];
+    
+    //测试真机是否可以正常播放音频，如果可以，就删掉下面这句话
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 
     return YES;
 }

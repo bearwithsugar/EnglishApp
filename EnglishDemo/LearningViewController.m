@@ -87,11 +87,15 @@
     
 }
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
+
+@property(nonatomic,strong)AVAudioPlayer *movePlayer ;
 @end
 
 
 
 @implementation LearningViewController
+
+
 
 -(void)viewDidLoad {
     [super viewDidLoad];
@@ -620,13 +624,15 @@
     //播放声音
     //音频播放空间分配
     //NSString* playUrl=[[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    NSString* playUrl=[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"];
-    playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    NSString* playUrl=[DownloadAudioService getAudioPath:
+                       [NSString stringWithFormat:@"%@",[[voiceArray objectAtIndex:id]valueForKey:@"id"]]];
     
-    voiceplayer=[[VoicePlayer alloc]init];
-    voiceplayer.url=playUrl;
-    voiceplayer.myblock = myblock;
-    [voiceplayer.audioStream play];
+//    voiceplayer=[[VoicePlayer alloc]init];
+//    voiceplayer.url=playUrl;
+//    voiceplayer.myblock = myblock;
+//    [voiceplayer.audioStream play];
+ 
+    [self playAudio:playUrl];
     
     flag=true;
     
@@ -1121,6 +1127,28 @@
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     [self.player play];
 }
+//根据l本地路径播放声音
+-(void)playAudio:(NSString*)path{
+    
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [session setActive:YES error:nil];
+    
+    // 1.加载本地的音乐文件
+    NSURL *url = [NSURL fileURLWithPath:path];
+    // 2. 创建音乐播放对象
+    _movePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+    
+    NSString *msg = [NSString stringWithFormat:@"音频文件声道数:%ld\n 音频文件持续时间:%g",_movePlayer.numberOfChannels,_movePlayer.duration];
+    NSLog(@"%@",msg);
+    
+    // 3.准备播放 (音乐播放的内存空间的开辟等功能)  不写这行代码直接播放也会默认调用prepareToPlay
+    [_movePlayer prepareToPlay];
+    
+    [_movePlayer play];
+
+}
+
 -(void)dealloc{
     NSLog(@"我被销毁了");
 }

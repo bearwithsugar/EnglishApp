@@ -4,28 +4,18 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            scope = "0"
-            stopOnStyle = "0">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "EnglishDemo/Functions/DownloadAudioService.m"
-            timestampString = "584200175.1431611"
+            filePath = "EnglishDemo/LearningViewController.m"
+            timestampString = "584206235.345773"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "17"
-            endingLineNumber = "17"
-            landmarkName = "+toLoadAudio:FileName:"
+            startingLineNumber = "1140"
+            endingLineNumber = "1140"
+            landmarkName = "-playAudio:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
