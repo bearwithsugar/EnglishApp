@@ -58,6 +58,12 @@ NS_ASSUME_NONNULL_BEGIN
 //修改用户信息
 +(NSDictionary*)modifyUserMsg:(NSString*)nickname UserKey:(NSString*)userkey Phone:(NSString*)phone Password:(NSString*)password;
 
+//获取用户第三方绑定信息
++(NSDictionary*)getBindingMsg:(NSString*)userkey;
+
+//版本信息
++(NSDictionary*)getVersionMsg :(NSString*)userkey;
+
 //直接获取最近学习信息
 +(NSDictionary*)recentLearnMsg:(NSString*)userkey;
 //根据书籍获取最近学习信息

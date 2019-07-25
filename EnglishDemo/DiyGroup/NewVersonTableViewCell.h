@@ -14,8 +14,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface NewVersonTableViewCell : UITableViewCell
+
 +(instancetype)createCellWithTableView:(UITableView*)tableView;
+
 -(void)loadData:(NSString*)label1;
+
+-(void)setNoVersion;
+
+-(void)setNewVersion;
+
 @end
 
 NS_ASSUME_NONNULL_END

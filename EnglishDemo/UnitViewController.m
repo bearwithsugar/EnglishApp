@@ -57,22 +57,7 @@
     }else{
         [self progressView];
     }
-    
-//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//        [self unitInit];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            NSLog(@"unitArray的值是%@",self->unitArray);
-//            //此处用单元进度数组来判断token是否过期，因为单元数组接口不能验证
-//            if (self->unitProcessArray.count==0) {
-//                //提示框
-//                [self presentViewController:[WarningWindow transToLogin:@"您的账号在别处登录，请重新登录！" Navigation:self.navigationController]
-//                                   animated:YES
-//                                 completion:nil];
-//            }else{
-//                [self progressView];
-//            }
-//        });
-//    });
+
     [self titleShow];
     
 }

@@ -265,39 +265,6 @@
 
 //刷新最近学习的书本信息和学习进度
 -(void)getReq{
-    
-//    ConnectionInstance* refreshReq=[[ConnectionInstance alloc]init];
-//
-//    RefreshBlock executeBlock=^(NSDictionary* reqDic){
-//        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//            self->learnProcess=[reqDic valueForKey:@"data"];
-//            [self->processDic setValue:[self->learnProcess valueForKey:@"grade"] forKey:@"zhunquelv"];
-//
-//            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningRate"] forKey:@"tingkewen"];
-//            [self->processDic setValue:[self->learnProcess valueForKey:@"rank_rate"] forKey:@"percentage"];
-//            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
-//            [self->processDic setValue:[self->learnProcess valueForKey:@"sentenceRate"] forKey:@"dujuzi"];
-//            [self->processDic setValue:[self->learnProcess valueForKey:@"rank"] forKey:@"zongpaiming"];
-//            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningTime"] forKey:@"zongshichang"];
-//
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//
-//                [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
-//
-//                [self loadGrade];
-//
-//            });
-//
-//
-//        });
-//    };
-//
-//    NSURL* url=[FixValues getUrl];
-//    url=[url URLByAppendingPathComponent:@"user_bookinfo"];
-//    url=[url URLByAppendingPathComponent:[recentBook valueForKey:@"bookId"]];
-//
-//    [refreshReq getRequest:url Block:executeBlock];
-    
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"user_bookinfo"];
     url=[url URLByAppendingPathComponent:[recentBook valueForKey:@"bookId"]];

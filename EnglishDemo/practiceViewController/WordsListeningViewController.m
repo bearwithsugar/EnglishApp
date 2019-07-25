@@ -103,6 +103,7 @@
     UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
+    [returnBtn addTarget:self action:@selector(popBack:) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
@@ -226,7 +227,7 @@
     lessontitle.layer.borderWidth=1;
     lessontitle.layer.cornerRadius=14.34;
     if (unitName==nil||className==nil) {
-        lessontitle.text=@"请先选择课程";
+        lessontitle.text=@"请先点击这里选择课程";
         NSLog(@"为空");
     }else{
         NSString* title=[unitName stringByAppendingString:@"-"];
@@ -307,6 +308,9 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     //单词表，这里的cell重用机制有问题
     WordsListeningTableViewCell* cell=[WordsListeningTableViewCell createCellWithTableView:tableView];
+    if (![wordsArray objectAtIndex:indexPath.row]) {
+        return NULL;
+    }
     NSDictionary* cellDic=[wordsArray objectAtIndex:indexPath.row];
     NSString* pic=@"icon_juzitingxia_laba";
     NSString* name=[cellDic valueForKey:@"wordEng"];

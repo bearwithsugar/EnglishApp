@@ -38,7 +38,6 @@ static UINavigationController* navigation;
     [titleView setUserInteractionEnabled:YES];
     
     UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(5, 15,35, 35)];
-    touchField.backgroundColor=[UIColor blackColor];
     [touchField setUserInteractionEnabled:YES];
     [titleView addSubview:touchField];
     

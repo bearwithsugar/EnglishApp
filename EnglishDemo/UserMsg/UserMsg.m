@@ -43,6 +43,7 @@
     UIView* headPicView;
     NSArray* saintArray;
     NSDictionary* userInfo;
+    NSDictionary* versionMsg;
     int score;
     
 }
@@ -97,13 +98,13 @@
     [self.view addSubview:userTitle];
     
     UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(10, 20,30, 30)];
-    touchField.backgroundColor=[UIColor blackColor];
     [touchField setUserInteractionEnabled:YES];
     [userTitle addSubview:touchField];
     
     UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
-    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
-    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
+    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ff7474"] forState:UIControlStateNormal];
+    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ff7474"] forState:UIControlStateHighlighted];
+    [returnBtn addTarget:self action:@selector(popForTag:) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popForTag:)];
@@ -214,7 +215,24 @@
             return xuefenCell;
         }else{
             NewVersonTableViewCell* cell=[NewVersonTableViewCell createCellWithTableView:tableView];
-            [cell loadData:@"V 1.0.2"];
+            //            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            self->versionMsg = [[[ConnectionFunction getVersionMsg:[self->userInfo valueForKey:@"userKey"]] valueForKey:@"data"]firstObject];
+            if([DocuOperate fileExistInPath:@"version.plist"]){
+                NSDictionary* oldVersion = [DocuOperate readFromPlist:@"version.plist"];
+                if ([[oldVersion valueForKey:@"version"]isEqualToString:[self->versionMsg valueForKey:@"versionId"]]) {
+                    [cell setNoVersion];
+                }else{
+                    [cell setNewVersion];
+                }
+            }else{
+                [DocuOperate writeIntoPlist:@"version.plist" dictionary:[NSDictionary dictionaryWithObjectsAndKeys:[self->versionMsg valueForKey:@"versionId"],@"version", nil]];
+                [cell setNoVersion];
+            }
+            //                dispatch_async(dispatch_get_main_queue(), ^{
+            [cell loadData:[self->versionMsg valueForKey:@"versionName"]];
+            //                });
+            //            });
+
             return cell;
         }
     }else{

@@ -31,17 +31,27 @@
     }
     return cell;
 }
+
 -(void)loadData:(NSString*)label1{
     self.version.text=label1;
     self.version.textColor=ssRGBHex(0x9B9B9B);
 }
+
+-(void)setNoVersion{
+    self.haveNew.text=@"当前是最新版本";
+    self.haveNew.textColor=ssRGBHex(0x9B9B9B);
+}
+
+-(void)setNewVersion{
+    self.haveNew.text=@"有新版本，请前往APP store下载";
+    self.haveNew.textColor=ssRGBHex(0xFF7474);
+}
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     self.logo.image=[UIImage imageNamed:@"icon_banben"];
     self.title.text=@"软件版本";
     self.title.font=[UIFont systemFontOfSize:14];
-    self.haveNew.text=@"有新版本";
-    self.haveNew.textColor=ssRGBHex(0xFF7474);
     self.haveNew.font=[UIFont systemFontOfSize:14];
     self.jiantou.image=[UIImage imageNamed:@"icon_foward"];
 }

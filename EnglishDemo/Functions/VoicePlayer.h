@@ -15,11 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic,strong) FSAudioStream *audioStream;
 @property (nonatomic,strong) NSString* url;
 
-typedef void (^LabaImageBlock) (void);
+typedef void (^VoidBlock) (void);
 
-@property LabaImageBlock myblock;
+@property VoidBlock myblock;
 
 //-(FSAudioStream *)audioStream:(NSString*)urlStr;
+
+//根据l本地路径播放声音
+//-(void)playAudio;
+-(void)playAudio;
+-(void)interruptPlay;
+
 @end
 
 NS_ASSUME_NONNULL_END

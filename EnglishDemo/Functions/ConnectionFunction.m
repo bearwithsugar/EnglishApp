@@ -61,6 +61,7 @@
     return dataDic;
 }
 
+
 //注册接口 接口通过
 +(NSDictionary*)toRegister:(long)phone Pass:(NSString*)password Nick:(NSString*)nickname{
     NSNumber* a=[NSNumber numberWithLong:phone];
@@ -305,6 +306,19 @@
 }
 
 
+//获取用户第三方绑定信息
+
++(NSDictionary*)getBindingMsg:(NSString*)userkey{
+    
+    NSURL* url=[FixValues getUrl];
+    
+    url=[url URLByAppendingPathComponent:@"/account/binding"];
+    
+    NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
+    
+    return dataDic;
+    
+}
 
 #pragma mark --测试模块
 //句子信息查询
@@ -331,6 +345,16 @@
     str=[str stringByAppendingString:wrongId];
     url=[NSURL URLWithString:str];
     NSDictionary* dataDic=[self postRequestWithHead:url Head:userkey];
+    return dataDic;
+}
+
+#pragma mark --版本信息
+
+//版本信息
++(NSDictionary*)getVersionMsg :(NSString*)userkey{
+    NSURL* url=[FixValues getUrl];
+    url=[url URLByAppendingPathComponent:@"version/"];
+    NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
     return dataDic;
 }
 

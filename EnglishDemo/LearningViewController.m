@@ -16,6 +16,7 @@
 #import "Functions/WarningWindow.h"
 #import "Common/LoadGif.h"
 #import "Functions/DownloadAudioService.h"
+#import "Functions/MyThreadPool.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -545,11 +546,22 @@
     recordingSentenceId=[dic valueForKey:@"sentenceId"];
     recordingSentenceId=[recordingSentenceId stringByAppendingString:@".caf"];
     NSLog(@"当前句子id是%@",recordingSentenceId);
+   
+    VoidBlock addLearnMsg = ^{
+        
+        //添加句子学习信息记录
+        
+        NSString* sentenceId=[[self->titleArray objectAtIndex:id] valueForKey:@"sentenceId"];
+        
+        NSDictionary* dataDic=[ConnectionFunction addSentenceMsg:sentenceId UserKey:[self->userInfo valueForKey:@"userKey"]];
+        
+        NSLog(@"添加句子学习信息返回的数据是%@",dataDic);
+        
+    };
     
-    //添加句子学习信息记录
-    NSString* sentenceId=[[titleArray objectAtIndex:id] valueForKey:@"sentenceId"];
-    NSDictionary* dataDic=[ConnectionFunction addSentenceMsg:sentenceId UserKey:[userInfo valueForKey:@"userKey"]];
-    NSLog(@"添加句子学习信息返回的数据是%@",dataDic);
+    
+    
+    [MyThreadPool executeJob:addLearnMsg];
     
     BOOL flag=YES;
     //遍历缩小其他控件
@@ -564,7 +576,7 @@
         }
     }
 
-    LabaImageBlock myblock;
+    VoidBlock myblock;
     
     for (UIView* label in contentArray) {
         //1.获取原始的frame
@@ -573,7 +585,14 @@
         UILabel* progressLabel=label.subviews[0];
         
         //获取喇叭图标
-        UIImageView* labaView = label.subviews[1];
+        UIView* labaView ;
+        
+        for (UIView* childView in label.subviews) {
+            if ([childView isKindOfClass: [UIImageView class]]) {
+                //获取喇叭图标
+                labaView = childView;
+            }
+        }
         
         //找到点击的label
         if (sender.self.view.tag==label.tag) {
@@ -623,16 +642,23 @@
     
     //播放声音
     //音频播放空间分配
-    //NSString* playUrl=[[[voiceArray objectAtIndex:id]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    NSString* playUrl=[DownloadAudioService getAudioPath:
-                       [NSString stringWithFormat:@"%@",[[voiceArray objectAtIndex:id]valueForKey:@"id"]]];
     
-//    voiceplayer=[[VoicePlayer alloc]init];
-//    voiceplayer.url=playUrl;
-//    voiceplayer.myblock = myblock;
-//    [voiceplayer.audioStream play];
- 
-    [self playAudio:playUrl];
+    VoidBlock playBlock =^{
+        NSString* playUrl=[DownloadAudioService getAudioPath:
+                           [NSString stringWithFormat:@"%@",[[self->voiceArray objectAtIndex:id]valueForKey:@"id"]]];
+        if (self->voiceplayer!=NULL) {
+            [self->voiceplayer interruptPlay];
+            self->voiceplayer = NULL;
+        }
+        
+        self->voiceplayer=[[VoicePlayer alloc]init];
+        self->voiceplayer.url = playUrl;
+        self->voiceplayer.myblock = myblock;
+        [self->voiceplayer playAudio];
+    };
+    
+    [MyThreadPool executeJob:playBlock];
+
     
     flag=true;
     
@@ -932,10 +958,7 @@
         [loadPic removeFromSuperview];
     }
     
-    [self loadAudioMsg];
-    
-
-    
+    [self loadAudioMsg];  
 }
 
 -(void)loadAudioMsg{
@@ -950,12 +973,8 @@
                 playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
                 [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
             }
-            
         }
-       
-    
     });
-
 }
 
 
@@ -1127,31 +1146,6 @@
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
     [self.player play];
 }
-//根据l本地路径播放声音
--(void)playAudio:(NSString*)path{
-    
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setCategory:AVAudioSessionCategoryPlayback error:nil];
-    [session setActive:YES error:nil];
-    
-    // 1.加载本地的音乐文件
-    NSURL *url = [NSURL fileURLWithPath:path];
-    // 2. 创建音乐播放对象
-    _movePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
-    
-    NSString *msg = [NSString stringWithFormat:@"音频文件声道数:%ld\n 音频文件持续时间:%g",_movePlayer.numberOfChannels,_movePlayer.duration];
-    NSLog(@"%@",msg);
-    
-    // 3.准备播放 (音乐播放的内存空间的开辟等功能)  不写这行代码直接播放也会默认调用prepareToPlay
-    [_movePlayer prepareToPlay];
-    
-    [_movePlayer play];
-
-}
-
--(void)dealloc{
-    NSLog(@"我被销毁了");
-}
 
 #pragma mark - UIGestureRecognizerDelegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch{
@@ -1165,17 +1159,6 @@
     {
         return YES;
     }
-    //方法二，判断点击的位置
-    //CGPoint location = [touch locationInView:self.view];
-    /*
-     if(CGRectContainsPoint(self.btn.frame, location))
-     {
-     [self GoOtherView:nil];
-     return NO;
-     }else{
-     return YES;
-     }
-     */
     
 }
 

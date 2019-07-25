@@ -15,12 +15,14 @@
 #import "../Functions/DocuOperate.h"
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Common/HeadView.h"
+#import "../../WeChatSDK1.8.3/WXApi.h"
 
 @interface ModifyUserMsgViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>{
     NSDictionary* userInfo;
     UITextField* nicknameTextField;
     UITextField* phoneTextField;
     UIImageView* headPic;
+    NSDictionary* binding;
     
 }
 
@@ -78,6 +80,10 @@
     [self.view addSubview:pushHeadBtn];
 }
 -(void)pushTheHeadPic{
+    
+    [self warnMsg:@"此功能暂未开放"];
+    return;
+
     NSLog(@"上传头像");
     //创建图片选取器对象
     UIImagePickerController * pickerViwController = [[UIImagePickerController alloc] init];
@@ -211,8 +217,8 @@
     
     UIButton* wechatBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
     wechatBond.titleLabel.font=[UIFont systemFontOfSize:14];
-    [wechatBond setTitle:@"已绑定" forState:UIControlStateNormal];
-    [wechatBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+    [wechatBond setTitle:@"未绑定" forState:UIControlStateNormal];
+    [wechatBond setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
     [self.view addSubview:wechatBond];
     
     //中部横线
@@ -237,6 +243,21 @@
     lineView4.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView4.layer.borderWidth=1;
     [self.view addSubview:lineView4];
+    
+    binding = [[ConnectionFunction getBindingMsg:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
+    if(binding != NULL){
+        NSString* qq = [NSString stringWithFormat:@"%@",[binding valueForKey:@"qq"]];
+        NSString* weixin = [NSString stringWithFormat:@"%@",[binding valueForKey:@"weixin"]];
+        if (![qq isEqualToString:@"0"]) {
+            [QQBond setTitle:@"已绑定" forState:UIControlStateNormal];
+            [QQBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+        }
+        if (![weixin isEqualToString:@"0"]) {
+            [wechatBond setTitle:@"已绑定" forState:UIControlStateNormal];
+            [wechatBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+        }
+    }
+
 }
 -(void)defineBtn{
     UIButton* toModify=[[UIButton alloc]initWithFrame:CGRectMake(20, 530, 374, 40)];
@@ -253,7 +274,7 @@
     NSDictionary* dataDic=[ConnectionFunction modifyUserMsg:nickname UserKey:[userInfo valueForKey:@"userKey"] Phone:phone Password:[userInfo valueForKey:@"password"]];
     NSLog(@"修改用户信息返回的数据%@",dataDic);
     //删除用户信息文件
-    if ([DocuOperate deletePlist:[[DocuOperate documentsDirectory] stringByAppendingPathComponent:@"userInfo.plist"]]&&
+    if ([DocuOperate deletePlist:@"userInfo.plist"]&&
         [DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[dataDic valueForKey:@"data"]]]) {
         [self popBack];
     }else{
@@ -274,6 +295,18 @@
     [self.navigationController popViewControllerAnimated:true];
 }
 
+-(void)WXlogin{
+    if ([WXApi isWXAppInstalled]) {
+        SendAuthReq *req = [[SendAuthReq alloc] init];
+        req.scope = @"snsapi_userinfo";
+        req.state = @"App";
+        [WXApi sendReq:req];
+        
+    }else {
+        NSLog(@"请安装微信");
+        
+    }
+}
 
 
 @end
