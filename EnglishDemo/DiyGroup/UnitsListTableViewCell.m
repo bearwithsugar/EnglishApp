@@ -33,11 +33,16 @@
 -(void)loadData:(NSString*)label1 description:(NSString*)label2{
     self.title.text=label1;
     self.title.font=[UIFont systemFontOfSize:14];
-    self.title.textColor=ssRGBHex(0xFF7474);
     self.process.text=label2;
-    self.process.textColor=ssRGBHex(0xFF7474);
     self.process.textAlignment=NSTextAlignmentCenter;
     self.process.font=[UIFont systemFontOfSize:12];
+    if ([label2 isEqualToString:@"学习进度：0%"]) {
+        self.title.textColor=ssRGBHex(0x9B9B9B);
+        self.process.textColor=ssRGBHex(0x9B9B9B);
+    }else{
+        self.title.textColor=ssRGBHex(0xFF7474);
+        self.process.textColor=ssRGBHex(0xFF7474);
+    }
 }
 
 - (void)awakeFromNib {

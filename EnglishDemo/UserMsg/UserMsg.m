@@ -74,6 +74,7 @@
     [self headPicView];
     [self userMsg];
     [self refreshScore];
+    //[userMsg reloadData];
     
 }
 -(void)refreshScore{
