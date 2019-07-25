@@ -155,11 +155,18 @@
     [title setUserInteractionEnabled:YES];
     [self.view addSubview:title];
     
-    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(15.45, 22.06, 10.7, 22.62)];
+    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(5, 15,35, 35)];
+    [touchField setUserInteractionEnabled:YES];
+    [title addSubview:touchField];
+    
+    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(10.45, 7.06, 10.7, 22.62)];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
     [returnBtn addTarget:self action:@selector(popBack) forControlEvents:UIControlEventTouchUpInside];
-    [title addSubview:returnBtn];
+    [touchField addSubview:returnBtn];
+    
+    UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack)];
+    [touchField addGestureRecognizer:touchFunc];
     
     UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
