@@ -11,22 +11,18 @@
 @implementation MyThreadPool
 
 
-+(void)executeJob:(JobBlock)block{
++(void)executeJob:(JobBlock)block Main:(JobBlock)mainThreadBlock{
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-
+        
         block();
         
-        //        dispatch_async(dispatch_get_main_queue(), ^{
-        
-        //
-        
-        //
-        
-        //        });
-        
-    });
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            mainThreadBlock();
 
+        });
+    });
 }
 
 @end

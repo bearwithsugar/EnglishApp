@@ -22,6 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 //仅仅提供提示，没有跳转
 +(UIAlertController*)MsgWithoutTrans:(NSString*)messagel;
 
+//退出程序
++(UIAlertController*)ExitAPP:(NSString*)message;
+
 
 @end
 

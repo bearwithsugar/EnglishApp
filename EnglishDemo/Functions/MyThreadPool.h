@@ -16,7 +16,9 @@ typedef void (^JobBlock) (void);
 
 @property JobBlock jobBlock;
 
-+(void)executeJob:(JobBlock)block;
+@property JobBlock mainThreadBlock;
+
++(void)executeJob:(JobBlock)block Main:(JobBlock)mainThreadBlock;
 
 @end
 

@@ -96,7 +96,6 @@
     [self.view addSubview:title];
     
     UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(10, 20,30, 30)];
-    touchField.backgroundColor=[UIColor blackColor];
     [touchField setUserInteractionEnabled:YES];
     [title addSubview:touchField];
     

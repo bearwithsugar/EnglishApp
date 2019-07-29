@@ -171,7 +171,7 @@
     UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
-    [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
+    //[setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
     [title addSubview:setBtn];
 }
 //选择课程的上一课下一课
@@ -470,6 +470,11 @@
         progressLabel.textColor=[UIColor whiteColor];
         [content addSubview:progressLabel];
         
+        // 获取句子学没学用的，
+//        JobBlock getMsgBlock = ^{
+//            [ConnectionFunction getUserSentenceMsg:[titleDic valueForKey:@"sentenceId"] UserKey:[userInfo valueForKey:@"userKey"]];
+//        };
+        
         //喇叭图标
         laba=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 32, 17.66, 16.55)];
         laba.image=[UIImage imageNamed:@"icon_laba2"];
@@ -565,10 +570,8 @@
         NSLog(@"添加句子学习信息返回的数据是%@",dataDic);
         
     };
-    
-    
-    
-    [MyThreadPool executeJob:addLearnMsg];
+
+    [MyThreadPool executeJob:addLearnMsg Main:^{}];
     
     BOOL flag=YES;
     //遍历缩小其他控件
@@ -664,8 +667,7 @@
         [self->voiceplayer playAudio];
     };
     
-    [MyThreadPool executeJob:playBlock];
-
+    [MyThreadPool executeJob:playBlock Main:^{}];
     
     flag=true;
     

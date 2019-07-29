@@ -74,6 +74,33 @@
     return alert;
 }
 
+//退出程序
++(UIAlertController*)ExitAPP:(NSString*)message{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"退出App,检查网络！" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        //assert(0);
+        
+//        [UIView animateWithDuration:1.0f animations:^{
+//
+//            window.alpha = 0;
+//
+//            window.frame = CGRectMake(0, window.bounds.size.width, 0, 0);
+//
+//        } completion:^(BOOL finished) {
+//
+//            exit(0);
+//
+//        }];
+        exit(0);
+        
+    }];
+    
+    [alert addAction:action1];
+    
+    return alert;
+}
 
 
 

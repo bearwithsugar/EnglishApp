@@ -16,6 +16,7 @@
 #import "Functions/WarningWindow.h"
 #import "Common/HeadView.h"
 #import "Functions/ConnectionInstance.h"
+#import "Functions/MyThreadPool.h"
 
 @interface UnitViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -62,7 +63,14 @@
     
 }
 -(void)viewWillAppear:(BOOL)animated{
-    [processMsg reloadData];
+//    JobBlock initUnitBlock = ^{
+//        [self unitInit];
+//    };
+//    JobBlock refreshUI = ^{
+//        [self->processMsg reloadData];
+//    };
+//
+//    [MyThreadPool executeJob:initUnitBlock Main:refreshUI];
 }
 -(void)unitInit{
     

@@ -27,6 +27,8 @@
 #import "Functions/DataFilter.h"
 #import "Functions/FixValues.h"
 #import "Functions/ConnectionInstance.h"
+#import "Reachability.h"
+
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -105,6 +107,9 @@
 }
 
 @property (nonatomic, strong)dispatch_source_t timer;
+
+@property (nonatomic, strong)Reachability *conn;
+
 @end
 
 @implementation ViewController
@@ -112,40 +117,48 @@
 -(void)viewDidLoad {
     [super viewDidLoad];
     
-    //初始化、分配空间
-    userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-    myShelfView=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
-    synchronousPractice=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
-    selectedPublication=[[NSString alloc]init];
-    //先为年级数组分配空间
-    gradesArray=[[NSArray alloc]init];
-    //为书籍数组分配空间
-    bookArray=[[NSArray alloc]init];
-    processDic=[[NSMutableDictionary alloc]init];
-    timerFlag=true;
-    //加载加载图
-    loadGifForRecentBook=[LoadGif imageViewStartAnimating:CGRectMake(100, 250, 30, 30)];
-    loadGifForProcess=[LoadGif imageViewStartAnimating:CGRectMake(290, 230, 30, 30)];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(netWorkStateChange:)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
+    self.conn = [Reachability reachabilityForInternetConnection];
+    [self.conn startNotifier];
     
-    //开始加载界面
-    [self synchronousPracticeShow];
-    [self.view addSubview:myShelfView];
-    [self.navigationController setNavigationBarHidden:true];
-    [self titleShow];
-    [self titleMenu];
-    
-    [self myGradeFixed];
-    [self myProgressFixed];
-  
-    //[self recommend];
-    if ([userInfo valueForKey:@"userKey"]!=nil) {
-        [self chooseBookinit];
-        [self chooseBook];
-    }
-    
-    //其他信息初始化方法
-    [self initForFirstLogin];
+    if ([self updateInterfaceWithReachability:self.conn]) {
+        //初始化、分配空间
+        userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+        myShelfView=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
+        synchronousPractice=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
+        selectedPublication=[[NSString alloc]init];
+        //先为年级数组分配空间
+        gradesArray=[[NSArray alloc]init];
+        //为书籍数组分配空间
+        bookArray=[[NSArray alloc]init];
+        processDic=[[NSMutableDictionary alloc]init];
+        timerFlag=true;
+        //加载加载图
+        loadGifForRecentBook=[LoadGif imageViewStartAnimating:CGRectMake(100, 250, 30, 30)];
+        loadGifForProcess=[LoadGif imageViewStartAnimating:CGRectMake(290, 230, 30, 30)];
 
+        //开始加载界面
+        [self synchronousPracticeShow];
+        [self.view addSubview:myShelfView];
+        [self.navigationController setNavigationBarHidden:true];
+        [self titleShow];
+        [self titleMenu];
+
+        [self myGradeFixed];
+        [self myProgressFixed];
+
+        //[self recommend];
+        if ([userInfo valueForKey:@"userKey"]!=nil) {
+            [self chooseBookinit];
+            [self chooseBook];
+        }
+
+        //其他信息初始化方法
+        [self initForFirstLogin];
+    }
     
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -154,70 +167,73 @@
 //        2.判断第一个接口请求信息返回code是否是401，如果是提示账号在其他设备登录，如果不是进行下一步
 //        3.加载最近学习信息和最近学习书本，
 
+    if (![self updateInterfaceWithReachability:self.conn]) {
+        return;
+    }
     //用户是否登陆过
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
-        
+
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-        
+
         ConnectionInstance* recentInstance=[[ConnectionInstance alloc]init];
 
         //判断账号是否其他设备登录
         if ([[[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]]valueForKey:@"code"]intValue]==401) {
-            
+
             NSLog(@"账号在别处登录");
-            
+
             //警告窗
             [self presentViewController:
              [WarningWindow transToLogin:@"您的账号在别处登录请重新登录！"
                               Navigation:self.navigationController]
                                animated:YES
                              completion:nil];
-            
+
         }else{
             //如果没有其他设备登录则进行数据加载---------------------------------------------------------------
-            
+
             //最近学习情况
             recentLearnMsg=[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]];
-            
+
             recentBook=[[recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
-            
+
             if ([recentBook isKindOfClass:[NSNull class]]||![recentBook count]) {
                 NSLog(@"最近学习信息为空");
-                
-                
+
+
             }else{
-                
+
                 [self myProgressUnfixed];
-                
+
                 //如果不是第一次下载本软件则直接加载
 //                if (![[processDic valueForKey:@"picture"]isEqualToString:@"a"]) {
 //
 //                    [self myGradeUnfixed];
 //
 //                }
-                
+
                 [self myGradeUnfixed];
-                
+
                 dispatch_async(dispatch_get_global_queue(0, 0), ^{
-                    
+
                     [self getReq];
-                    
+
                 });
-                
-                
+
+
             }
-           
+
             //----------------------------------------------------------------------------------------
-            
+
         }
-        
+
     }else{
         [bookPicView removeFromSuperview];
         [processDetails addSubview:noRecordLabel];
         [processFixView removeFromSuperview];
         [refreshPanelProcess removeFromSuperview];
         [bookScanView removeFromSuperview];
-        
+
         //提示框
         [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
                            animated:YES
@@ -1082,5 +1098,51 @@
 //    }
 //    [self.navigationController pushViewController:sentencesTest animated:true];
 //}
+
+#pragma mark network
+
+-(void)netWorkStateChange:(NSNotification*)note{
+    Reachability* curReach = [note object];
+    NSParameterAssert([curReach isKindOfClass: [Reachability class]]);
+    NetworkStatus status = [curReach currentReachabilityStatus];
+
+    if (status == NotReachable) {
+        NSLog(@"无网络连接");
+         [self presentViewController:[WarningWindow ExitAPP:@"网络无连接！"]
+                                                     animated:YES completion:nil];
+    }else if(status == ReachableViaWiFi){
+        NSLog(@"Wifi");
+    }else{
+        NSLog(@"3G/4G/5G");
+    }
+}
+- (BOOL)updateInterfaceWithReachability:(Reachability *)reachability{
+    BOOL flag = false;
+    NetworkStatus netStatus = [reachability currentReachabilityStatus];
+    switch (netStatus) {
+        case NotReachable:
+            NSLog(@"无网络");
+            [self presentViewController:[WarningWindow ExitAPP:@"网络无连接！"]
+                                                        animated:YES completion:nil];
+            break;
+        case ReachableViaWiFi:
+            NSLog(@"WIFI");
+            flag = true;
+            break;
+        case ReachableViaWWAN:
+            NSLog(@"手机网络");
+            flag = true;
+            break;
+        default:
+            break;
+    }
+    return flag;
+}
+
+-(void)dealloc{
+    [self.conn stopNotifier];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
 @end
 
