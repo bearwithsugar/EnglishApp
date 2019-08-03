@@ -50,7 +50,7 @@
 }
 
 //根据l本地路径播放声音
--(void)playAudio{
+-(void)playAudio:(NSInteger)times{
     
     AVAudioSession *session = [AVAudioSession sharedInstance];
     [session setCategory:AVAudioSessionCategoryPlayback error:nil];
@@ -67,6 +67,8 @@
     
     // 3.准备播放 (音乐播放的内存空间的开辟等功能)  不写这行代码直接播放也会默认调用prepareToPlay
     [_movePlayer prepareToPlay];
+    
+    _movePlayer.numberOfLoops = times;
     
     [_movePlayer play];
 }

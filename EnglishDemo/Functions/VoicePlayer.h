@@ -23,7 +23,7 @@ typedef void (^VoidBlock) (void);
 
 //根据l本地路径播放声音
 //-(void)playAudio;
--(void)playAudio;
+-(void)playAudio:(NSInteger)times;
 -(void)interruptPlay;
 
 @end

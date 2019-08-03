@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LearningViewController : UIViewController
 
+typedef void (^JobBlock) (void);
+
 @property(nonatomic,copy)NSString* bookId;
 @property(nonatomic,copy)NSString* unitId;
 @property(nonatomic,copy)NSString* bookName;

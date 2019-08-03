@@ -86,6 +86,15 @@
     //喇叭图标
     UIImageView* laba;
     
+    //setting=======
+    //播放次数
+    NSInteger playTimes;
+    
+    //中文翻译
+    NSMutableArray* translateLabelArray;
+    //中文翻译是否隐藏
+    BOOL translateIsHided;
+    
 }
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
 
@@ -137,7 +146,7 @@
     
     //录音所用
     //self.progressView.progress = 0;
-    
+    translateIsHided = NO;
     
   
 }
@@ -171,7 +180,7 @@
     UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
-    //[setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
+    [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
     [title addSubview:setBtn];
 }
 //选择课程的上一课下一课
@@ -427,6 +436,7 @@
     NSUInteger contentDetailHeight = 0;
     titleArray=[[NSMutableArray alloc]init];
     voiceArray=[[NSMutableArray alloc]init];
+    translateLabelArray = [[NSMutableArray alloc]init];
     for (NSDictionary* dic in sentenceArray) {
         if ([[NSString stringWithFormat:@"%@",[dic valueForKey:@"page"]]isEqualToString:page]) {
             [titleArray addObject:dic];
@@ -487,13 +497,14 @@
         title.adjustsFontSizeToFitWidth =YES;
         [content addSubview:title];
         
-        UILabel* translate=[[UILabel alloc]initWithFrame:CGRectMake(46.36, 59.58, 200, 24.27)];
-        translate.text=[titleDic valueForKey:@"sentenceChn"];
-        translate.font=[UIFont systemFontOfSize:16];
-        translate.adjustsFontSizeToFitWidth =YES;
-        [content addSubview:translate];
-        
-        
+        UILabel* translateLabel=[[UILabel alloc]initWithFrame:CGRectMake(46.36, 59.58, 200, 24.27)];
+        translateLabel.text=[titleDic valueForKey:@"sentenceChn"];
+        translateLabel.font=[UIFont systemFontOfSize:16];
+        translateLabel.adjustsFontSizeToFitWidth =YES;
+        [translateLabelArray addObject:translateLabel];
+        if (!translateIsHided) {
+            [content addSubview:translateLabel];
+        }
         
 //        //添加各种按钮
 //        UILabel* timeShow=[[UILabel alloc]initWithFrame:CGRectMake(15.45, 119.17, 33.1, 33.1)];
@@ -572,6 +583,8 @@
     };
 
     [MyThreadPool executeJob:addLearnMsg Main:^{}];
+    
+    VoidBlock playBlock;
     
     BOOL flag=YES;
     //遍历缩小其他控件
@@ -653,7 +666,7 @@
     //播放声音
     //音频播放空间分配
     
-    VoidBlock playBlock =^{
+    playBlock =^{
         NSString* playUrl=[DownloadAudioService getAudioPath:
                            [NSString stringWithFormat:@"%@",[[self->voiceArray objectAtIndex:id]valueForKey:@"id"]]];
         if (self->voiceplayer!=NULL) {
@@ -664,7 +677,7 @@
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
         self->voiceplayer.myblock = myblock;
-        [self->voiceplayer playAudio];
+        [self->voiceplayer playAudio:self->playTimes];
     };
     
     [MyThreadPool executeJob:playBlock Main:^{}];
@@ -805,6 +818,7 @@
     for (UIButton* btn in autoPlayNextBtnArray) {
         if (btn.selected) {
             btn.backgroundColor=ssRGBHex(0xFF7474);
+            
         }
     }
     for (UIButton* btn in timeIntervalBtnArray) {
@@ -825,6 +839,7 @@
     for (UIButton* btn in replayTimesBtnArray) {
         if (btn.selected) {
             btn.backgroundColor=ssRGBHex(0xFF7474);
+            playTimes = btn.tag;
         }
     }
     
@@ -874,11 +889,26 @@
         button.selected=false;
         button.backgroundColor=[UIColor whiteColor];
     }
+    if (translateLabelArray.count!=0) {
+        if (btn.tag == 5) {
+            for (UILabel* label in translateLabelArray) {
+                [label removeFromSuperview];
+            }
+            translateIsHided = YES;
+        }else{
+            for (int i = 0; i < contentArray.count ; i++) {
+                UIView *view = [contentArray objectAtIndex:i];
+                [view addSubview:[translateLabelArray objectAtIndex:i]];
+            }
+            translateIsHided = NO;
+        }
+    }
 }
 -(void)actionOfReplayTimes:(UIButton*)btn{
     for (UIButton* button in replayTimesBtnArray) {
         if(button.tag==btn.tag){
             button.selected=true;
+            playTimes = button.tag;
             button.backgroundColor=ssRGBHex(0xFF7474);
             continue;
         }

@@ -2,4 +2,118 @@
 <Bucket
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EnglishDemo/LearningViewController.m"
+            timestampString = "586538586.678546"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "842"
+            endingLineNumber = "842"
+            landmarkName = "-defaultSettingsShow"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EnglishDemo/LearningViewController.m"
+            timestampString = "586538586.678969"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "909"
+            endingLineNumber = "909"
+            landmarkName = "-actionOfReplayTimes:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EnglishDemo/LearningViewController.m"
+            timestampString = "586538586.67922"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "911"
+            endingLineNumber = "911"
+            landmarkName = "-actionOfReplayTimes:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EnglishDemo/LearningViewController.m"
+            timestampString = "586538586.679669"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "680"
+            endingLineNumber = "680"
+            landmarkName = "-clickContent:"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EnglishDemo/LearningViewController.m"
+            timestampString = "586538586.680058"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "883"
+            endingLineNumber = "883"
+            landmarkName = "-actionOfShowTranslation:"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LearningViewController actionOfShowTranslation:]"
+                  moduleName = "EnglishDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mayixuan/Desktop/EnglishApp/EnglishDemo/LearningViewController.m"
+                  timestampString = "586536148.884016"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "881"
+                  endingLineNumber = "881"
+                  offsetFromSymbolStart = "77">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[LearningViewController actionOfShowTranslation:]"
+                  moduleName = "EnglishDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/mayixuan/Desktop/EnglishApp/EnglishDemo/LearningViewController.m"
+                  timestampString = "586536148.885808"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "881"
+                  endingLineNumber = "881"
+                  offsetFromSymbolStart = "99">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
