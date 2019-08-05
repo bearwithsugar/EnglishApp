@@ -34,8 +34,8 @@
     UIImageView* theBigPic;
     ChooseLessonView* chooseLessonView;
     NSMutableArray* autoPlayNextBtnArray;
-    NSMutableArray* timeIntervalBtnArray;
-    NSMutableArray* playChineseBtnArray;
+//    NSMutableArray* timeIntervalBtnArray;
+//    NSMutableArray* playChineseBtnArray;
     NSMutableArray* showTranslationBtnArray;
     NSMutableArray* replayTimesBtnArray;
     NSArray* settingArray;
@@ -94,6 +94,8 @@
     NSMutableArray* translateLabelArray;
     //中文翻译是否隐藏
     BOOL translateIsHided;
+    //连续播放下句
+    BOOL continuePlay;
     
 }
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
@@ -147,6 +149,7 @@
     //录音所用
     //self.progressView.progress = 0;
     translateIsHided = NO;
+    continuePlay = NO;
     
   
 }
@@ -419,6 +422,8 @@
 -(void)showContent:(UITapGestureRecognizer*)sender{
     //清空一下存放右侧内容单元的数组，不然会影响缩放显示
     [contentArray  removeAllObjects];
+    
+    //注意异步！
     //添加图片学习信息
     [ConnectionFunction addUserPictureMsg:[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"pictureId"]
                                                         UserKey:[userInfo valueForKey:@"userKey"]];
@@ -678,6 +683,10 @@
         self->voiceplayer.url = playUrl;
         self->voiceplayer.myblock = myblock;
         [self->voiceplayer playAudio:self->playTimes];
+        if (self->continuePlay) {
+            self->voiceplayer.urlArray = self->voiceArray;
+            self->voiceplayer.startIndex = id+1;
+        }
     };
     
     [MyThreadPool executeJob:playBlock Main:^{}];
@@ -693,14 +702,14 @@
     settingView=[[UIView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647.72)];
     settingView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     //上部分白色背景
-    UILabel* settingLabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 414, 236.13)];
+    UILabel* settingLabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 414, 180.13)];
     settingLabel.backgroundColor=[UIColor whiteColor];
     settingLabel.clipsToBounds = YES;
     [settingLabel setUserInteractionEnabled:YES];
     [settingView addSubview:settingLabel];
     
-    //左侧标题数组
-    NSArray* tagLabelArray=@[@"自动播放下句",@"播放时间间隔",@"播放中文语音",@"显示中文翻译",@"单句重复次数"];
+    //左侧标题数组  ,@"播放时间间隔",@"播放中文语音"
+    NSArray* tagLabelArray=@[@"自动播放下句",@"显示中文翻译",@"单句重复次数"];
     for (NSString* title in tagLabelArray) {
         float y=-4.413+22.06*([tagLabelArray indexOfObject:title]+1)+22.06*[tagLabelArray indexOfObject:title];
         UILabel* tagLabel=[[UILabel alloc]initWithFrame:CGRectMake(19.87, y, 92.73, 22.06)];
@@ -709,8 +718,8 @@
         [settingLabel addSubview:tagLabel];
     }
     
-    //右侧label边框加载
-    NSArray* btnWidth=@[@"168",@"252",@"168.01",@"168.02",@"252.01"];
+    //右侧label边框加载,@"252" ,@"168.01"
+    NSArray* btnWidth=@[@"168",@"168.02",@"252.01"];
     NSMutableArray* btnLabelArray=[[NSMutableArray alloc]init];
     for (NSString* x in btnWidth) {
         float y=-4.413+17.65*([btnWidth indexOfObject:x]+1)+26.48*[btnWidth indexOfObject:x];
@@ -726,14 +735,14 @@
 
     //右侧按钮数组
     autoPlayNextBtnArray=[[NSMutableArray alloc]init];
-    timeIntervalBtnArray=[[NSMutableArray alloc]init];
-    playChineseBtnArray=[[NSMutableArray alloc]init];
+//    timeIntervalBtnArray=[[NSMutableArray alloc]init];
+//    playChineseBtnArray=[[NSMutableArray alloc]init];
     showTranslationBtnArray=[[NSMutableArray alloc]init];
     replayTimesBtnArray=[[NSMutableArray alloc]init];
     
     //下面三个方法为三种不同的选项添加按钮
     NSArray* openBtnArray=@[@"打开",@"关闭"];
-    NSArray* addArray=@[@"0",@"2",@"3"];
+    NSArray* addArray=@[@"0",@"1"];
     for (NSString* number in addArray) {
         for (NSString* title in openBtnArray) {
             float x=84*[openBtnArray indexOfObject:title];
@@ -750,37 +759,37 @@
                 openBtn.tag=[openBtnArray indexOfObject:title];
                 [openBtn addTarget:self action:@selector(actionOfAutoPlay:) forControlEvents:UIControlEventTouchUpInside];
             }
+//            if ([addArray indexOfObject:number]==1) {
+//                //把按钮加到对应的按钮数组中
+//                [playChineseBtnArray addObject:openBtn];
+//                //2和3
+//                openBtn.tag=[openBtnArray indexOfObject:title]+2;
+//                [openBtn addTarget:self action:@selector(actionOfPlayChinese:) forControlEvents:UIControlEventTouchUpInside];
+//            }
             if ([addArray indexOfObject:number]==1) {
-                //把按钮加到对应的按钮数组中
-                [playChineseBtnArray addObject:openBtn];
-                //2和3
-                openBtn.tag=[openBtnArray indexOfObject:title]+2;
-                [openBtn addTarget:self action:@selector(actionOfPlayChinese:) forControlEvents:UIControlEventTouchUpInside];
-            }
-            if ([addArray indexOfObject:number]==2) {
                 //把按钮加到对应的按钮数组中
                 [showTranslationBtnArray addObject:openBtn];
                 //4和5
                 openBtn.tag=[openBtnArray indexOfObject:title]+4;
                 [openBtn addTarget:self action:@selector(actionOfShowTranslation:) forControlEvents:UIControlEventTouchUpInside];
             }
-        
+
         }
     }
     
-    NSArray* secondBtnArray=@[@"1s",@"2s",@"3s"];
-    for (NSString* title in secondBtnArray) {
-        float x=84*[secondBtnArray indexOfObject:title];
-        UIButton* secondBtn=[[UIButton alloc]initWithFrame:CGRectMake(x, 0, 84, 26.48)];
-        [secondBtn setTitle:title forState:UIControlStateNormal];
-        [secondBtn setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
-        [secondBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-        secondBtn.titleLabel.font=[UIFont systemFontOfSize:13];
-        secondBtn.tag=[secondBtnArray indexOfObject:title];
-        [[btnLabelArray objectAtIndex:1] addSubview:secondBtn];
-        [timeIntervalBtnArray addObject:secondBtn];
-        [secondBtn addTarget:self action:@selector(actionOfTimeInterval:) forControlEvents:UIControlEventTouchUpInside];
-    }
+//    NSArray* secondBtnArray=@[@"1s",@"2s",@"3s"];
+//    for (NSString* title in secondBtnArray) {
+//        float x=84*[secondBtnArray indexOfObject:title];
+//        UIButton* secondBtn=[[UIButton alloc]initWithFrame:CGRectMake(x, 0, 84, 26.48)];
+//        [secondBtn setTitle:title forState:UIControlStateNormal];
+//        [secondBtn setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+//        [secondBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+//        secondBtn.titleLabel.font=[UIFont systemFontOfSize:13];
+//        secondBtn.tag=[secondBtnArray indexOfObject:title];
+//        [[btnLabelArray objectAtIndex:1] addSubview:secondBtn];
+//        [timeIntervalBtnArray addObject:secondBtn];
+//        [secondBtn addTarget:self action:@selector(actionOfTimeInterval:) forControlEvents:UIControlEventTouchUpInside];
+//    }
 
     NSArray* timesBtnArray=@[@"1遍",@"2遍",@"3遍"];
     for (NSString* title in timesBtnArray) {
@@ -791,7 +800,7 @@
         [timesBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
         timesBtn.titleLabel.font=[UIFont systemFontOfSize:13];
         timesBtn.tag=[timesBtnArray indexOfObject:title];
-        [[btnLabelArray objectAtIndex:4] addSubview:timesBtn];
+        [[btnLabelArray objectAtIndex:2] addSubview:timesBtn];
         [replayTimesBtnArray addObject:timesBtn];
         [timesBtn addTarget:self action:@selector(actionOfReplayTimes:) forControlEvents:UIControlEventTouchUpInside];
     }
@@ -801,12 +810,12 @@
     flag=@"1";
     UIButton* btn1=[autoPlayNextBtnArray objectAtIndex:flag.intValue];
     btn1.selected=true;
-    flag=[settingArray objectAtIndex:1];
-    UIButton* btn2=[timeIntervalBtnArray objectAtIndex:flag.intValue];
-    btn2.selected=true;
-    flag=[settingArray objectAtIndex:2];
-    UIButton* btn3=[playChineseBtnArray objectAtIndex:0];
-    btn3.selected=true;
+//    flag=[settingArray objectAtIndex:1];
+//    UIButton* btn2=[timeIntervalBtnArray objectAtIndex:flag.intValue];
+//    btn2.selected=true;
+//    flag=[settingArray objectAtIndex:2];
+//    UIButton* btn3=[playChineseBtnArray objectAtIndex:0];
+//    btn3.selected=true;
     flag=[settingArray objectAtIndex:3];
     UIButton* btn4=[showTranslationBtnArray objectAtIndex:flag.intValue];
     btn4.selected=true;
@@ -821,16 +830,16 @@
             
         }
     }
-    for (UIButton* btn in timeIntervalBtnArray) {
-        if (btn.selected) {
-            btn.backgroundColor=ssRGBHex(0xFF7474);
-        }
-    }
-    for (UIButton* btn in playChineseBtnArray) {
-        if (btn.selected) {
-            btn.backgroundColor=ssRGBHex(0xFF7474);
-        }
-    }
+//    for (UIButton* btn in timeIntervalBtnArray) {
+//        if (btn.selected) {
+//            btn.backgroundColor=ssRGBHex(0xFF7474);
+//        }
+//    }
+//    for (UIButton* btn in playChineseBtnArray) {
+//        if (btn.selected) {
+//            btn.backgroundColor=ssRGBHex(0xFF7474);
+//        }
+//    }
     for (UIButton* btn in showTranslationBtnArray) {
         if (btn.selected) {
             btn.backgroundColor=ssRGBHex(0xFF7474);
@@ -847,6 +856,12 @@
 
 //点击各种设置的处理函数
 -(void)actionOfAutoPlay:(UIButton*)btn{
+    if (btn.tag == 0) {
+        continuePlay = YES;
+    }else{
+        continuePlay = NO;
+    }
+    
     for (UIButton* button in autoPlayNextBtnArray) {
         if(button.tag==btn.tag){
             button.selected=true;
@@ -857,28 +872,28 @@
         button.backgroundColor=[UIColor whiteColor];
     }
 }
--(void)actionOfTimeInterval:(UIButton*)btn{
-    for (UIButton* button in timeIntervalBtnArray) {
-        if(button.tag==btn.tag){
-            button.selected=true;
-            button.backgroundColor=ssRGBHex(0xFF7474);
-            continue;
-        }
-        button.selected=false;
-        button.backgroundColor=[UIColor whiteColor];
-    }
-}
--(void)actionOfPlayChinese:(UIButton*)btn{
-    for (UIButton* button in playChineseBtnArray) {
-        if(button.tag==btn.tag){
-            button.selected=true;
-            button.backgroundColor=ssRGBHex(0xFF7474);
-            continue;
-        }
-        button.selected=false;
-        button.backgroundColor=[UIColor whiteColor];
-    }
-}
+//-(void)actionOfTimeInterval:(UIButton*)btn{
+//    for (UIButton* button in timeIntervalBtnArray) {
+//        if(button.tag==btn.tag){
+//            button.selected=true;
+//            button.backgroundColor=ssRGBHex(0xFF7474);
+//            continue;
+//        }
+//        button.selected=false;
+//        button.backgroundColor=[UIColor whiteColor];
+//    }
+//}
+//-(void)actionOfPlayChinese:(UIButton*)btn{
+//    for (UIButton* button in playChineseBtnArray) {
+//        if(button.tag==btn.tag){
+//            button.selected=true;
+//            button.backgroundColor=ssRGBHex(0xFF7474);
+//            continue;
+//        }
+//        button.selected=false;
+//        button.backgroundColor=[UIColor whiteColor];
+//    }
+//}
 -(void)actionOfShowTranslation:(UIButton*)btn{
     for (UIButton* button in showTranslationBtnArray) {
         if(button.tag==btn.tag){
@@ -1012,6 +1027,12 @@
                 playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
                 [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
             }
+            
+//            for (NSObject *object in self->sentenceArray) {
+//                NSString* playUrl=[object valueForKey:@"engUrl"];
+//                playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+//                [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
+//            }
         }
     });
 }

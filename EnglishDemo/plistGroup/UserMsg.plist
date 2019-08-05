@@ -53,12 +53,6 @@
 			<key>picture</key>
 			<string>icon_yijianfankui</string>
 		</dict>
-		<dict>
-			<key>title</key>
-			<string>更多软件推荐</string>
-			<key>picture</key>
-			<string>Shape</string>
-		</dict>
 	</array>
 </array>
 </plist>

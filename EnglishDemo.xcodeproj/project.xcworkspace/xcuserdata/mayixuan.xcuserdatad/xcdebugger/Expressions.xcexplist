@@ -3,12 +3,23 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "-[VoicePlayer continuePlay]:VoicePlayer.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[_urlArray objectAtIndex:_startIndex++]valueForKey:@&quot;id&quot;">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
          <PersistentStrings>
             <PersistentString
                value = "button.tag">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__38-[LearningViewController loadAudioMsg]_block_invoke:LearningViewController.m">
       </ContextState>
       <ContextState
          contextName = "-[LearningViewController actionOfShowTranslation:]:LearningViewController.m">
