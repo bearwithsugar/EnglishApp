@@ -34,6 +34,8 @@
     self.name.font=[UIFont systemFontOfSize:14];
     self.description.text=label2;
     self.description.font=[UIFont systemFontOfSize:12];
+    self.name.adjustsFontSizeToFitWidth =YES;
+    self.description.adjustsFontSizeToFitWidth = YES;
 }
 - (void)awakeFromNib;{
     [super awakeFromNib];

@@ -9,6 +9,9 @@
 #import "EngChooseChi.h"
 #import "../../Functions/ConnectionFunction.h"
 #import "../../Functions/VoicePlayer.h"
+#import "../../Functions/MyThreadPool.h"
+#import "../../Functions/DownloadAudioService.h"
+
 
 @implementation EngChooseChi{
     //正确答案所在的位置
@@ -31,17 +34,17 @@
     
     UILabel* questionTitle=[[UILabel alloc]initWithFrame:CGRectMake(50, 4.41, 314, 73.93)];
     if ([super.testType isEqualToString:@"word"]) {
-        questionTitle.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"];
+        questionTitle.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"];
         questionTitle.font=[UIFont systemFontOfSize:48];
     }else if ([super.testType isEqualToString:@"sentence"]){
-        questionTitle.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"];
+        questionTitle.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"];
         questionTitle.font=[UIFont systemFontOfSize:22];
     }else{
         if (super.testFlag<super.wordNum) {
-            questionTitle.text=[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"] valueForKey:@"wordChn"];
+            questionTitle.text=[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"] valueForKey:@"wordEng"];
             questionTitle.font=[UIFont systemFontOfSize:48];
         }else{
-            questionTitle.text=[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"]valueForKey:@"sentenceChn"];
+            questionTitle.text=[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"]valueForKey:@"sentenceEng"];
             questionTitle.font=[UIFont systemFontOfSize:22];
         }
     }
@@ -50,7 +53,12 @@
     [questionPanel addSubview:questionTitle];
     
     UILabel* questionVoice=[[UILabel alloc]initWithFrame:CGRectMake(150, 87.17, 114, 27.58)];
-    questionVoice.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
+    NSString* voiceHelp = [[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
+    if ([voiceHelp isEqualToString:@"无"]) {
+        questionVoice.text = @"";
+    }else{
+        questionVoice.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
+    }
     questionVoice.textColor=ssRGBHex(0x4A4A4A);
     questionVoice.font=[UIFont systemFontOfSize:20];
     questionVoice.textAlignment=NSTextAlignmentCenter;
@@ -82,9 +90,9 @@
     for (int i=0; i<4; i++) {
         if (i==rightAnswer) {
             if ([super.testType isEqualToString:@"word"]) {
-                [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"]];
+                [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
             }else if([super.testType isEqualToString:@"sentence"]){
-                [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"]];
+                [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
             }else{
                 if (super.testFlag<super.wordNum) {
                     [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
@@ -206,26 +214,46 @@
 -(void)playVoice{
     //播放声音
     //音频播放空间分配
-    NSString* playUrl;
-    if ([super.testType isEqualToString:@"wrong"]) {
-        if (super.testFlag<super.wordNum) {
-            //错题本中单词
-            playUrl=[[[[super.testArray objectAtIndex:super.testFlag]
-                       valueForKey:@"bookWord"]valueForKey:@"engUrl"]
-                     stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+    
+    JobBlock playBlock =^{
+        
+        NSString* playUrl;
+        if ([super.testType isEqualToString:@"wrong"]) {
+            if (super.testFlag < super.wordNum) {
+                //错题本中单词
+                playUrl=[DownloadAudioService getAudioPath:
+                         [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordId"]]];
+            }else{
+                //错题本中句子
+                playUrl=[DownloadAudioService getAudioPath:
+                         [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
+            }
+        }else if([super.testType isEqualToString:@"word"]){
+            //单词测试
+            playUrl=[DownloadAudioService getAudioPath:
+                     [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordId"]]];
         }else{
-            //错题本中句子
-            playUrl=[[[[super.testArray objectAtIndex:super.testFlag]
-                       valueForKey:@"bookSentence"]valueForKey:@"engUrl"]
-                     stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+            //句子测试
+            playUrl=[DownloadAudioService getAudioPath:
+                     [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
         }
-    }else{
-        //c单词测试和句子测试h返回信息是一样的
-        playUrl=[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    }
-    voiceplayer=[[VoicePlayer alloc]init];
-    voiceplayer.url=playUrl;
-    [voiceplayer.audioStream play];
+        
+        if (self->voiceplayer!=NULL) {
+            [self->voiceplayer interruptPlay];
+            self->voiceplayer = NULL;
+        }
+        
+        self->voiceplayer=[[VoicePlayer alloc]init];
+        self->voiceplayer.url = playUrl;
+        self->voiceplayer.myblock = ^{};
+        [self->voiceplayer playAudio:0];
+        //        if (self->continuePlay) {
+        //            self->voiceplayer.urlArray = self->voiceArray;
+        //            self->voiceplayer.startIndex = id+1;
+        //        }
+    };
+    
+    [MyThreadPool executeJob:playBlock Main:^{}];
+    
 }
-
 @end

@@ -233,13 +233,15 @@ __attribute__((visibility("default"))) @interface QQApiURLObject : QQApiObject
 + (id)objectWithimageDataArray:(NSArray*)imageDataArray title:(NSString*)title extMap:(NSDictionary *)extMap;
 
 @end
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "Wconsumed"
 // QQApiVideoForQZoneObject
 /** @brief 视频对象
  用于分享视频到空间，走写说说路径<code>QQApiObject</code>
  assetURL可传ALAsset的ALAssetPropertyAssetURL，或者PHAsset的localIdentifier
   @param extMap 扩展字段
  */
+#pragma clang diagnostic pop
 @interface QQApiVideoForQZoneObject : QQApiObject
 
 @property(nonatomic, retain) NSString *assetURL;

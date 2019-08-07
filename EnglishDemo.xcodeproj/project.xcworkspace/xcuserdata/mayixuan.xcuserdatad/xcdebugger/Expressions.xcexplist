@@ -3,20 +3,27 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[VoicePlayer continuePlay]:VoicePlayer.m">
+         contextName = "__27-[VoiceChooseChn playVoice]_block_invoke:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
-               value = "[_urlArray objectAtIndex:_startIndex++]valueForKey:@&quot;id&quot;">
+               value = "super.wordNum">
+            </PersistentString>
+            <PersistentString
+               value = "super.testFlag">
+            </PersistentString>
+            <PersistentString
+               value = "super.testType">
+            </PersistentString>
+            <PersistentString
+               value = "super.testArray">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "button.tag">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "-[MyShelfViewController pushToUnit:Name:]:MyShelfViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[MyShelfViewController viewDidLoad]:MyShelfViewController.m">
       </ContextState>
       <ContextState
          contextName = "__38-[LearningViewController loadAudioMsg]_block_invoke:LearningViewController.m">
@@ -28,6 +35,66 @@
                value = "btn.tag">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[VoicePlayer continuePlay]:VoicePlayer.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[_urlArray objectAtIndex:_startIndex++]valueForKey:@&quot;id&quot;">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[ChooseLessonView tableView:didSelectRowAtIndexPath:]:ChooseLessonView.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "_dataArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[WordsListeningViewController showContent:className:wordsArray:classId:]:WordsListeningViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[VoiceChooseChn playVoice]:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__66-[WordsListeningViewController tableView:didSelectRowAtIndexPath:]_block_invoke:WordsListeningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "wordsArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[EngChooseChi questionView]:EngChooseChi.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[WordsTestViewController initData]:WordsTestViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "button.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MyShelfViewController clickBook:]:MyShelfViewController.m">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

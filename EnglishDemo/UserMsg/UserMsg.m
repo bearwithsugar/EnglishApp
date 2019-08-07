@@ -217,20 +217,26 @@
         }else{
             NewVersonTableViewCell* cell=[NewVersonTableViewCell createCellWithTableView:tableView];
             //            dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            self->versionMsg = [[[ConnectionFunction getVersionMsg:[self->userInfo valueForKey:@"userKey"]] valueForKey:@"data"]firstObject];
-            if([DocuOperate fileExistInPath:@"version.plist"]){
-                NSDictionary* oldVersion = [DocuOperate readFromPlist:@"version.plist"];
-                if ([[oldVersion valueForKey:@"version"]isEqualToString:[self->versionMsg valueForKey:@"versionId"]]) {
-                    [cell setNoVersion];
-                }else{
-                    [cell setNewVersion];
-                }
-            }else{
-                [DocuOperate writeIntoPlist:@"version.plist" dictionary:[NSDictionary dictionaryWithObjectsAndKeys:[self->versionMsg valueForKey:@"versionId"],@"version", nil]];
+            if(userInfo==nil){
+                [cell loadData:@""];
                 [cell setNoVersion];
+            }else{
+                self->versionMsg = [[[ConnectionFunction getVersionMsg:[self->userInfo valueForKey:@"userKey"]] valueForKey:@"data"]firstObject];
+                if([DocuOperate fileExistInPath:@"version.plist"]){
+                    NSDictionary* oldVersion = [DocuOperate readFromPlist:@"version.plist"];
+                    if ([[oldVersion valueForKey:@"version"]isEqualToString:[self->versionMsg valueForKey:@"versionId"]]) {
+                        [cell setNoVersion];
+                    }else{
+                        [cell setNewVersion];
+                    }
+                }else{
+                    [DocuOperate writeIntoPlist:@"version.plist" dictionary:[NSDictionary dictionaryWithObjectsAndKeys:[self->versionMsg valueForKey:@"versionId"],@"version", nil]];
+                    [cell setNoVersion];
+                }
+                //                dispatch_async(dispatch_get_main_queue(), ^{
+                [cell loadData:[self->versionMsg valueForKey:@"versionName"]];
             }
-            //                dispatch_async(dispatch_get_main_queue(), ^{
-            [cell loadData:[self->versionMsg valueForKey:@"versionName"]];
+        
             //                });
             //            });
 

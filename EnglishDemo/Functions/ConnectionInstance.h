@@ -21,6 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 //查询单元学习进度
 -(NSDictionary*)unitProcess:(NSString*)bookId UserKey:(NSString*)userkey;
 
+//根据书籍获取最近学习信息
+-(NSDictionary*)recentLearnMsgByBook:(NSString*)userkey Id:(NSString*)bookId;
+
 @end
 
 NS_ASSUME_NONNULL_END

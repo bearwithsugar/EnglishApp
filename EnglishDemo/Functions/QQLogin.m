@@ -70,7 +70,7 @@
             [[AgentFunction theTopviewControler]
              presentViewController:[WarningWindow MsgWithoutTrans:@"登录信息保存失败"] animated:YES completion:nil];
         }
-    }else if([[qqLoginDic valueForKey:@"message"]isEqualToString:@"该账号绑定设备已达上限，请先用已绑定设备登录，解绑后再重新尝试。"]){
+    }else if([[qqLoginDic valueForKey:@"code"]intValue] == 400){
         [WarningWindow  MsgWithoutTrans:[qqLoginDic valueForKey:@"message"]];
     }else{
         [[AgentFunction theTopviewControler]

@@ -81,4 +81,9 @@
     [self.navigationController popViewControllerAnimated:true];
 }
 
+//点击背景收起键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的
+}
+
 @end

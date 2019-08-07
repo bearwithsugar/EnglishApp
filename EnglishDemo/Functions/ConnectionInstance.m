@@ -43,6 +43,15 @@
     return dataDic;
 }
 
+//根据书籍获取最近学习信息
+-(NSDictionary*)recentLearnMsgByBook:(NSString*)userkey Id:(NSString*)bookId{
+    NSURL* url=[FixValues getUrl];
+    url=[url URLByAppendingPathComponent:@"recent"];
+    url=[url URLByAppendingPathComponent:bookId];
+    RequestInstance* getReq=[[RequestInstance alloc]init];
+    NSDictionary* dataDic=[getReq getRequestWithHead:url Head:userkey];
+    return dataDic;
+}
 
 
 

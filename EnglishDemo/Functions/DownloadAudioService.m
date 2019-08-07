@@ -14,6 +14,10 @@
 
 +(void)toLoadAudio:(NSString*)url FileName:(NSString*)name{
     
+    if (![DocuOperate fileExistInPath:@"audioFile"]) {
+        [DocuOperate createDir:[DocuOperate cacheDirectory] directoryName:@"audioFile"];
+    }
+    
     NSData * mp3Data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
     NSString *filePath = [[[DocuOperate cacheDirectory] stringByAppendingPathComponent:@"audioFile"]
                           stringByAppendingPathComponent:

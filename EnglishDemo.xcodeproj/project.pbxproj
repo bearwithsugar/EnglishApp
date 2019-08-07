@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5901E49B2192C5270084156E /* DocuOperate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5901E49A2192C5270084156E /* DocuOperate.m */; };
+		59029C2222F9599A00DA339B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59029C2122F9599A00DA339B /* Images.xcassets */; };
 		590CA3D2224B84B6004D1AFD /* ConnectionInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 590CA3D1224B84B6004D1AFD /* ConnectionInstance.m */; };
 		5910AC42217DC3970024768A /* ProcessLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC41217DC3970024768A /* ProcessLine.m */; };
 		5910AC46217DD93F0024768A /* UnitsListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC44217DD93F0024768A /* UnitsListTableViewCell.m */; };
@@ -94,7 +95,6 @@
 		598E16A82269730D00DDF959 /* UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E16A62269730D00DDF959 /* UUID.m */; };
 		598E16AB2269AA0B00DDF959 /* Sources in Resources */ = {isa = PBXBuildFile; fileRef = 598E16AA2269AA0A00DDF959 /* Sources */; };
 		59A88A6C221BB36C00F16742 /* LoadGif.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A6B221BB36C00F16742 /* LoadGif.m */; };
-		59A88A70221C404000F16742 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59A88A6F221C404000F16742 /* Images.xcassets */; };
 		59A88A76221E2C1C00F16742 /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A75221E2C1C00F16742 /* HeadView.m */; };
 		59B0929B224C47A000B571A0 /* RequestInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B0929A224C47A000B571A0 /* RequestInstance.m */; };
 		59D4616E21F6CB7E00CF29D8 /* FixValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4616D21F6CB7E00CF29D8 /* FixValues.m */; };
@@ -128,6 +128,7 @@
 /* Begin PBXFileReference section */
 		5901E4992192C5270084156E /* DocuOperate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocuOperate.h; sourceTree = "<group>"; };
 		5901E49A2192C5270084156E /* DocuOperate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DocuOperate.m; sourceTree = "<group>"; };
+		59029C2122F9599A00DA339B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		590CA3D0224B84B6004D1AFD /* ConnectionInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionInstance.h; sourceTree = "<group>"; };
 		590CA3D1224B84B6004D1AFD /* ConnectionInstance.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConnectionInstance.m; sourceTree = "<group>"; };
 		5910AC40217DC3970024768A /* ProcessLine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessLine.h; sourceTree = "<group>"; };
@@ -275,7 +276,6 @@
 		598E16AA2269AA0A00DDF959 /* Sources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sources; sourceTree = "<group>"; };
 		59A88A6A221BB36C00F16742 /* LoadGif.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadGif.h; sourceTree = "<group>"; };
 		59A88A6B221BB36C00F16742 /* LoadGif.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoadGif.m; sourceTree = "<group>"; };
-		59A88A6F221C404000F16742 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		59A88A74221E2C1C00F16742 /* HeadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeadView.h; sourceTree = "<group>"; };
 		59A88A75221E2C1C00F16742 /* HeadView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeadView.m; sourceTree = "<group>"; };
 		59B09299224C47A000B571A0 /* RequestInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestInstance.h; sourceTree = "<group>"; };
@@ -457,7 +457,7 @@
 				59DE4222217961B8008D65CC /* LearningViewController.m */,
 				59DE4227217AC0EB008D65CC /* MoreRecommendViewController.h */,
 				59DE4228217AC0EB008D65CC /* MoreRecommendViewController.m */,
-				59A88A6F221C404000F16742 /* Images.xcassets */,
+				59029C2122F9599A00DA339B /* Images.xcassets */,
 			);
 			path = EnglishDemo;
 			sourceTree = "<group>";
@@ -769,7 +769,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59477BBE216F3FC6000205A5 /* LaunchScreen.storyboard in Resources */,
-				59A88A70221C404000F16742 /* Images.xcassets in Resources */,
 				5910AC62218063F30024768A /* NewVersonTableViewCell.xib in Resources */,
 				59344ADB21C24AF700198E8F /* load.gif in Resources */,
 				59DE4237217C189D008D65CC /* WordsListeningTableViewCell.xib in Resources */,
@@ -780,6 +779,7 @@
 				59477BB9216F3FC5000205A5 /* Main.storyboard in Resources */,
 				5910AC47217DD93F0024768A /* UnitsListTableViewCell.xib in Resources */,
 				5910AC5D21805C520024768A /* XuefenTableViewCell.xib in Resources */,
+				59029C2222F9599A00DA339B /* Images.xcassets in Resources */,
 				5910AC6721806A4E0024768A /* ChoosePublishTableViewCell.xib in Resources */,
 				596721B021F3871F00409403 /* WeChatSDK1.8.3 in Resources */,
 				59DE4232217C0FF1008D65CC /* WordsList.plist in Resources */,
@@ -1021,8 +1021,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = KQAW6PTN47;
+				DEVELOPMENT_TEAM = AX2Q3ZSY4J;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1055,8 +1056,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = KQAW6PTN47;
+				DEVELOPMENT_TEAM = AX2Q3ZSY4J;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",

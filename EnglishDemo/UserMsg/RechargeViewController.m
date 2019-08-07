@@ -116,9 +116,10 @@
 //}
 -(void)stategyView{
     UITextView* strategiesState=[[UITextView alloc]initWithFrame:CGRectMake(30, 200, 354, 250)];
-    strategiesState.text=@"根据充值金额的大小赠送相应数量的学分，具体规则如下：\n \n1、金额<=5元，不赠送学分，学分=金额*100；\n \n2、5元<=金额<10元，赠送0.2倍学分，学分=金额*1.2*100；\n \n3、10元<=金额<20元，赠送0.4倍学分，学分=金额*1.4*100；\n \n4、20元<=金额，赠送0.6倍学分，学分=金额*1.6*100";
+    strategiesState.text=@"根据充值金额的大小赠送相应数量的学分，具体规则如下：\n \n1、金额 < 5元，不赠送学分，学分=金额*100；\n \n2、5元<=金额<10元，赠送0.2倍学分，学分=金额*1.2*100；\n \n3、10元<=金额<20元，赠送0.4倍学分，学分=金额*1.4*100；\n \n4、20元<=金额，赠送0.6倍学分，学分=金额*1.6*100";
     strategiesState.font=[UIFont systemFontOfSize:14];
     strategiesState.textColor=ssRGBHex(0x4A4A4A);
+    strategiesState.editable=false;
     [self.view addSubview:strategiesState];
 }
 -(void)payBtn{
@@ -200,6 +201,11 @@
     }
 }
 
+
+//点击背景收起键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的
+}
 
 
 

@@ -76,9 +76,11 @@ CFURLRef Caching_Stream::createFileURLWithPath(CFStringRef path)
     if (!path) {
         return fileUrl;
     }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     
     CFStringRef escapedPath = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, path, NULL, NULL, kCFStringEncodingUTF8);
-    
+    #pragma clang diagnostic pop
     CFURLRef regularUrl = CFURLCreateWithString(kCFAllocatorDefault, (escapedPath ? escapedPath : path), NULL);
     
     if (regularUrl) {

@@ -28,6 +28,7 @@
 #import "Functions/FixValues.h"
 #import "Functions/ConnectionInstance.h"
 #import "Reachability.h"
+#import "Functions/MyThreadPool.h"
 
 
 //使控制台打印完整信息
@@ -93,6 +94,8 @@
     NSArray* bookArray;
     //首页书架部分书籍展示
     NSArray* bookshelfArray;
+    //title数组
+    NSMutableArray* titleBtnArray;
     //最近学习情况
     NSDictionary* recentLearnMsg;
     //最近读的这本书的信息
@@ -134,6 +137,7 @@
         gradesArray=[[NSArray alloc]init];
         //为书籍数组分配空间
         bookArray=[[NSArray alloc]init];
+        titleBtnArray = [[NSMutableArray alloc]init];
         processDic=[[NSMutableDictionary alloc]init];
         timerFlag=true;
         //加载加载图
@@ -199,7 +203,14 @@
 
             if ([recentBook isKindOfClass:[NSNull class]]||![recentBook count]) {
                 NSLog(@"最近学习信息为空");
+                
+                [loadGifForProcess removeFromSuperview];
+                [loadGifForRecentBook removeFromSuperview];
 
+                [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有学习记录，快去选择课本学习吧！"]
+                                   animated:YES completion:nil];
+                
+                
 
             }else{
 
@@ -228,16 +239,7 @@
         }
 
     }else{
-        [bookPicView removeFromSuperview];
-        [processDetails addSubview:noRecordLabel];
-        [processFixView removeFromSuperview];
-        [refreshPanelProcess removeFromSuperview];
-        [bookScanView removeFromSuperview];
-
-        //提示框
-        [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
-                           animated:YES
-                         completion:nil];
+        [self cleanMsg];
     }
 
 
@@ -338,13 +340,20 @@
     titleShow.clipsToBounds = YES;
     //打开button父组件的人机交互
     [titleShow setUserInteractionEnabled:YES];
-
+    
+    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(300, 15, 36, 35)];
+    [touchField setUserInteractionEnabled:YES];
+    [titleShow addSubview:touchField];
+    
     //用户button
-    UIButton* userPic=[[UIButton alloc]initWithFrame:CGRectMake(372.04, 20, 23, 25)];
+    UIButton* userPic=[[UIButton alloc]initWithFrame:CGRectMake(72, 5, 23, 25)];
     [userPic setBackgroundImage:[UIImage imageNamed:@"icon_people"] forState:UIControlStateNormal];
     [userPic setBackgroundImage:[UIImage imageNamed:@"icon_people"] forState:UIControlStateHighlighted];
     [userPic addTarget:self action:@selector(pushToUser) forControlEvents:UIControlEventTouchUpInside];
-    [titleShow addSubview:userPic];
+    [touchField addSubview:userPic];
+    
+    UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pushToUser)];
+    [touchField addGestureRecognizer:touchFunc];
     
     [self.view addSubview:titleShow];
 }
@@ -359,17 +368,14 @@
         titlebtn.titleLabel.font = [UIFont systemFontOfSize:15];
         [titlebtn addTarget:self action:@selector(wasClicked:) forControlEvents:UIControlEventTouchDown];
         titlebtn.tag=[titleArray indexOfObject:title];
+        if (titlebtn.tag == 0) {
+            titlebtn.selected = YES;
+        }
         [self.view addSubview:titlebtn];
+        [titleBtnArray addObject:titlebtn];
     }
 }
 -(void)wasClicked:(UIButton*)btn{
-    if (btn!= self.selectedBtn) {
-        self.selectedBtn.selected = NO;
-        btn.selected = YES;
-        self.selectedBtn = btn;
-    }else{
-        self.selectedBtn.selected = YES;
-    }
     if (btn.tag==1) {
         [myShelfView removeFromSuperview];
         [chooseBookView removeFromSuperview];
@@ -385,6 +391,14 @@
                              completion:nil];
         }
         [self.view addSubview:chooseBookView];
+    }
+    
+    for (UIButton* button in titleBtnArray) {
+        if (btn.tag == button.tag) {
+            button.selected = YES;
+        }else{
+            button.selected = NO;
+        }
     }
 }
 
@@ -962,8 +976,18 @@
 }
 
 #pragma mark --otherFunction
--(void)defineToken{
+-(void)cleanMsg{
+   
+    [bookPicView removeFromSuperview];
+    [processDetails addSubview:noRecordLabel];
+    [processFixView removeFromSuperview];
+    [refreshPanelProcess removeFromSuperview];
+    [bookScanView removeFromSuperview];
     
+    //提示框
+    [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
+                       animated:YES
+                     completion:nil];
 }
 
 #pragma mark --push
@@ -981,9 +1005,15 @@
         unitMsg = [[UnitViewController alloc]init];
     }
     if(![self.navigationController.topViewController isKindOfClass:[unitMsg class]]) {
-        NSLog(@"被点击的书架的id是%@",[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]);
-        [processDic setValue:[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
-        [DocuOperate replacePlist:@"process.plist" dictionary:processDic];
+        
+        [self->processDic setValue:[[[self->bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
+        
+        JobBlock myblock = ^{
+            [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
+        };
+        
+        [MyThreadPool executeJob:myblock Main:^{NSLog(@"被点击的书架的id是%@",[[[self->bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]);}];
+       
         //    NSDictionary* dic=[ConnectionFunction getBookLearnMsg:[userInfo valueForKey:@"userKey"] Id:[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]];
         //    NSLog(@"新接口的信息是%@",[dic valueForKey:@"data"]);
         

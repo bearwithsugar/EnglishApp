@@ -18,6 +18,8 @@
 #import "../DiyGroup/TestType/EngChooseChi.h"
 #import "../Functions/WarningWindow.h"
 #import "../DiyGroup/UnloginMsgView.h"
+#import "../Functions/DownloadAudioService.h"
+#import "../Functions/MyThreadPool.h"
 
 //#ifdef DEBUG
 //#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
@@ -33,6 +35,8 @@
     UIView* presentLession;
     //上一题下一题
     UIView* lastAndNextPanel;
+    
+    NSMutableArray* voiceArray;
     
     //选课信息界面
     ChooseLessonView* chooseLessonView;
@@ -89,12 +93,19 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor=ssRGBHex(0xFCF8F7);
+    voiceArray = [[NSMutableArray alloc]init];
     [self titleShow];
     [self settingView];
     
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
+        
+        if([_recentBookId isKindOfClass:[NSNull class]]){
+            [self presentViewController:[WarningWindow MsgWithoutTrans:@"你还没有学习课本，不能进行测试！"] animated:YES completion:nil];
+            return;
+        }
+        
         [self initData];
         [self chooseLessonViewInit];
         [self chooseLesson];
@@ -117,9 +128,10 @@
     if (![DocuOperate fileExistInPath:@"testDetails.plist"]) {
         NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",@"0",@"testFlag", nil];
         [DocuOperate writeIntoPlist:@"testDetails.plist" dictionary:dic];
-    }else{
-        testDetails=[DocuOperate readFromPlist:@"testDetails.plist"];
     }
+        testDetails=[DocuOperate readFromPlist:@"testDetails.plist"];
+    
+    NSLog(@"teatdetail：%@",testDetails);
     testFlag=[[testDetails valueForKey:@"testFlag"]intValue];
 }
 
@@ -146,13 +158,14 @@
     UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
+    [returnBtn addTarget:self action:@selector(popBack:) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
     [touchField addGestureRecognizer:touchFunc];
-
     
-    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
+//    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
+    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(336.46, 22.06 , 22.06, 22.06)];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
     [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
@@ -484,6 +497,31 @@
 }
 //加载数据，显示页面内容
 -(void)showContent:(NSString*)unitname className:(NSString*)classname testArray:(NSArray*)testarray classId:(NSString*)classid{
+    
+    JobBlock myblock = ^{
+        for (NSDictionary* dic in testarray) {
+            NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
+            [dictionary setValue:[dic valueForKey:@"engUrl"] forKey:@"url"];
+            if ([dic valueForKey:@"sentenceId"] == nil) {
+                [dictionary setValue:[dic valueForKey:@"wordId"] forKey:@"id"];
+            }else{
+                [dictionary setValue:[dic valueForKey:@"sentenceId"] forKey:@"id"];
+            }
+            [self->voiceArray addObject:dictionary];
+        }
+        
+        for (NSDictionary* dic in self->voiceArray) {
+            NSString* playUrl=[dic valueForKey:@"url"];
+            if ([playUrl isKindOfClass:[NSNull class]]) {
+                continue;
+            }
+            playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+            [DownloadAudioService toLoadAudio:playUrl FileName:[dic valueForKey:@"id"]];
+        }
+    };
+    
+    [MyThreadPool executeJob:myblock Main:^{}];
+    
     //收起选择课程界面
     [chooseLessonView removeFromSuperview];
     
@@ -527,15 +565,6 @@
     [processTip removeFromSuperview];
     [self processTip];
     [self.view addSubview:questionAndAnswerView];
-}
-
--(void)playVoice{
-    //播放声音
-    //音频播放空间分配
-    NSString* playUrl=[[[testArray objectAtIndex:testFlag]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    voiceplayer=[[VoicePlayer alloc]init];
-    voiceplayer.url=playUrl;
-    [voiceplayer.audioStream play];
 }
 
 -(void)popBack:(UITapGestureRecognizer*)sender{

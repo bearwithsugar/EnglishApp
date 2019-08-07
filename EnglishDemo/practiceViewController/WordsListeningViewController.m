@@ -15,6 +15,8 @@
 #import "../Functions/VoicePlayer.h"
 #import "../Functions/WarningWindow.h"
 #import "../DiyGroup/UnloginMsgView.h"
+#import "../Functions/DownloadAudioService.h"
+#import "../Functions/MyThreadPool.h"
 
 @interface WordsListeningViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -69,7 +71,11 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
-        userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+        if([_bookId isKindOfClass:[NSNull class]]){
+            [self presentViewController:[WarningWindow MsgWithoutTrans:@"你还没有学习课本，不能进行单词听写！"] animated:YES completion:nil];
+            return;
+        }
+        userInfo = [DocuOperate readFromPlist:@"userInfo.plist"];
         //初始化选课信息
         [self chooseLessonViewInit];
         [self contentViewInit]; 
@@ -109,12 +115,13 @@
     [touchField addGestureRecognizer:touchFunc];
 
     
-    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
-    [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
-    [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
-//    [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
-    [title addSubview:setBtn];
+//    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
+//    [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
+//    [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
+////    [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
+//    [title addSubview:setBtn];
 }
+
 -(void)chooseLessonViewInit{
     ShowContentBlock showContentBlock=^(NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname){
         __weak WordsListeningViewController*  weakSelf=self;
@@ -276,6 +283,29 @@
 
 }
 -(void)showContent:(NSString*)unitname className:(NSString*)classname wordsArray:(NSArray*)wordsarray classId:(NSString*)classid{
+    
+    JobBlock myblock = ^{
+        //如果不这样做一下字典准换会出现no summary
+        NSMutableArray* voiceArray = [[NSMutableArray alloc]init];
+        for (NSDictionary* dic in wordsarray) {
+            NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
+            [dictionary setValue:[dic valueForKey:@"engUrl"] forKey:@"url"];
+            [dictionary setValue:[dic valueForKey:@"wordId"] forKey:@"id"];
+            [voiceArray addObject:dictionary];
+        }
+        
+        for (NSDictionary* dic in voiceArray) {
+            NSString* playUrl=[dic valueForKey:@"url"];
+            if ([playUrl isKindOfClass:[NSNull class]]) {
+                continue;
+            }
+            playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+            [DownloadAudioService toLoadAudio:playUrl FileName:[dic valueForKey:@"id"]];
+        }
+    };
+    
+    [MyThreadPool executeJob:myblock Main:^{}];
+    
     //收起选择课程界面
     [chooseLessonView removeFromSuperview];
     
@@ -326,10 +356,30 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     //播放声音
     //音频播放空间分配
-    NSString* playUrl=[[[wordsArray objectAtIndex:indexPath.row]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    voiceplayer=[[VoicePlayer alloc]init];
-    voiceplayer.url=playUrl;
-    [voiceplayer.audioStream play];
+//    NSString* playUrl=[[[wordsArray objectAtIndex:indexPath.row]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
+//    voiceplayer=[[VoicePlayer alloc]init];
+//    voiceplayer.url=playUrl;
+//    [voiceplayer.audioStream play];
+    
+    JobBlock playBlock =^{
+        NSString* playUrl=[DownloadAudioService getAudioPath:
+                           [NSString stringWithFormat:@"%@",[[self->wordsArray objectAtIndex:indexPath.row]valueForKey:@"wordId"]]];
+        if (self->voiceplayer!=NULL) {
+            [self->voiceplayer interruptPlay];
+            self->voiceplayer = NULL;
+        }
+        
+        self->voiceplayer=[[VoicePlayer alloc]init];
+        self->voiceplayer.url = playUrl;
+        self->voiceplayer.myblock = ^{};
+        [self->voiceplayer playAudio:0];
+//        if (self->continuePlay) {
+//            self->voiceplayer.urlArray = self->voiceArray;
+//            self->voiceplayer.startIndex = id+1;
+//        }
+    };
+    
+    [MyThreadPool executeJob:playBlock Main:^{}];
 }
 
 -(void)popBack:(UITapGestureRecognizer*)sender{

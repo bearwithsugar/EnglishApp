@@ -10,6 +10,8 @@
 #import "../Functions/ConnectionFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../LearningViewController.h"
+#import "../Functions/DownloadAudioService.h"
+#import "../Functions/MyThreadPool.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -50,7 +52,7 @@
         [self unitMsgInit];
         //初始化数组
         _lessonArray=[[NSArray alloc]init];
-        _dataArray=[[NSArray alloc]init];
+        _dataArray=[[NSDictionary alloc]init];
         sentenceArray=[[NSArray alloc]init];
     
         UITableView* unitsList=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, 150, 397.24)];
@@ -160,7 +162,10 @@
         NSDictionary* lessonMsg=_lessonArray[indexPath.row];
         _className=[lessonMsg valueForKey:@"articleName"];
         
-        _showContentBlock([_dataArray valueForKey:@"bookPictures"],[_dataArray valueForKey:@"bookSentences"],[[[_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],_unitName,_className);
+        _showContentBlock([_dataArray valueForKey:@"bookPictures"],
+                          [_dataArray valueForKey:@"bookSentences"],
+                          [[[_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
+                          _unitName,_className);
     }
     
 }

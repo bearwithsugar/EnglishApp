@@ -373,7 +373,8 @@ CFReadStreamRef HTTP_Stream::createReadStream(CFURLRef url)
             }
         }
     }
-    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (!(readStream = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, request))) {
         goto out;
     }
@@ -392,6 +393,7 @@ CFReadStreamRef HTTP_Stream::createReadStream(CFURLRef url)
         CFRelease(proxySettings);
     }
     
+#pragma clang diagnostic pop
 out:
     if (request) {
         CFRelease(request);
@@ -425,10 +427,11 @@ void HTTP_Stream::parseHttpHeadersIfNeeded(const UInt8 *buf, const CFIndex bufSi
     }
     
     HS_TRACE("A regular HTTP stream\n");
-    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CFHTTPMessageRef response = (CFHTTPMessageRef)CFReadStreamCopyProperty(m_readStream, kCFStreamPropertyHTTPResponseHeader);
     CFIndex statusCode = 0;
-    
+    #pragma clang diagnostic pop
     if (response) {
         /*
          * If the server responded with the icy-metaint header, the response

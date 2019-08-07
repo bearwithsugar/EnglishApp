@@ -14,6 +14,7 @@
 #import "Functions/WarningWindow.h"
 #import "Common/LoadGif.h"
 #import "Common/HeadView.h"
+#import "Functions/ConnectionInstance.h"
 
 @interface MyShelfViewController (){
    // NSDictionary* shelf
@@ -24,6 +25,8 @@
     NSDictionary* shelfDic;
     //跳转单元的界面
     UnitViewController* unitMsg;
+    
+    NSMutableDictionary* processDic;
 }
 
 @end
@@ -63,6 +66,13 @@
 //            [loadGif removeFromSuperview];
 //        });
 //    });
+    if([DocuOperate fileExistInPath:@"process.plist"]){
+        NSDictionary* dic=[DocuOperate readFromPlist:@"process.plist"];
+        for (int i=0; i<[dic allKeys].count; i++) {
+            [processDic setValue:[dic valueForKey:[[dic allKeys]objectAtIndex:i]]
+                          forKey:[[dic allKeys]objectAtIndex:i]];
+        }
+    }
 }
 -(void)viewWillAppear:(BOOL)animated{
     bookArray=[shelfDic valueForKey:@"data"];
@@ -113,21 +123,37 @@
 }
 -(void)clickBook:(UIButton*)theBook{
     NSDictionary* dic=[bookArray objectAtIndex:theBook.tag];
-    [self pushToUnit:[[dic valueForKey:@"userBook"]valueForKey:@"bookId"]];
+    [self pushToUnit:[[dic valueForKey:@"userBook"]valueForKey:@"bookId"] Name:[dic valueForKey:@"bookName"]];
     
 }
 -(void)addBook{
-    [WarningWindow MsgWithoutTrans:@"请返回主页点击选择课本进行选课！"];
+    [self presentViewController:[WarningWindow MsgWithoutTrans:@"请返回主页点击选择课本进行选课！"]
+                       animated:YES
+                     completion:nil];
 }
 -(void)popBack{
     [self.navigationController popViewControllerAnimated:true];
 }
--(void)pushToUnit:(NSString*)bookid{
-    if (unitMsg==nil) {
-        unitMsg = [[UnitViewController alloc]init];
+
+-(void)pushToUnit:(NSString*)bookid Name:(NSString*)bookname{
+//    if (unitMsg==nil) {
+//        unitMsg = [[UnitViewController alloc]init];
+//    }
+    unitMsg = [[UnitViewController alloc]init];
+    
+    if(![self.navigationController.topViewController isKindOfClass:[unitMsg class]]) {
+        NSLog(@"被点击的书架的id是%@",bookid);
+        [processDic setValue:bookid forKey:@"picture"];
+        [DocuOperate replacePlist:@"process.plist" dictionary:processDic];
+        
+        unitMsg.bookId=bookid;
+        unitMsg.bookName=bookname;
+        ConnectionInstance* con = [[ConnectionInstance alloc]init];
+        unitMsg.recentLesson=[[[[con recentLearnMsgByBook:[userInfo valueForKey:@"userKey"] Id:bookid] valueForKey:@"data"] valueForKey:@"article"]valueForKey:@"articleName" ];
+        NSLog(@"点击书本的最新学习信息%@",unitMsg.recentLesson);
+        [self.navigationController pushViewController:unitMsg animated:true];
     }
-    unitMsg.bookId=bookid;
-    [self.navigationController pushViewController:unitMsg animated:true];
+
 }
 
 

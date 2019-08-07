@@ -84,24 +84,24 @@
     [self warnMsg:@"此功能暂未开放"];
     return;
 
-    NSLog(@"上传头像");
-    //创建图片选取器对象
-    UIImagePickerController * pickerViwController = [[UIImagePickerController alloc] init];
-    /*
-     图片来源
-     UIImagePickerControllerSourceTypePhotoLibrary：表示显示所有的照片
-     UIImagePickerControllerSourceTypeCamera：表示从摄像头选取照片
-     UIImagePickerControllerSourceTypeSavedPhotosAlbum：表示仅仅从相册中选取照片。
-     */
-    pickerViwController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    
-    //允许用户编辑图片 (YES可以编辑，NO只能选择照片)
-    pickerViwController.allowsEditing = YES;
-    
-    //设置代理
-    pickerViwController.delegate = self;
-    
-    [self presentViewController:pickerViwController animated:YES completion:nil];
+//    NSLog(@"上传头像");
+//    //创建图片选取器对象
+//    UIImagePickerController * pickerViwController = [[UIImagePickerController alloc] init];
+//    /*
+//     图片来源
+//     UIImagePickerControllerSourceTypePhotoLibrary：表示显示所有的照片
+//     UIImagePickerControllerSourceTypeCamera：表示从摄像头选取照片
+//     UIImagePickerControllerSourceTypeSavedPhotosAlbum：表示仅仅从相册中选取照片。
+//     */
+//    pickerViwController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+//
+//    //允许用户编辑图片 (YES可以编辑，NO只能选择照片)
+//    pickerViwController.allowsEditing = YES;
+//
+//    //设置代理
+//    pickerViwController.delegate = self;
+//
+//    [self presentViewController:pickerViwController animated:YES completion:nil];
 }
 #pragma mark <2>相册协议中方法，选中某张图片后调用方法
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
@@ -306,6 +306,11 @@
         NSLog(@"请安装微信");
         
     }
+}
+
+//点击背景收起键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的
 }
 
 

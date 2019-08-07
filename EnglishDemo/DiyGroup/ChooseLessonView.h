@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ChooseLessonView : UIView
 //每一课的教学信息
-@property(nonatomic,copy)NSArray* dataArray;
+@property(nonatomic,copy)NSDictionary* dataArray;
 @property(nonatomic,copy)NSString* unitName;
 @property(nonatomic,copy)NSString* className;
 @property(nonatomic,copy)NSString* bookId;
@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property NSInteger defaultUnit;
 
 typedef void (^ShowContentBlock) (NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname);
+
+typedef void (^JobBlock) (void);
 
 @property ShowContentBlock showContentBlock;
 

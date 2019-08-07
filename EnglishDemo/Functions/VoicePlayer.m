@@ -83,7 +83,7 @@
 }
 
 - (void) continuePlay{
-    if(_startIndex == _urlArray.count){
+    if(_startIndex == _urlArray.count || _urlArray == nil){
         return;
     }
     AVAudioSession *session = [AVAudioSession sharedInstance];

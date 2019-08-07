@@ -15,25 +15,22 @@
 
 @implementation AgentFunction
 
-
-
-
 //根据输入价格获取学分
 +(NSMutableDictionary*)getScore:(int)price{
     NSMutableDictionary* scoreDic=[[NSMutableDictionary alloc]init];
     [scoreDic removeAllObjects];
-    if (price<=5) {
+    if (price<5) {
         [scoreDic setValue:[NSString stringWithFormat:@"%d",price*100] forKey:@"score"];
-        [scoreDic setValue:[NSString stringWithFormat:@"%d",123456] forKey:@"strategy"];
-    }else if(price<=10&&price>5){
+        [scoreDic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"strategy"];
+    }else if(price<10&&price>=5){
         [scoreDic setValue:[NSString stringWithFormat:@"%d",price*120] forKey:@"score"];
-        [scoreDic setValue:[NSString stringWithFormat:@"%d",123457] forKey:@"strategy"];
-    }else if(price<20&&price>10){
+        [scoreDic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"strategy"];
+    }else if(price<20&&price>=10){
         [scoreDic setValue:[NSString stringWithFormat:@"%d",price*140] forKey:@"score"];
-        [scoreDic setValue:[NSString stringWithFormat:@"%d",123458] forKey:@"strategy"];
+        [scoreDic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"strategy"];
     }else{
         [scoreDic setValue:[NSString stringWithFormat:@"%d",price*160] forKey:@"score"];
-        [scoreDic setValue:[NSString stringWithFormat:@"%d",123459] forKey:@"strategy"];
+        [scoreDic setValue:[NSString stringWithFormat:@"%d",1] forKey:@"strategy"];
     }
      return scoreDic;
 }

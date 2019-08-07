@@ -401,14 +401,15 @@ typedef void(^WXLogBolock)(NSString * log);
  *
  */
 @interface WXOpenBusinessWebViewReq : BaseReq
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "Wconsumed"
 /** 网页业务类型
- * @attention
+ * @attention success description of param here removes warning
  */
 @property (nonatomic, assign) UInt32 businessType;
 
 /** 网页业务参数
- * @attention
+ * @attention success description of param here removes warning
  */
 @property (nonatomic, retain) NSDictionary *queryInfoDic;
 
@@ -428,6 +429,7 @@ typedef void(^WXLogBolock)(NSString * log);
 /** 网页业务类型
  * @attention
  */
+#pragma clang diagnostic pop
 @property (nonatomic, assign) UInt32 businessType;
 
 @end

@@ -1017,9 +1017,6 @@
 
 -(void)loadAudioMsg{
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        if (![DocuOperate fileExistInPath:@"audioFile"]) {
-            [DocuOperate createDir:[DocuOperate cacheDirectory] directoryName:@"audioFile"];
-        }
         if (self->sentenceArray != nil) {
             
             for (NSObject *object in self->sentenceArray) {
