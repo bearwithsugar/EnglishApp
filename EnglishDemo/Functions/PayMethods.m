@@ -8,8 +8,8 @@
 
 #import "PayMethods.h"
 #import <AlipaySDK/AlipaySDK.h>
-#import "../../WeChatSDK1.8.3/WXApiObject.h"
-#import "../../WeChatSDK1.8.3/WXApi.h"
+#import "../WeChatSDK/WeChatSDK1.8.3/WXApiObject.h"
+#import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 
 @implementation PayMethods
 +(void)toAlipay:(NSString*)order{

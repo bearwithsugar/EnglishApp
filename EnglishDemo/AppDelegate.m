@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import <AlipaySDK/AlipaySDK.h>
-#import "../WeChatSDK1.8.3/WXApi.h"
+#import "WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 #import "Functions/FixValues.h"
 #import "Functions/ConnectionFunction.h"
 #import "Functions/WarningWindow.h"

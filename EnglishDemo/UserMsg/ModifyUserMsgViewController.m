@@ -15,7 +15,7 @@
 #import "../Functions/DocuOperate.h"
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Common/HeadView.h"
-#import "../../WeChatSDK1.8.3/WXApi.h"
+#import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 
 @interface ModifyUserMsgViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>{
     NSDictionary* userInfo;
