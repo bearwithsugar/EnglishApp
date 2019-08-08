@@ -49,85 +49,118 @@
     [self addSubview:answerView];
 
     //创建数组
-    NSMutableArray *answerArray = [NSMutableArray array];
-    //随机数
-    rightAnswer = arc4random_uniform(4);
-
-    for (int i=0; i<4; i++) {
-        if (i==rightAnswer) {
+    NSMutableArray* answerArray = [NSMutableArray array];
+    NSMutableArray* allAnswerArray = [[NSMutableArray alloc]init];
+    
+    JobBlock myBlock = ^{
+        for (NSDictionary* dic in super.testArray) {
             if ([super.testType isEqualToString:@"word"]){
-                [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                [allAnswerArray addObject:[dic valueForKey:@"wordChn"]];
             }else if([super.testType isEqualToString:@"sentence"]){
-                [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                [allAnswerArray addObject:[dic valueForKey:@"sentenceChn"]];
             }else{
-                if (super.testFlag<super.wordNum) {
-                    [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                //因为这里是遍历，所以不能用wordflag来判断当前是不是单词或者句子
+                if([[dic valueForKey:@"bookWord"]valueForKey:@"wordChn"] == nil){
+                    [allAnswerArray addObject:[[dic valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
                 }else{
-                    [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                    [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
                 }
-               
+                
             }
-
-        }else{
-            [answerArray addObject:@"wrong"];
         }
-    }
 
-    answer1=[[UIButton alloc]initWithFrame:CGRectMake(0, 0, 132.47, 132.47)];
-    [answer1 setBackgroundColor:[UIColor whiteColor]];
-    [answer1 setTitle:[answerArray objectAtIndex:0] forState:UIControlStateNormal];
-    //下面两行代码用来控制多行显示
-    answer1.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [answer1 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [answer1 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    answer1.titleLabel.font=[UIFont systemFontOfSize:20];
-    answer1.tag=0;
+        //随机数
+        self->rightAnswer = arc4random_uniform(4);
+    
+        for (int i=0; i<4; i++) {
+            if (i==self->rightAnswer) {
+                if ([super.testType isEqualToString:@"word"]){
+                    [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                    [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                }else if([super.testType isEqualToString:@"sentence"]){
+                    [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                    [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                }else{
+                    if (super.testFlag<super.wordNum) {
+                        [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                        [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                    }else{
+                        [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                        [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                    }
+                    
+                }
+                
+            }else{
+                NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
+                [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
+                [allAnswerArray removeObjectAtIndex:randomNum];
+            }
+        }
+        
+    };
+    
+    JobBlock setAnswer =^{
+        self->answer1=[[UIButton alloc]initWithFrame:CGRectMake(0, 0, 132.47, 132.47)];
+        [self->answer1 setBackgroundColor:[UIColor whiteColor]];
+        [self->answer1 setTitle:[answerArray objectAtIndex:0] forState:UIControlStateNormal];
+        //下面两行代码用来控制多行显示
+        self->answer1.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        [self->answer1 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+        [self->answer1 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        self->answer1.titleLabel.font=[UIFont systemFontOfSize:20];
+        self->answer1.tag=0;
+        
+        [self->answer1 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+        [self->answer1 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
+        [answerView addSubview:self->answer1];
+        
+        self->answer2=[[UIButton alloc]initWithFrame:CGRectMake(175.53, 0, 132.47, 132.47)];
+        [self->answer2 setBackgroundColor:[UIColor whiteColor]];
+        [self->answer2 setTitle:[answerArray objectAtIndex:1] forState:UIControlStateNormal];
+        //下面两行代码用来控制多行显示
+        self->answer2.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        [self->answer2 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+        [self->answer2 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [self->answer2 setTitleColor:[UIColor whiteColor]forState:UIControlStateSelected];
+        self->answer2.titleLabel.font=[UIFont systemFontOfSize:20];
+        self->answer2.tag=1;
+        
+        [self->answer2 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
+        [answerView addSubview:self->answer2];
+        
+        self->answer3=[[UIButton alloc]initWithFrame:CGRectMake(0, 161.1, 132.47, 132.47)];
+        [self->answer3 setBackgroundColor:[UIColor whiteColor]];
+        [self->answer3 setTitle:[answerArray objectAtIndex:2] forState:UIControlStateNormal];
+        //下面两行代码用来控制多行显示
+        self->answer3.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        [self->answer3 setTitleEdgeInsets:UIEdgeInsetsMake(5, 5, 5, 5)];
+        [self->answer3 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [self->answer3 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+        self->answer3.titleLabel.font=[UIFont systemFontOfSize:20];
+        self->answer3.tag=2;
+        
+        [self->answer3 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
+        [answerView addSubview:self->answer3];
+        
+        self->answer4=[[UIButton alloc]initWithFrame:CGRectMake(175.52, 161.1, 132.47, 132.47)];
+        [self->answer4 setBackgroundColor:[UIColor whiteColor]];
+        [self->answer4 setTitle:[answerArray objectAtIndex:3] forState:UIControlStateNormal];
+        //下面两行代码用来控制多行显示
+        self->answer4.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        [self->answer4 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
+        [self->answer4 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [self->answer4 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
+        self->answer4.titleLabel.font=[UIFont systemFontOfSize:20];
+        self->answer4.tag=3;
+        
+        [self->answer4 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
+        [answerView addSubview:self->answer4];
+    };
+    
+    [MyThreadPool executeJob:myBlock Main:setAnswer];
 
-    [answer1 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    [answer1 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
-    [answerView addSubview:answer1];
 
-    answer2=[[UIButton alloc]initWithFrame:CGRectMake(175.53, 0, 132.47, 132.47)];
-    [answer2 setBackgroundColor:[UIColor whiteColor]];
-    [answer2 setTitle:[answerArray objectAtIndex:1] forState:UIControlStateNormal];
-    //下面两行代码用来控制多行显示
-    answer2.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [answer2 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [answer2 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [answer2 setTitleColor:[UIColor whiteColor]forState:UIControlStateSelected];
-    answer2.titleLabel.font=[UIFont systemFontOfSize:20];
-    answer2.tag=1;
-
-    [answer2 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
-    [answerView addSubview:answer2];
-
-    answer3=[[UIButton alloc]initWithFrame:CGRectMake(0, 161.1, 132.47, 132.47)];
-    [answer3 setBackgroundColor:[UIColor whiteColor]];
-    [answer3 setTitle:[answerArray objectAtIndex:2] forState:UIControlStateNormal];
-    //下面两行代码用来控制多行显示
-    answer3.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [answer3 setTitleEdgeInsets:UIEdgeInsetsMake(5, 5, 5, 5)];
-    [answer3 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [answer3 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    answer3.titleLabel.font=[UIFont systemFontOfSize:20];
-    answer3.tag=2;
-
-    [answer3 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
-    [answerView addSubview:answer3];
-
-    answer4=[[UIButton alloc]initWithFrame:CGRectMake(175.52, 161.1, 132.47, 132.47)];
-    [answer4 setBackgroundColor:[UIColor whiteColor]];
-    [answer4 setTitle:[answerArray objectAtIndex:3] forState:UIControlStateNormal];
-    //下面两行代码用来控制多行显示
-    answer4.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [answer4 setTitleEdgeInsets:UIEdgeInsetsMake(10, 10, 10, 10)];
-    [answer4 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [answer4 setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-    answer4.titleLabel.font=[UIFont systemFontOfSize:20];
-    answer4.tag=3;
-
-    [answer4 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
-    [answerView addSubview:answer4];
     
    
     

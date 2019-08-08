@@ -341,12 +341,12 @@
     //打开button父组件的人机交互
     [titleShow setUserInteractionEnabled:YES];
     
-    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(300, 15, 36, 35)];
+    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(365, 15, 36, 35)];
     [touchField setUserInteractionEnabled:YES];
     [titleShow addSubview:touchField];
     
     //用户button
-    UIButton* userPic=[[UIButton alloc]initWithFrame:CGRectMake(72, 5, 23, 25)];
+    UIButton* userPic=[[UIButton alloc]initWithFrame:CGRectMake(7, 5, 23, 25)];
     [userPic setBackgroundImage:[UIImage imageNamed:@"icon_people"] forState:UIControlStateNormal];
     [userPic setBackgroundImage:[UIImage imageNamed:@"icon_people"] forState:UIControlStateHighlighted];
     [userPic addTarget:self action:@selector(pushToUser) forControlEvents:UIControlEventTouchUpInside];

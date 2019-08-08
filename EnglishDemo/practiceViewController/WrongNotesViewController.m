@@ -111,9 +111,9 @@
     if (![DocuOperate fileExistInPath:@"wrongsDetails.plist"]) {
         NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",@"0",@"testFlag", nil];
         [DocuOperate writeIntoPlist:@"wrongsDetails.plist" dictionary:dic];
-    }else{
-        testDetails=[DocuOperate readFromPlist:@"wrongsDetails.plist"];
     }
+    testDetails=[DocuOperate readFromPlist:@"wrongsDetails.plist"];
+    
 }
 -(void)initData{
     userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];

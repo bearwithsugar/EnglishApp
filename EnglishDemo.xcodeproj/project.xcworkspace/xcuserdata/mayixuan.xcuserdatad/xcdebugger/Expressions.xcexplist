@@ -29,6 +29,28 @@
          contextName = "__38-[LearningViewController loadAudioMsg]_block_invoke:LearningViewController.m">
       </ContextState>
       <ContextState
+         contextName = "__28-[VoiceChooseChn answerView]_block_invoke:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testFlag">
+            </PersistentString>
+            <PersistentString
+               value = "super.wordNum">
+            </PersistentString>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[VoiceChooseChn answerView]:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[LearningViewController actionOfShowTranslation:]:LearningViewController.m">
          <PersistentStrings>
             <PersistentString

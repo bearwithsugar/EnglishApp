@@ -1023,7 +1023,7 @@
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AX2Q3ZSY4J;
+				DEVELOPMENT_TEAM = FF3W9T8H43;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1058,7 +1058,7 @@
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = AX2Q3ZSY4J;
+				DEVELOPMENT_TEAM = FF3W9T8H43;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
