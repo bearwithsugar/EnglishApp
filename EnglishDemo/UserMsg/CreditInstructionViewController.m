@@ -22,7 +22,7 @@
     [self textShow];
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"学分使用说明" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"学分使用说明" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)textShow{
     UITextView* textShow=[[UITextView alloc]initWithFrame:CGRectMake(22.08, 110.34, 369.83, 399.33)];

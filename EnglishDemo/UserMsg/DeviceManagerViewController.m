@@ -16,6 +16,7 @@
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Common/HeadView.h"
 #import "../Functions/FixValues.h"
+#import "Masonry.h"
 
 @interface DeviceManagerViewController (){
     NSDictionary* userInfo;
@@ -49,41 +50,71 @@
         [self dataInit];
         [self deviceShow];
     }else{
-        unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
+        unloginView=[[UnloginMsgView alloc]init];
         [self.view addSubview:unloginView];
+        
+        [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.top.equalTo(self.view).with.offset(88);
+            make.bottom.equalTo(self.view);
+        }];
     }
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"设备管理" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"设备管理" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)textShow{
-    UITextView* textShow=[[UITextView alloc]initWithFrame:CGRectMake(22.08, 110.34, 369.83, 399.33)];
+    UITextView* textShow=[[UITextView alloc]init];
     textShow.text=@"注意：同一账号最多可以在两台手机上使用，账户登录时默认绑定了当前设备，如需在第三台设备上使用，需要在本机上对当前设备进行解绑。";
     textShow.editable=false;
     textShow.textColor=ssRGBHex(0xF43530 );
     textShow.font=[UIFont systemFontOfSize:12];
     [self.view addSubview:textShow];
+    
+    [textShow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).with.offset(22);
+        make.right.equalTo(self.view).with.offset(-22);
+        make.top.equalTo(self.view).with.offset(110);
+        make.height.equalTo(@60);
+    }];
 }
 -(void)dataInit{
     deviceArray=[[ConnectionFunction deviceBinding:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];;
     NSLog(@"拿到的设备信息是%@",deviceArray);
 }
 -(void)deviceShow{
-    deviceShowView=[[UIView alloc]initWithFrame:CGRectMake(0, 174.34, 414, 400)];
+    deviceShowView=[[UIView alloc]init];
+    [self.view addSubview:deviceShowView];
+    
+    [deviceShowView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.top.equalTo(self.view).with.offset(174);
+        make.bottom.equalTo(self.view);
+    }];
     
     if (deviceArray.count==0) {
-        deviceLabel=[[UILabel alloc]initWithFrame:CGRectMake(40, 0, 414, 52.96)];
+        deviceLabel=[[UILabel alloc]init];
         deviceLabel.text=@"您尚未登录，请在登录后查看绑定设备！";
         deviceLabel.textColor=ssRGBHex(0x4A4A4A);
         deviceLabel.font=[UIFont systemFontOfSize:14];
         [deviceShowView addSubview:deviceLabel];
+        
+        [deviceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self->deviceShowView).with.offset(40);
+            make.right.equalTo(self->deviceShowView);
+            make.top.equalTo(self->deviceShowView);
+            make.height.equalTo(@53);
+        }];
+        
     }else{
         for (NSDictionary* device in deviceArray) {
             float y=0+52.96*[deviceArray indexOfObject:device];
-            deviceLabel=[[UILabel alloc]initWithFrame:CGRectMake(17.66, y, 414, 52.96)];
+            deviceLabel=[[UILabel alloc]init];
             [deviceLabel setUserInteractionEnabled:YES];
             NSString* deviceName=[device valueForKey:@"deviceName"];
-            UIButton* releaseBtn=[[UIButton alloc]initWithFrame:CGRectMake(303.60, 14.34, 70.65, 22.06)];
+            UIButton* releaseBtn=[[UIButton alloc]init];
             [releaseBtn setTitle:@"解绑" forState:UIControlStateNormal];
             releaseBtn.titleLabel.font=[UIFont systemFontOfSize:10];
             releaseBtn.layer.backgroundColor=ssRGBHex(0xFF7474 ).CGColor;
@@ -92,6 +123,14 @@
             releaseBtn.tag=[deviceArray indexOfObject:device];
             [releaseBtn addTarget:self action:@selector(releaseDevice:) forControlEvents:UIControlEventTouchUpInside];
             [deviceLabel addSubview:releaseBtn];
+            
+            [releaseBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.right.equalTo(self->deviceLabel).with.offset(-30);
+                make.top.equalTo(self->deviceLabel).with.offset(14);
+                make.width.equalTo(@70);
+                make.height.equalTo(@22);
+            }];
+            
             if ([[device valueForKey:@"deviceId"] isEqualToString:[FixValues getUniqueId]]) {
                 deviceName=[deviceName stringByAppendingString:@"(当前设备)"];
             }
@@ -100,10 +139,16 @@
             deviceLabel.font=[UIFont systemFontOfSize:14];
             [deviceShowView addSubview:deviceLabel];
             
+            [deviceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self->deviceShowView).with.offset(17);
+                make.right.equalTo(self->deviceShowView);
+                make.top.equalTo(self->deviceShowView).with.offset(y);
+                make.height.equalTo(@53);
+            }];
+            
             
         }
     }
-    [self.view addSubview:deviceShowView];
     
 }
 -(void)releaseDevice:(UIButton*)btn{

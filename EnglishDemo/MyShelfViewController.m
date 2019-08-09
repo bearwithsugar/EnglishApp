@@ -80,7 +80,7 @@
     
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"我的书架" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"我的书架" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 
 -(void)bookView{

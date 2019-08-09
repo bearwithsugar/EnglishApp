@@ -8,6 +8,7 @@
 
 #import "AboutSoftwareViewController.h"
 #import "../Common/HeadView.h"
+#import "Masonry.h"
 
 @interface AboutSoftwareViewController ()
 
@@ -22,7 +23,7 @@
     [self textShow];
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"关于本软件" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"关于本软件" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)textShow{
     UITextView* textShow=[[UITextView alloc]initWithFrame:CGRectMake(22.08, 110.34, 369.83, 399.33)];
@@ -31,6 +32,13 @@
     textShow.textColor=ssRGBHex(0x4A4A4A);
     textShow.font=[UIFont systemFontOfSize:14];
     [self.view addSubview:textShow];
+    
+    [textShow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).offset(110);
+        make.left.equalTo(self.view).offset(22);
+        make.right.equalTo(self.view).offset(-22);
+        make.bottom.equalTo(self.view);
+    }];
 }
 
 -(void)popBack{

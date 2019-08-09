@@ -12,6 +12,7 @@
 #import "../Functions/DocuOperate.h"
 #import "../Functions/WarningWindow.h"
 #import "../Common/HeadView.h"
+#import "Masonry.h"
 
 @interface OpinionViewController (){
     //意见
@@ -33,29 +34,44 @@
 }
 
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"意见和问题反馈" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"意见和问题反馈" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)contentView{
 //    UITextField* opinionText=[[UITextField alloc]initWithFrame:CGRectMake(28.70, 116.96, 353.27, 119.23)];
 //    opinionText.placeholder=@"请输入您的意见和问题，我们将及时给您回复！多谢您的支持！";
 //    [self.view addSubview:opinionText];
     
-    opinionText=[[UITextView alloc]initWithFrame:CGRectMake(28.70, 116.96, 353.27, 119.23)];
+    opinionText=[[UITextView alloc]init];
     [opinionText setContentInset:UIEdgeInsetsMake(5, 5, 5, 5)];
     //opinionText.placeholder=@"请输入您的意见和问题，我们将及时给您回复！多谢您的支持！";
     [self.view addSubview:opinionText];
+    
+    [opinionText mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).offset(117);
+        make.left.equalTo(self.view).offset(22);
+        make.right.equalTo(self.view).offset(-22);
+        make.bottom.equalTo(self.view).offset(-100);
+    }];
+    
     
     NSAttributedString* attributedString = [[NSAttributedString alloc] initWithString:@"请输入您的意见和问题，我们将及时给您回复！多谢您的支持！" attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14],NSForegroundColorAttributeName:[UIColor grayColor]}];
 
     ((void(*)(id,SEL,NSAttributedString *))objc_msgSend)(opinionText,NSSelectorFromString(@"setAttributedPlaceholder:"),attributedString);
     
     
-    UIButton* submitBtn=[[UIButton alloc]initWithFrame:CGRectMake(22.08, 262.62, 369.83, 44.13)];
+    UIButton* submitBtn=[[UIButton alloc]init];
     [submitBtn setTitle:@"提交" forState:UIControlStateNormal];
     [submitBtn setBackgroundColor:ssRGBHex(0xFF7474)];
     [submitBtn addTarget:self action:@selector(submitOpinion) forControlEvents:UIControlEventTouchUpInside];
     submitBtn.titleLabel.font=[UIFont systemFontOfSize:14];
     [self.view addSubview:submitBtn];
+    
+    [submitBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).offset(22);
+        make.right.equalTo(self.view).offset(-22);
+        make.bottom.equalTo(self.view).offset(-40);
+        make.height.equalTo(@40);
+    }];
 }
 
 -(void)submitOpinion{

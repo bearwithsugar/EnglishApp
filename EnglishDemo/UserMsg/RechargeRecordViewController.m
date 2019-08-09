@@ -12,6 +12,7 @@
 #import "../DiyGroup/OrderTableViewCell.h"
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Common/HeadView.h"
+#import "Masonry.h"
 
 @interface RechargeRecordViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -52,13 +53,20 @@
 }
 
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"充值记录" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"充值记录" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)rechargeMsg{
-    UITableView* rechargeMsg=[[UITableView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647.72)];
+    UITableView* rechargeMsg=[[UITableView alloc]init];
     rechargeMsg.dataSource=self;
     rechargeMsg.delegate=self;
     [self.view addSubview:rechargeMsg];
+    
+    [rechargeMsg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.top.equalTo(self.view).with.offset(88);
+        make.bottom.equalTo(self.view);
+    }];
     
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{

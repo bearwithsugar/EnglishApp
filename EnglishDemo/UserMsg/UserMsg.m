@@ -23,6 +23,7 @@
 #import "../Functions/QQLogin.h"
 #import "../Functions/AgentFunction.h"
 #import "ModifyUserMsgViewController.h"
+#import "Masonry.h"
 
 
 @interface UserMsg ()<UITableViewDelegate,UITableViewDataSource>
@@ -89,7 +90,7 @@
     
 }
 -(void)userTitle{
-    UILabel* userTitle=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.06, 414, 66.2)];
+    UILabel* userTitle=[[UILabel alloc]init];
     userTitle.text=@"个人中心";
     userTitle.textColor=ssRGBHex(0xFF7474);
     userTitle.font=[UIFont systemFontOfSize:18];
@@ -98,33 +99,69 @@
     [userTitle setUserInteractionEnabled:YES];
     [self.view addSubview:userTitle];
     
-    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(10, 20,30, 30)];
+    UILabel* touchField=[[UILabel alloc]init];
     [touchField setUserInteractionEnabled:YES];
     [userTitle addSubview:touchField];
     
-    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
+    [touchField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(userTitle).with.offset(20);
+        make.left.equalTo(userTitle).with.offset(10);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
+    }];
+    
+    UIButton* returnBtn=[[UIButton alloc]init];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ff7474"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ff7474"] forState:UIControlStateHighlighted];
     [returnBtn addTarget:self action:@selector(popForTag:) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
+    [returnBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(touchField).with.offset(2);
+        make.left.equalTo(touchField).with.offset(5.5);
+        make.width.equalTo(@10.7);
+        make.height.equalTo(@22.6);
+    }];
+    
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popForTag:)];
     [touchField addGestureRecognizer:touchFunc];
 
+    [userTitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(22);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@66);
+    }];
     
 }
 -(void)headPicView{
     [headPicView removeFromSuperview];
-    headPicView=[[UIView alloc]initWithFrame:CGRectMake(0, 88.26, 414, 143.44)];
+    headPicView=[[UIView alloc]init];
     headPicView.backgroundColor=ssRGBHex(0xFF7474);
     [self.view addSubview:headPicView];
     
-    UIImageView* headPic=[[UIImageView alloc]initWithFrame:CGRectMake(22.08, 38.62, 66.20, 66.20)];
-    headPic.layer.cornerRadius=headPic.frame.size.width / 2;
+    [headPicView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(88);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@143);
+    }];
+    
+    UIImageView* headPic=[[UIImageView alloc]init];
+    headPic.layer.cornerRadius=33;
     //把多余部分去掉
     headPic.layer.masksToBounds = YES;
     headPic.image=[UIImage imageNamed:@"icon_head"];
-
+    
+    [headPicView addSubview:headPic];
+    
+    [headPic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->headPicView).with.offset(40);
+        make.left.equalTo(self->headPicView).with.offset(22);
+        make.width.equalTo(@66);
+        make.height.equalTo(@66);
+    }];
+    
     if (userInfo!=nil) {
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             // 处理耗时操作的代码块...
@@ -142,37 +179,64 @@
             });
         });
     }
-    [headPicView addSubview:headPic];
     
     if (userInfo==nil) {
-        UILabel* loginAndRegister=[[UILabel alloc]initWithFrame:CGRectMake(110.40, 55.17, 87.21, 32.01)];
+        UILabel* loginAndRegister=[[UILabel alloc]init];
         loginAndRegister.text=@"登录/注册";
         loginAndRegister.textColor=[UIColor whiteColor];
         loginAndRegister.font=[UIFont systemFontOfSize:18];
         [headPicView addSubview:loginAndRegister];
         
+        [loginAndRegister mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->headPicView).with.offset(55);
+            make.left.equalTo(self->headPicView).with.offset(110);
+            make.width.equalTo(@87);
+            make.height.equalTo(@32);
+        }];
+        
         UITapGestureRecognizer* clickLogin=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pushToLogin)];
         [headPicView addGestureRecognizer:clickLogin];
     }else{
-        UILabel* usernameLabel=[[UILabel alloc]initWithFrame:CGRectMake(110.4, 39.72, 130, 27.58)];
+        UILabel* usernameLabel=[[UILabel alloc]init];
         usernameLabel.text=[userInfo valueForKey:@"nickname"];
         usernameLabel.font=[UIFont systemFontOfSize:18];
         usernameLabel.textColor=[UIColor whiteColor];
         [headPicView addSubview:usernameLabel];
         
-        UILabel* phoneLabel=[[UILabel alloc]initWithFrame:CGRectMake(110.4, 77.24, 130, 19.86)];
+        [usernameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->headPicView).with.offset(40);
+            make.left.equalTo(self->headPicView).with.offset(110);
+            make.width.equalTo(@130);
+            make.height.equalTo(@27.58);
+        }];
+        
+        UILabel* phoneLabel=[[UILabel alloc]init];
         phoneLabel.text=[userInfo valueForKey:@"phone"];
         phoneLabel.font=[UIFont systemFontOfSize:13];
         phoneLabel.textColor=[UIColor whiteColor];
         [headPicView addSubview:phoneLabel];
         
-        UIButton* modifyUserMsg=[[UIButton alloc]initWithFrame:CGRectMake(308, 40, 88.32, 24)];
+        [phoneLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->headPicView).with.offset(77.24);
+            make.left.equalTo(self->headPicView).with.offset(110);
+            make.width.equalTo(@130);
+            make.height.equalTo(@20);
+        }];
+        
+        UIButton* modifyUserMsg=[[UIButton alloc]init];
         [modifyUserMsg setTitle:@"修改个人信息" forState:UIControlStateNormal];
         modifyUserMsg.titleLabel.font=[UIFont systemFontOfSize:12];
         [modifyUserMsg addTarget:self action:@selector(modifyUser) forControlEvents:UIControlEventTouchUpInside];
         [headPicView addSubview:modifyUserMsg];
         
-        UIButton* loginOut=[[UIButton alloc]initWithFrame:CGRectMake(308, 70, 88.32, 24)];
+        [modifyUserMsg mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->headPicView).with.offset(40);
+            make.right.equalTo(self->headPicView).with.offset(-15);
+            make.width.equalTo(@88.32);
+            make.height.equalTo(@24);
+        }];
+        
+        UIButton* loginOut=[[UIButton alloc]init];
         [loginOut setTitle:@"退出登录" forState:UIControlStateNormal];
         loginOut.titleLabel.font=[UIFont systemFontOfSize:12];
         loginOut.backgroundColor=ssRGBHex(0xFF7474);
@@ -181,6 +245,13 @@
         loginOut.layer.borderWidth=1;
         [loginOut addTarget:self action:@selector(loginOut) forControlEvents:UIControlEventTouchUpInside];
         [headPicView addSubview:loginOut];
+        
+        [loginOut mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->headPicView).with.offset(70);
+            make.right.equalTo(self->headPicView).with.offset(-15);
+            make.width.equalTo(@88.32);
+            make.height.equalTo(@24);
+        }];
     }
     
 }
@@ -189,11 +260,17 @@
 }
 
 -(void)userMsg{
-    userMsg=[[UITableView alloc]initWithFrame:CGRectMake(0, 244.96, 414, 504.27)];
+    userMsg=[[UITableView alloc]init];
     userMsg.dataSource=self;
     userMsg.delegate=self;
     [self.view addSubview:userMsg];
     
+    [userMsg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(240);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view);
+    }];
     //NSMutableArray* msgArray=[[NSMutableArray alloc]init];
     
 }

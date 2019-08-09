@@ -7,6 +7,8 @@
 //
 
 #import "HeadView.h"
+#import "Masonry.h"
+#import "Masonry.h"
 @interface HeadView(){
 
 }
@@ -15,20 +17,12 @@
 @implementation HeadView
 
 static UINavigationController* navigation;
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
-
-+(UIView*)titleShow:(NSString*)title Color:(UIColor*)color Located:(CGRect)cgrect UINavigationController: (UINavigationController*) navigationController{
++(void)titleShow:(NSString*)title Color:(UIColor*)color UIView:(UIView*)view UINavigationController: (UINavigationController*) navigationController{
     
     navigation=navigationController;
     
-    UILabel* titleView=[[UILabel alloc]initWithFrame:cgrect];
+    UILabel* titleView=[[UILabel alloc]init];
     titleView.text=title;
     titleView.textColor=[UIColor whiteColor];
     titleView.backgroundColor=color;
@@ -37,20 +31,41 @@ static UINavigationController* navigation;
     titleView.clipsToBounds = YES;
     [titleView setUserInteractionEnabled:YES];
     
-    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(5, 15,35, 35)];
+    UILabel* touchField=[[UILabel alloc]init];
     [touchField setUserInteractionEnabled:YES];
     [titleView addSubview:touchField];
     
-    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(10.45, 7.06, 10.7, 22.62)];
+    [touchField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(titleView).with.offset(5);
+        make.top.equalTo(titleView).with.offset(15);
+        make.width.equalTo(@35);
+        make.height.equalTo(@35);
+    }];
+    
+    UIButton* returnBtn=[[UIButton alloc]init];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
     [returnBtn addTarget:self action:@selector(popBack:) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
+    [returnBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(touchField).with.offset(10.45);
+        make.top.equalTo(touchField).with.offset(7);
+        make.width.equalTo(@10.7);
+        make.height.equalTo(@22.6);
+    }];
+    
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
     [touchField addGestureRecognizer:touchFunc];
     
-    return titleView;
+    [view addSubview:titleView];
+    
+    [titleView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(view);
+        make.right.equalTo(view);
+        make.top.equalTo(view).with.offset(20);
+        make.height.equalTo(@60);
+    }];
     
 }
 +(void)popBack:(UITapGestureRecognizer*)sender{

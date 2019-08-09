@@ -29,7 +29,7 @@
     [self someButoon];
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"输入密码" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"输入密码" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)inputArea{
     UILabel* usernameLabel=[[UILabel alloc]initWithFrame:CGRectMake(47.47, 165.51, 80.59, 22.06)];

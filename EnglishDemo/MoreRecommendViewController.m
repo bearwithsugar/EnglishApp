@@ -24,7 +24,7 @@
     [self contentShow];
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"更多软件推荐" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"更多软件推荐" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)contentShow{
     for (int i=0; i<1; i++) {

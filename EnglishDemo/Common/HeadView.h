@@ -10,10 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface HeadView : UIView
+@interface HeadView : NSObject
 
-+(UIView*)titleShow:(NSString*)title Color:(UIColor*)color Located:(CGRect)cgrect UINavigationController: (UINavigationController*) navigationController;
-
++(void)titleShow:(NSString*)title Color:(UIColor*)color UIView:(UIView*)view UINavigationController: (UINavigationController*) navigationController;
 @end
 
 NS_ASSUME_NONNULL_END

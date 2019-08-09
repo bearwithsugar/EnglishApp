@@ -90,7 +90,7 @@
     NSLog(@"显示单元进度数组%@",unitProcessArray);
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:_bookName Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:_bookName Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)progressView{
     UIView* progressView=[[UIView alloc]initWithFrame:CGRectMake(0, 88.26, 414, 44.13)];

@@ -14,6 +14,7 @@
 #import "../Functions/AgentFunction.h"
 #import "../Functions/WarningWindow.h"
 #import "../Common/HeadView.h"
+#import "Masonry.h"
 
 //#ifdef DEBUG
 //#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
@@ -56,34 +57,56 @@
     //[self chooseSet:[strategiesDic valueForKey:@"data"]];
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"学分充值" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"学分充值" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)inputMoney{
-    UILabel* inputMoneyLable=[[UILabel alloc]initWithFrame:CGRectMake(22.08, 126.89, 77.27, 22.08)];
+    UILabel* inputMoneyLable=[[UILabel alloc]init];
     inputMoneyLable.text=@"输入金额：";
     inputMoneyLable.font=[UIFont systemFontOfSize:14];
     inputMoneyLable.textColor=ssRGBHex(0x4A4A4A);
     [self.view addSubview:inputMoneyLable];
     
-    UITextField* inputMoneyField=[[UITextField alloc]initWithFrame:CGRectMake(113.71, 128, 298, 22.06)];
+    [inputMoneyLable mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).with.offset(20);
+        make.top.equalTo(self.view).with.offset(127);
+        make.height.equalTo(@22);
+        make.width.equalTo(@77);
+    }];
+    
+    UITextField* inputMoneyField=[[UITextField alloc]init];
     inputMoneyField.backgroundColor=ssRGBHex(0xFCF8F7);
     inputMoneyField.placeholder=@"请输入金额";
     [inputMoneyField setValue:[UIFont boldSystemFontOfSize:14] forKeyPath:@"_placeholderLabel.font"];
     [inputMoneyField addTarget:self action:@selector(changedTextField:) forControlEvents:UIControlEventEditingChanged];
     [self.view addSubview:inputMoneyField];
+    
+    [inputMoneyField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(127);
+        make.left.equalTo(inputMoneyLable.mas_right).offset(10);
+        make.height.equalTo(@25);
+        make.right.equalTo(self.view).offset(-20);
+    }];
+    
+    moneyTip=[[UILabel alloc]init];
+    moneyTip.textColor=ssRGBHex(0xFF7474);
+    moneyTip.font=[UIFont systemFontOfSize:12];
+    [self.view addSubview:moneyTip];
+    
+    [moneyTip mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(inputMoneyField);
+        make.top.equalTo(inputMoneyField.mas_bottom).offset(12);
+        make.width.equalTo(@200);
+    }];
+    
+    
 
 }
 -(void)addScoreTip{
-    [moneyTip removeFromSuperview];
-    moneyTip=[[UILabel alloc]initWithFrame:CGRectMake(104.87, 163.31, 200, 18.75)];
     NSString* moneyAndScore=[NSString stringWithFormat:@"%d",money];
     moneyAndScore=[moneyAndScore stringByAppendingString:@"元 = "];
     moneyAndScore=[moneyAndScore stringByAppendingString:[NSString stringWithFormat:@"%d",score]];
     moneyAndScore=[moneyAndScore stringByAppendingString:@"学分"];
     moneyTip.text=moneyAndScore;
-    moneyTip.textColor=ssRGBHex(0xFF7474);
-    moneyTip.font=[UIFont systemFontOfSize:12];
-    [self.view addSubview:moneyTip];
 }
 
 -(void)changedTextField:(UITextField*)textField
@@ -115,12 +138,19 @@
 //    }
 //}
 -(void)stategyView{
-    UITextView* strategiesState=[[UITextView alloc]initWithFrame:CGRectMake(30, 200, 354, 250)];
+    UITextView* strategiesState=[[UITextView alloc]init];
     strategiesState.text=@"根据充值金额的大小赠送相应数量的学分，具体规则如下：\n \n1、金额 < 5元，不赠送学分，学分=金额*100；\n \n2、5元<=金额<10元，赠送0.2倍学分，学分=金额*1.2*100；\n \n3、10元<=金额<20元，赠送0.4倍学分，学分=金额*1.4*100；\n \n4、20元<=金额，赠送0.6倍学分，学分=金额*1.6*100";
     strategiesState.font=[UIFont systemFontOfSize:14];
     strategiesState.textColor=ssRGBHex(0x4A4A4A);
     strategiesState.editable=false;
     [self.view addSubview:strategiesState];
+    
+    [strategiesState mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).offset(30);
+        make.top.equalTo(self.view).offset(200);
+        make.right.equalTo(@-30);
+        make.bottom.equalTo(self.view).offset(-200);
+    }];
 }
 -(void)payBtn{
     UIButton* weixinBtn=[[UIButton alloc]initWithFrame:CGRectMake(52.99, 505.37, 309.11, 52.96)];
@@ -133,25 +163,51 @@
     [weixinBtn addTarget:self action:@selector(WeChatpay) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:weixinBtn];
     
-    UIImageView* weixinPic=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 13.24, 27.6, 27.6)];
+    [weixinBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).offset(50);
+        make.height.equalTo(@50);
+        make.right.equalTo(@-50);
+        make.bottom.equalTo(self.view).offset(-150);
+    }];
+    
+    UIImageView* weixinPic=[[UIImageView alloc]init];
     weixinPic.image=[UIImage imageNamed:@"icon_weixinzhifu"];
     [weixinBtn addSubview:weixinPic];
     
-    UIButton* zhifubaoBtn=[[UIButton alloc]initWithFrame:CGRectMake(52.99, 573.79, 309.11, 52.96)];
+    [weixinPic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(weixinBtn).offset(11);
+        make.height.equalTo(@28);
+        make.width.equalTo(@28);
+        make.top.equalTo(weixinBtn).offset(11);
+    }];
+    
+    UIButton* zhifubaoBtn=[[UIButton alloc]init];
     [zhifubaoBtn setTitle:@"支付宝支付" forState:UIControlStateNormal];
     zhifubaoBtn.titleLabel.font=[UIFont systemFontOfSize:14];
     [zhifubaoBtn setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
     zhifubaoBtn.backgroundColor=[UIColor whiteColor];
     [zhifubaoBtn addTarget:self action:@selector(Alipay) forControlEvents:UIControlEventTouchUpInside];
-
     zhifubaoBtn.layer.borderColor=ssRGBHex(0x9B9B9B).CGColor;
     zhifubaoBtn.layer.borderWidth=1;
     [self.view addSubview:zhifubaoBtn];
     
-    UIImageView* zhifubaoPic=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 13.24, 27.6, 27.6)];
+    [zhifubaoBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).offset(50);
+        make.height.equalTo(@50);
+        make.right.equalTo(@-50);
+        make.top.equalTo(weixinBtn.mas_bottom).offset(20);
+    }];
+    
+    UIImageView* zhifubaoPic=[[UIImageView alloc]init];
     zhifubaoPic.image=[UIImage imageNamed:@"icon_zhifubaozhifu"];
     [zhifubaoBtn addSubview:zhifubaoPic];
     
+    [zhifubaoPic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(zhifubaoBtn).offset(11);
+        make.height.equalTo(@28);
+        make.width.equalTo(@28);
+        make.top.equalTo(zhifubaoBtn).offset(11);
+    }];
     
 }
 -(void)wasClicked:(UIButton*)btn{

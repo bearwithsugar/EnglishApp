@@ -29,7 +29,7 @@
     [self someButoon];
 }
 -(void)titleShow{
-    [self.view addSubview:[HeadView titleShow:@"手机验证" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"手机验证" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)inputArea{
     UILabel* phonenumberLabel=[[UILabel alloc]initWithFrame:CGRectMake(66.23, 177.65, 61.82, 22.06)];

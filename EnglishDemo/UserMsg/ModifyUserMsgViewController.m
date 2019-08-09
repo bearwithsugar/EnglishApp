@@ -16,6 +16,8 @@
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Common/HeadView.h"
 #import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
+#import "Masonry.h"
+#import "../Functions/WarningWindow.h"
 
 @interface ModifyUserMsgViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>{
     NSDictionary* userInfo;
@@ -23,6 +25,7 @@
     UITextField* phoneTextField;
     UIImageView* headPic;
     NSDictionary* binding;
+    UIView* surfaceView;
     
 }
 
@@ -34,25 +37,43 @@
     [super viewDidLoad];
     self.view.backgroundColor=[UIColor whiteColor];
     [self titleView];
+    
+    
 
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+        [surfaceView removeFromSuperview];
+        surfaceView = [UIView new];
+        [self.view addSubview:surfaceView];
+        [surfaceView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).offset(50);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
         [self headPicView];
         [self detailMsg];
         [self defineBtn];
     }else{
-        UnloginMsgView* unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
+        UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
         [self.view addSubview:unloginView];
+        [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.view);
+            make.top.equalTo(self.view).with.offset(88.27);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
     }
     
 }
 -(void)titleView{
-    [self.view addSubview:[HeadView titleShow:@"个人信息" Color:ssRGBHex(0xFF7474) Located:CGRectMake(0, 22.06, 414, 66.2) UINavigationController:self.navigationController]];
+    [HeadView titleShow:@"个人信息" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)headPicView{
-    headPic=[[UIImageView alloc]initWithFrame:CGRectMake(152, 140, 110, 110)];
+    
+    headPic=[[UIImageView alloc]init];
     headPic.image=[UIImage imageNamed:@"icon_head"];
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         UIImage* headpic=[LocalDataOperation getImage:[self->userInfo valueForKey:@"userKey"]
@@ -64,20 +85,34 @@
             }
         });
     });
-    headPic.layer.cornerRadius=headPic.frame.size.width / 2;
+    headPic.layer.cornerRadius=55;
     //把多余部分去掉
     headPic.layer.masksToBounds = YES;
-    [self.view addSubview:headPic];
+    [surfaceView addSubview:headPic];
     
-    UIButton* pushHeadBtn=[[UIButton alloc]initWithFrame:CGRectMake(152, 140, 110, 110)];
-    pushHeadBtn.layer.cornerRadius=pushHeadBtn.frame.size.width / 2;
+    [headPic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(90);
+        make.height.equalTo(@110);
+        make.width.equalTo(@110);
+        make.centerX.equalTo(self->surfaceView);
+    }];
+    
+    UIButton* pushHeadBtn=[[UIButton alloc]init];
+    pushHeadBtn.layer.cornerRadius=55;
     //把多余部分去掉
     pushHeadBtn.layer.masksToBounds = YES;
     [pushHeadBtn setTitle:@"点击上传" forState:UIControlStateNormal];
     UIImage* backImg=[BackgroundImageWithColor imageWithColor:[UIColor blackColor]];
     [pushHeadBtn setBackgroundImage:[BackgroundImageWithColor imageByApplyingAlpha:0.5 image:backImg] forState:UIControlStateNormal];
     [pushHeadBtn addTarget:self action:@selector(pushTheHeadPic) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:pushHeadBtn];
+    [surfaceView addSubview:pushHeadBtn];
+    
+    [pushHeadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(90);
+        make.height.equalTo(@110);
+        make.width.equalTo(@110);
+        make.centerX.equalTo(self->surfaceView.mas_centerX);
+    }];
 }
 -(void)pushTheHeadPic{
     
@@ -177,72 +212,81 @@
 
 
 -(void)detailMsg{
-    UILabel* nicknameLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 300, 80, 49)];
+    UILabel* nicknameLabel=[[UILabel alloc]init];
     nicknameLabel.text=@"昵称：";
     nicknameLabel.font=[UIFont systemFontOfSize:14];
     nicknameLabel.textAlignment=NSTextAlignmentCenter;
-    [self.view addSubview:nicknameLabel];
+    [surfaceView addSubview:nicknameLabel];
     
-    nicknameTextField=[[UITextField alloc]initWithFrame:CGRectMake(140, 300, 200, 49)];
+    [nicknameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(250);
+        make.height.equalTo(@49);
+        make.width.equalTo(@80);
+        make.left.equalTo(self->surfaceView).offset(50);
+    }];
+    
+    nicknameTextField=[[UITextField alloc]initWithFrame:CGRectMake(140, 250, 200, 49)];
     nicknameTextField.text=[userInfo valueForKey:@"nickname"];
     nicknameTextField.font=[UIFont systemFontOfSize:14];
-    [self.view addSubview:nicknameTextField];
+    [surfaceView addSubview:nicknameTextField];
     
     //中部横线
-    UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(0, 349, 414, 1)];
+    UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(0, 299, 414, 1)];
     lineView.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView.layer.borderWidth=1;
-    [self.view addSubview:lineView];
+    [surfaceView addSubview:lineView];
     
-    UILabel* phoneLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 350, 80, 49)];
+    UILabel* phoneLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 300, 80, 49)];
     phoneLabel.text=@"电话号码：";
     phoneLabel.font=[UIFont systemFontOfSize:14];
-    [self.view addSubview:phoneLabel];
+    [surfaceView addSubview:phoneLabel];
     
-    phoneTextField=[[UITextField alloc]initWithFrame:CGRectMake(140, 350, 200, 49)];
+    phoneTextField=[[UITextField alloc]initWithFrame:CGRectMake(140, 300, 200, 49)];
     phoneTextField.font=[UIFont systemFontOfSize:14];
     phoneTextField.text=[userInfo valueForKey:@"phone"];;
-    [self.view addSubview:phoneTextField];
+    [surfaceView addSubview:phoneTextField];
     
     //中部横线
-    UIView* lineView2=[[UIView alloc]initWithFrame:CGRectMake(0, 399, 414, 1)];
+    UIView* lineView2=[[UIView alloc]initWithFrame:CGRectMake(0, 349, 414, 1)];
     lineView2.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView2.layer.borderWidth=1;
-    [self.view addSubview:lineView2];
+    [surfaceView addSubview:lineView2];
     
-    UILabel* wechatLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 400, 80, 49)];
+    UILabel* wechatLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 350, 80, 49)];
     wechatLabel.text=@"微信绑定：";
     wechatLabel.font=[UIFont systemFontOfSize:14];
-    [self.view addSubview:wechatLabel];
+    [surfaceView addSubview:wechatLabel];
     
-    UIButton* wechatBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
+    UIButton* wechatBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 350, 100, 49)];
+    [wechatBond removeFromSuperview];
     wechatBond.titleLabel.font=[UIFont systemFontOfSize:14];
     [wechatBond setTitle:@"未绑定" forState:UIControlStateNormal];
     [wechatBond setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
-    [self.view addSubview:wechatBond];
+    [surfaceView addSubview:wechatBond];
     
     //中部横线
-    UIView* lineView3=[[UIView alloc]initWithFrame:CGRectMake(0, 449, 414, 1)];
+    UIView* lineView3=[[UIView alloc]initWithFrame:CGRectMake(0, 399, 414, 1)];
     lineView3.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView3.layer.borderWidth=1;
-    [self.view addSubview:lineView3];
+    [surfaceView addSubview:lineView3];
     
-    UILabel* qqLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 450, 80, 49)];
+    UILabel* qqLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 400, 80, 49)];
     qqLabel.text=@"QQ绑定：";
     qqLabel.font=[UIFont systemFontOfSize:14];
-    [self.view addSubview:qqLabel];
+    [surfaceView addSubview:qqLabel];
     
-    UIButton* QQBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 450, 100, 49)];
+    UIButton* QQBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
+    [QQBond removeFromSuperview];
     [QQBond setTitle:@"未绑定" forState:UIControlStateNormal];
     QQBond.titleLabel.font=[UIFont systemFontOfSize:14];
     [QQBond setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
-    [self.view addSubview:QQBond];
+    [surfaceView addSubview:QQBond];
     
     //中部横线
-    UIView* lineView4=[[UIView alloc]initWithFrame:CGRectMake(0, 499, 414, 1)];
+    UIView* lineView4=[[UIView alloc]initWithFrame:CGRectMake(0, 449, 414, 1)];
     lineView4.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView4.layer.borderWidth=1;
-    [self.view addSubview:lineView4];
+    [surfaceView addSubview:lineView4];
     
     binding = [[ConnectionFunction getBindingMsg:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
     if(binding != NULL){
@@ -260,17 +304,32 @@
 
 }
 -(void)defineBtn{
-    UIButton* toModify=[[UIButton alloc]initWithFrame:CGRectMake(20, 530, 374, 40)];
+    UIButton* toModify=[[UIButton alloc]init];
     [toModify setTitle:@"保存" forState:UIControlStateNormal];
     toModify.titleLabel.font=[UIFont systemFontOfSize:14];
     toModify.backgroundColor=ssRGBHex(0xFF7474);
     [toModify addTarget:self action:@selector(modifyUserMsg) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:toModify];
+    
+    [toModify mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).offset(20);
+        make.right.equalTo(self.view).offset(-20);
+        make.height.equalTo(@40);
+        make.bottom.equalTo(self.view).offset(-20);
+        
+    }];
 }
 
 -(void)modifyUserMsg{
     NSString* nickname=nicknameTextField.text;
     NSString* phone=phoneTextField.text;
+    NSLog(@"userInfo%@",userInfo);
+    if([[userInfo valueForKey:@"password"]isEqualToString:@""]){
+        [self presentViewController:[WarningWindow MsgWithoutTrans:@"第三方账号无法修改个人信息！"]
+                           animated:YES
+                         completion:nil];
+        return;
+    }
     NSDictionary* dataDic=[ConnectionFunction modifyUserMsg:nickname UserKey:[userInfo valueForKey:@"userKey"] Phone:phone Password:[userInfo valueForKey:@"password"]];
     NSLog(@"修改用户信息返回的数据%@",dataDic);
     //删除用户信息文件
