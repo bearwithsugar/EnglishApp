@@ -581,7 +581,7 @@
 +(void)WXtoLogin:(NSDictionary*)userMsg{
     NSDictionary* wxLogDic=[self OtherLogin:[userMsg valueForKey:@"openid"]
                                    Nickname:[userMsg valueForKey:@"nickname"]
-                                   DeviceId:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
+                                   DeviceId:[FixValues getUniqueId]
                                  DeviceName:[[UIDevice currentDevice] name]
                                        Type:@"WEIXIN"
                                         Pic:[userMsg valueForKey:@"headimgurl"]];

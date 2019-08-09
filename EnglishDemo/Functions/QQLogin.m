@@ -57,7 +57,7 @@
 -(void)qqLoginReturnMsg{
     NSDictionary* qqLoginDic=[ConnectionFunction OtherLogin:_tencentOAuth.openId
                                                    Nickname:[userMsg valueForKey:@"nickname"]
-                                                   DeviceId:[[[UIDevice currentDevice] identifierForVendor] UUIDString]
+                                                   DeviceId:[FixValues getUniqueId]
                                                  DeviceName:[[UIDevice currentDevice] name]
                                                        Type:@"QQ"
                                                         Pic:[userMsg valueForKey:@"figureurl_2"]];

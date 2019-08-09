@@ -15,6 +15,7 @@
 #import "../Functions/DocuOperate.h"
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Common/HeadView.h"
+#import "../Functions/FixValues.h"
 
 @interface DeviceManagerViewController (){
     NSDictionary* userInfo;
@@ -91,7 +92,7 @@
             releaseBtn.tag=[deviceArray indexOfObject:device];
             [releaseBtn addTarget:self action:@selector(releaseDevice:) forControlEvents:UIControlEventTouchUpInside];
             [deviceLabel addSubview:releaseBtn];
-            if ([[device valueForKey:@"deviceId"] isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
+            if ([[device valueForKey:@"deviceId"] isEqualToString:[FixValues getUniqueId]]) {
                 deviceName=[deviceName stringByAppendingString:@"(当前设备)"];
             }
             deviceLabel.text=deviceName;
