@@ -11,7 +11,7 @@
 #import "../../Functions/VoicePlayer.h"
 #import "../../Functions/MyThreadPool.h"
 #import "../../Functions/DownloadAudioService.h"
-
+#import "Masonry.h"
 
 @implementation EngChooseChi{
     //正确答案所在的位置
@@ -21,18 +21,26 @@
     UIButton* answer3;
     UIButton* answer4;
     
+    UIView* questionPanel;
+    
     //播放音频所需
     VoicePlayer* voiceplayer;
 }
 
 //问题界面
 -(void)questionView{
-    UIView* questionPanel;
-    questionPanel=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 414, 187.58)];
+    questionPanel=[[UIView alloc]init];
     questionPanel.backgroundColor=[UIColor whiteColor];
     [self addSubview:questionPanel];
     
-    UILabel* questionTitle=[[UILabel alloc]initWithFrame:CGRectMake(50, 4.41, 314, 73.93)];
+    [questionPanel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self);
+        make.left.equalTo(self);
+        make.right.equalTo(self);
+        make.height.equalTo(self).multipliedBy(0.4);
+    }];
+    
+    UILabel* questionTitle=[[UILabel alloc]init];
     if ([super.testType isEqualToString:@"word"]) {
         questionTitle.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"];
         questionTitle.font=[UIFont systemFontOfSize:48];
@@ -52,7 +60,14 @@
     questionTitle.textAlignment=NSTextAlignmentCenter;
     [questionPanel addSubview:questionTitle];
     
-    UILabel* questionVoice=[[UILabel alloc]initWithFrame:CGRectMake(150, 87.17, 114, 27.58)];
+    [questionTitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel).with.offset(4.41);
+        make.centerX.equalTo(self->questionPanel);
+        make.width.equalTo(@300);
+        make.height.equalTo(@74);
+    }];
+    
+    UILabel* questionVoice=[[UILabel alloc]init];
     NSString* voiceHelp = [[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
     if ([voiceHelp isEqualToString:@"无"]) {
         questionVoice.text = @"";
@@ -64,23 +79,51 @@
     questionVoice.textAlignment=NSTextAlignmentCenter;
     [questionPanel addSubview:questionVoice];
     
-    UIButton* playBtn=[[UIButton alloc]initWithFrame:CGRectMake(193.19, 139.03, 28.7, 26.48)];
+    [questionVoice mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel).with.offset(87.17);
+        make.centerX.equalTo(self->questionPanel);
+        make.width.equalTo(@120);
+        make.height.equalTo(@28);
+    }];
+    
+    UIButton* playBtn=[[UIButton alloc]init];
     [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_ceshi_laba"] forState:UIControlStateNormal];
     [playBtn addTarget:self action:@selector(playVoice) forControlEvents:UIControlEventTouchUpInside];
     [questionPanel addSubview:playBtn];
+    
+    [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self->questionPanel);
+        make.centerX.equalTo(self->questionPanel);
+        make.width.equalTo(self->questionPanel).multipliedBy(0.1);
+        make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+    }];
 }
 //答案界面
 -(void)answerView{
-    UILabel* answerTip=[[UILabel alloc]initWithFrame:CGRectMake(108.29, 205.23, 198.72, 18.75)];
+    UILabel* answerTip=[[UILabel alloc]init];
     answerTip.text=@"根据英文单词或句子选择中文意思";
     answerTip.textColor=ssRGBHex(0x9B9B9B );
     answerTip.font=[UIFont systemFontOfSize:12];
     answerTip.textAlignment=NSTextAlignmentCenter;
     [self addSubview:answerTip];
     
+    [answerTip mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel.mas_bottom).offset(20);
+        make.left.equalTo(self);
+        make.right.equalTo(self);
+        make.height.equalTo(@20);
+    }];
+    
     UIView* answerView;
-    answerView=[[UIView alloc]initWithFrame:CGRectMake(53, 239.44, 308, 293.51)];
+    answerView=[[UIView alloc]init];
     [self addSubview:answerView];
+    
+    [answerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(answerTip.mas_bottom).with.offset(18);
+        make.left.equalTo(self);
+        make.right.equalTo(self);
+        make.bottom.equalTo(self);
+    }];
     
     //创建数组
     NSMutableArray *answerArray = [NSMutableArray array];
@@ -134,7 +177,7 @@
     };
     
     JobBlock setAnswer =^{
-        self->answer1=[[UIButton alloc]initWithFrame:CGRectMake(0, 0, 132.47, 132.47)];
+        self->answer1=[[UIButton alloc]init];
         [self->answer1 setBackgroundColor:[UIColor whiteColor]];
         [self->answer1 setTitle:[answerArray objectAtIndex:0] forState:UIControlStateNormal];
         //下面两行代码用来控制多行显示
@@ -148,7 +191,7 @@
         [self->answer1 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
         [answerView addSubview:self->answer1];
         
-        self->answer2=[[UIButton alloc]initWithFrame:CGRectMake(175.53, 0, 132.47, 132.47)];
+        self->answer2=[[UIButton alloc]init];
         [self->answer2 setBackgroundColor:[UIColor whiteColor]];
         [self->answer2 setTitle:[answerArray objectAtIndex:1] forState:UIControlStateNormal];
         //下面两行代码用来控制多行显示
@@ -162,7 +205,7 @@
         [self->answer2 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
         [answerView addSubview:self->answer2];
         
-        self->answer3=[[UIButton alloc]initWithFrame:CGRectMake(0, 161.1, 132.47, 132.47)];
+        self->answer3=[[UIButton alloc]init];
         [self->answer3 setBackgroundColor:[UIColor whiteColor]];
         [self->answer3 setTitle:[answerArray objectAtIndex:2] forState:UIControlStateNormal];
         //下面两行代码用来控制多行显示
@@ -176,7 +219,7 @@
         [self->answer3 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
         [answerView addSubview:self->answer3];
         
-        self->answer4=[[UIButton alloc]initWithFrame:CGRectMake(175.52, 161.1, 132.47, 132.47)];
+        self->answer4=[[UIButton alloc]init];
         [self->answer4 setBackgroundColor:[UIColor whiteColor]];
         [self->answer4 setTitle:[answerArray objectAtIndex:3] forState:UIControlStateNormal];
         //下面两行代码用来控制多行显示
@@ -189,9 +232,39 @@
         
         [self->answer4 addTarget:self action:@selector(chooseAnswer:) forControlEvents:UIControlEventTouchUpInside];
         [answerView addSubview:self->answer4];
+        
+        [self->answer1 mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(answerView).with.offset(20);
+            make.width.equalTo(answerView).multipliedBy(0.4);
+            make.left.equalTo(answerView).with.offset(20);
+            make.height.equalTo(answerView.mas_width).multipliedBy(0.25);
+        }];
+        
+        [self->answer2 mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(answerView).with.offset(20);
+            make.width.equalTo(answerView).multipliedBy(0.4);
+            make.right.equalTo(answerView).with.offset(-20);
+            make.height.equalTo(answerView.mas_width).multipliedBy(0.25);
+        }];
+        
+        [self->answer3 mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(answerView).with.offset(-20);
+            make.left.equalTo(answerView).with.offset(20);
+            make.width.equalTo(answerView).multipliedBy(0.4);
+            make.height.equalTo(answerView.mas_width).multipliedBy(0.25);
+        }];
+        
+        [self->answer4 mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(answerView).with.offset(-20);
+            make.right.equalTo(answerView).with.offset(-20);
+            make.width.equalTo(answerView).multipliedBy(0.4);
+            make.height.equalTo(answerView.mas_width).multipliedBy(0.25);
+        }];
     };
     
     [MyThreadPool executeJob:myBlock Main:setAnswer];
+    
+   
 
 }
 

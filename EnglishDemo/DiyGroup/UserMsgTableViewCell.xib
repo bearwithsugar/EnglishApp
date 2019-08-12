@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,22 +18,40 @@
                 <rect key="frame" x="0.0" y="0.0" width="414" height="52.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9kD-Qq-mJh">
-                        <rect key="frame" x="18" y="15" width="22" height="22"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9kD-Qq-mJh">
+                        <rect key="frame" x="18" y="15" width="22" height="22.5"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="22" id="8bf-Oq-XCf"/>
+                            <constraint firstAttribute="height" constant="22.5" id="Ydj-kT-1tT"/>
+                        </constraints>
                     </imageView>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dR4-np-5eg">
-                        <rect key="frame" x="62" y="15" width="120" height="22"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dR4-np-5eg">
+                        <rect key="frame" x="60" y="15" width="200" height="22.5"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="200" id="Ax3-cg-pAl"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SuN-og-qxz">
-                        <rect key="frame" x="389" y="19" width="9" height="15"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SuN-og-qxz">
+                        <rect key="frame" x="390" y="19" width="9" height="15"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="15" id="Q4V-yh-wlx"/>
+                            <constraint firstAttribute="width" constant="9" id="iLA-T9-RqN"/>
+                        </constraints>
                     </imageView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="9kD-Qq-mJh" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="15" id="5pY-xW-IWm"/>
+                    <constraint firstAttribute="bottom" secondItem="dR4-np-5eg" secondAttribute="bottom" constant="15" id="Ae3-cr-Q6K"/>
+                    <constraint firstItem="dR4-np-5eg" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="15" id="H6I-Qi-l6x"/>
+                    <constraint firstItem="SuN-og-qxz" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="19" id="Itg-Oz-YRM"/>
+                    <constraint firstAttribute="trailing" secondItem="SuN-og-qxz" secondAttribute="trailing" constant="15" id="WJb-aw-0Ai"/>
+                    <constraint firstItem="dR4-np-5eg" firstAttribute="leading" secondItem="9kD-Qq-mJh" secondAttribute="trailing" constant="20" id="cHI-vm-C4A"/>
+                    <constraint firstAttribute="bottom" secondItem="9kD-Qq-mJh" secondAttribute="bottom" constant="15" id="nYn-5x-HfH"/>
+                    <constraint firstItem="9kD-Qq-mJh" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="18" id="x2U-PZ-ZRB"/>
+                </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>

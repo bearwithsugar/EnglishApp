@@ -17,6 +17,7 @@
 #import "Common/HeadView.h"
 #import "Functions/ConnectionInstance.h"
 #import "Functions/MyThreadPool.h"
+#import "Masonry.h"
 
 @interface UnitViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -93,14 +94,28 @@
     [HeadView titleShow:_bookName Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)progressView{
-    UIView* progressView=[[UIView alloc]initWithFrame:CGRectMake(0, 88.26, 414, 44.13)];
+    UIView* progressView=[[UIView alloc]init];
     [self.view addSubview:progressView];
     
-    UILabel* wordShow=[[UILabel alloc]initWithFrame:CGRectMake(17.66, 13.24, 66.23, 18.76)];
+    [progressView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(88.26);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@44.13);
+    }];
+    
+    UILabel* wordShow=[[UILabel alloc]init];
     wordShow.text=@"当前进度";
     wordShow.textColor=ssRGBHex(0x9B9B9B);
     wordShow.font=[UIFont systemFontOfSize:12];
     [progressView addSubview:wordShow];
+    
+    [wordShow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(progressView).with.offset(13.24);
+        make.left.equalTo(progressView).with.offset(17.66);
+        make.width.equalTo(@70);
+        make.height.equalTo(@19);
+    }];
     
     UILabel* lessontitle=[[UILabel alloc]initWithFrame:CGRectMake(97.15, 7.72, 220.80, 28.68)];
     lessontitle.layer.borderColor=ssRGBHex(0xFE8484).CGColor;
@@ -115,10 +130,27 @@
     lessontitle.font=[UIFont systemFontOfSize:12];
     [progressView addSubview:lessontitle];
     
-    processMsg=[[UITableView alloc]initWithFrame:CGRectMake(0, 134.62, 414, 647.72)];
+    [lessontitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(progressView).with.offset(7.72);
+        make.left.equalTo(progressView).with.offset(100);
+        make.height.equalTo(@29);
+        make.right.equalTo(progressView).with.offset(-100);
+    }];
+    
+    
+    
+    processMsg=[[UITableView alloc]init];
     processMsg.dataSource=self;
     processMsg.delegate=self;
     [self.view addSubview:processMsg];
+    
+    [processMsg mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(progressView);
+        make.left.equalTo(self.view);
+        make.bottom.equalTo(self.view);
+        make.right.equalTo(self.view);
+    }];
+    
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;

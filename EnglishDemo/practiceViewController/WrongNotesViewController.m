@@ -18,6 +18,8 @@
 #import "../DiyGroup/TestType/EngChooseChi.h"
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Functions/WarningWindow.h"
+#import "../Functions/MyThreadPool.h"
+#import "Masonry.h"
 
 //#ifdef DEBUG
 //#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
@@ -88,17 +90,21 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
+        
         [self initData];
-        if ([testArray isKindOfClass:[NSNull class]]||testArray.count==0) {
-            [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
-        }else{
-           [self showContent];
-        }
-
+        [self showContent];
+       
     }
     else{
-        UnloginMsgView* unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
+        UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
         [self.view addSubview:unloginView];
+        
+        [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(88.27);
+            make.right.equalTo(self.view);
+            make.left.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
     }
 }
 
@@ -147,7 +153,7 @@
 
 //标题栏显示
 -(void)titleShow{
-    UILabel* title=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.06, 414, 66.2)];
+    UILabel* title=[[UILabel alloc]init];
     title.text=@"错题本";
     
     title.textColor=[UIColor whiteColor];
@@ -158,33 +164,68 @@
     [title setUserInteractionEnabled:YES];
     [self.view addSubview:title];
     
-    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(10, 20,30, 30)];
+    [title mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(22);
+        make.right.equalTo(self.view);
+        make.left.equalTo(self.view);
+        make.height.equalTo(@66);
+    }];
+    
+    UILabel* touchField=[[UILabel alloc]init];
     [touchField setUserInteractionEnabled:YES];
     [title addSubview:touchField];
     
-    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
+    [touchField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(title).with.offset(20);
+        make.width.equalTo(@30);
+        make.left.equalTo(self.view).with.offset(10);
+        make.height.equalTo(@30);
+    }];
+    
+    UIButton* returnBtn=[[UIButton alloc]init];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
     [returnBtn addTarget:self action:@selector(popBack:) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
+    [returnBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(touchField).with.offset(2);
+        make.width.equalTo(@10.7);
+        make.left.equalTo(touchField).with.offset(5.45);
+        make.height.equalTo(@22.62);
+    }];
+    
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
     [touchField addGestureRecognizer:touchFunc];
 
     
-    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
+    UIButton* setBtn=[[UIButton alloc]init];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
     [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
     [title addSubview:setBtn];
+    
+    [setBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(title).with.offset(22);
+        make.width.equalTo(@22);
+        make.right.equalTo(title).with.offset(-15);
+        make.height.equalTo(@22);
+    }];
 }
 
 -(void)lastAndNext{
-    lastAndNextPanel=[[UIView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 33.1)];
+    lastAndNextPanel=[[UIView alloc]init];
     lastAndNextPanel.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:lastAndNextPanel];
     
-    lastSubBtn=[[UIButton alloc]initWithFrame:CGRectMake(17.66, 9.93, 55.20, 22.06)];
+    [lastAndNextPanel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(88.27);
+        make.right.equalTo(self.view);
+        make.left.equalTo(self.view);
+        make.height.equalTo(@33);
+    }];
+    
+    lastSubBtn=[[UIButton alloc]init];
     if (testFlag==0) {
         [lastSubBtn setBackgroundColor:ssRGBHex(0x9B9B9B)];
     }else{
@@ -197,9 +238,16 @@
     [lastSubBtn addTarget:self action:@selector(lastSubject:) forControlEvents:UIControlEventTouchUpInside];
     [lastAndNextPanel addSubview:lastSubBtn];
     
+    [lastSubBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->lastAndNextPanel).with.offset(9.93);
+        make.width.equalTo(@55.2);
+        make.left.equalTo(self->lastAndNextPanel).with.offset(17.66);
+        make.height.equalTo(@22.06);
+    }];
+    
     [self processTip];
     
-    nextSubBtn=[[UIButton alloc]initWithFrame:CGRectMake(341.13, 9.93, 55.20, 22.06)];
+    nextSubBtn=[[UIButton alloc]init];
     if (testFlag==testArray.count-1) {
         [nextSubBtn setBackgroundColor:ssRGBHex(0x9B9B9B)];
     }else{
@@ -212,17 +260,32 @@
     [nextSubBtn addTarget:self action:@selector(nextSubject:) forControlEvents:UIControlEventTouchUpInside];
     [lastAndNextPanel addSubview:nextSubBtn];
     
+    [nextSubBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->lastAndNextPanel).with.offset(9.93);
+        make.width.equalTo(@55.2);
+        make.right.equalTo(self->lastAndNextPanel).with.offset(-17.66);
+        make.height.equalTo(@22.06);
+    }];
+    
 }
 //显示当前是第几题了
 -(void)processTip{
-    processTip=[[UILabel alloc]initWithFrame:CGRectMake(195.95, 12.13, 60, 18.75)];
+    processTip=[[UILabel alloc]init];
     NSString* total=[NSString stringWithFormat:@"%lu",(unsigned long)testArray.count];
     NSString* present=[NSString stringWithFormat:@"%d",(testFlag+1)];
     present=[present stringByAppendingString:@"/"];
     processTip.text=[present stringByAppendingString:total];
     processTip.textColor=ssRGBHex(0x9B9B9B);
     processTip.font=[UIFont systemFontOfSize:12];
+    processTip.textAlignment=NSTextAlignmentCenter;
     [lastAndNextPanel addSubview:processTip];
+    
+    [processTip mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->lastAndNextPanel).with.offset(12.13);
+        make.width.equalTo(@50);
+        make.centerX.equalTo(self->lastAndNextPanel);
+        make.height.equalTo(@18.75);
+    }];
 }
 
 #pragma mark --上一题下一题点击事件
@@ -276,15 +339,23 @@
 //设置界面👇
 -(void)settingView{
     //整体灰色背景
-    settingView=[[UIView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647.72)];
+    settingView=[[UIView alloc]init];
     settingView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     
     settingContent=@[@"根据英语发音选择中文意思",@"根据英文单词或句子选择中文意思",@"根据中文意思选择英文单词或句子",@"根据中文意思拼写英文单词或句子"];
     
-    UITableView* settingList=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, 414, 213)];
+    UITableView* settingList=[[UITableView alloc]init];
     settingList.dataSource=self;
     settingList.delegate=self;
     [settingView addSubview:settingList];
+    
+    [settingList mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->settingView);
+        make.left.equalTo(self->settingView);
+        make.right.equalTo(self->settingView);
+        make.height.equalTo(@213);
+    }];
+    
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -325,6 +396,13 @@
 -(void)showSettingView{
     if (showSetting) {
         [self.view addSubview:settingView];
+        
+        [settingView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(88.27);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
     }else{
         [settingView removeFromSuperview];
     }
@@ -336,10 +414,14 @@
 //加载数据，显示页面内容
 -(void)showContent{
     
-    //加载内容
-    [self lastAndNext];
-    
-    [self addQAview];
+    if ([testArray isKindOfClass:[NSNull class]]||testArray.count==0) {
+        [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
+    }else{
+        //加载内容
+        [self lastAndNext];
+        
+        [self addQAview];
+    }
     
 }
 
@@ -349,25 +431,33 @@
     if ([testFunc isEqualToString:@"0"]) {
         questionAndAnswerView=[VoiceChooseChn alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFrame:CGRectMake(0, 121.37, 414, 647.72) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }else if([testFunc isEqualToString:@"1"]){
         questionAndAnswerView=[EngChooseChi alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFrame:CGRectMake(0, 121.37, 414, 563.86) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }else if([testFunc isEqualToString:@"2"]){
         questionAndAnswerView=[ChnChooseEng alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFrame:CGRectMake(0, 121.37, 414, 563.86) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }else if([testFunc isEqualToString:@"3"]){
         questionAndAnswerView=[ChinSpellEnglish alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFrame:CGRectMake(0, 121.37, 414, 563.86) TestFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
     }else{
         
     }
     [processTip removeFromSuperview];
     [self processTip];
     [self.view addSubview:questionAndAnswerView];
+    
+    [questionAndAnswerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(172);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view);
+    }];
+    
 }
 
 -(void)playVoice{

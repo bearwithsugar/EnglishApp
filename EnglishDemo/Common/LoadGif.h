@@ -12,10 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface LoadGif : UIView
 
-+(UIImageView*)imageViewStartAnimating:(CGRect)cgrect;
++(UIImageView*)imageViewStartAnimating;
 
 //喇叭循环动画
-+(UIImageView*)imageViewfForPlaying:(CGRect)cgrect;
++(UIImageView*)imageViewfForPlaying;
 
 @end
 

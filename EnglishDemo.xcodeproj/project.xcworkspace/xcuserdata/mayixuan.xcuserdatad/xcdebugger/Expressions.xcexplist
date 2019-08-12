@@ -51,12 +51,15 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[LearningViewController actionOfShowTranslation:]:LearningViewController.m">
+         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.74:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
-               value = "btn.tag">
+               value = "super.testArray">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
       </ContextState>
       <ContextState
          contextName = "-[VoicePlayer continuePlay]:VoicePlayer.m">
@@ -67,7 +70,12 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
+         contextName = "-[LearningViewController actionOfShowTranslation:]:LearningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "btn.tag">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "-[ChooseLessonView tableView:didSelectRowAtIndexPath:]:ChooseLessonView.m">
@@ -112,6 +120,14 @@
          <PersistentStrings>
             <PersistentString
                value = "button.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__38-[LearningViewController learningBook]_block_invoke_4:LearningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.view.subviews">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

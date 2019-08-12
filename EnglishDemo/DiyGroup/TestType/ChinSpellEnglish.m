@@ -11,7 +11,7 @@
 #import "../../Functions/VoicePlayer.h"
 #import "../../Functions/MyThreadPool.h"
 #import "../../Functions/DownloadAudioService.h"
-
+#import "Masonry.h"
 
 
 @implementation ChinSpellEnglish{
@@ -25,6 +25,8 @@
     UIButton* answer3;
     UIButton* answer4;
     
+    UIView* questionPanel;
+    
     UITextField* spellField;
     
     //播放音频所需
@@ -36,12 +38,18 @@
 
 //问题界面
 -(void)questionView{
-    UIView* questionPanel;
-    questionPanel=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 414, 187.58)];
+    questionPanel=[[UIView alloc]init];
     questionPanel.backgroundColor=[UIColor whiteColor];
     [self addSubview:questionPanel];
     
-    UILabel* questionTitle=[[UILabel alloc]initWithFrame:CGRectMake(50, 4.41, 314, 73.93)];
+    [questionPanel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self);
+        make.left.equalTo(self);
+        make.right.equalTo(self);
+        make.height.equalTo(self).multipliedBy(0.4);
+    }];
+    
+    UILabel* questionTitle=[[UILabel alloc]init];
     if ([super.testType isEqualToString:@"word"]) {
         questionTitle.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"];
         questionTitle.font=[UIFont systemFontOfSize:48];
@@ -62,35 +70,78 @@
     questionTitle.textAlignment=NSTextAlignmentCenter;
     [questionPanel addSubview:questionTitle];
     
-    UIButton* playBtn=[[UIButton alloc]initWithFrame:CGRectMake(193.19, 116.96, 28.7, 26.48)];
+    [questionTitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel).with.offset(4.41);
+        make.centerX.equalTo(self->questionPanel);
+        make.width.equalTo(@300);
+        make.height.equalTo(@74);
+    }];
+    
+    
+    UIButton* playBtn=[[UIButton alloc]init];
     [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_ceshi_laba"] forState:UIControlStateNormal];
     [playBtn addTarget:self action:@selector(playVoice) forControlEvents:UIControlEventTouchUpInside];
     [questionPanel addSubview:playBtn];
+    
+    [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self->questionPanel);
+        make.centerX.equalTo(self->questionPanel);
+        make.width.equalTo(self->questionPanel).multipliedBy(0.1);
+        make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+    }];
 }
 //答案界面
 -(void)answerView{
-    UILabel* answerTip=[[UILabel alloc]initWithFrame:CGRectMake(108.29, 205.23, 198.72, 18.75)];
+    UILabel* answerTip=[[UILabel alloc]init];
     answerTip.text=@"根据中文意思拼写英文单词和句子";
     answerTip.textColor=ssRGBHex(0x9B9B9B );
     answerTip.font=[UIFont systemFontOfSize:12];
     answerTip.textAlignment=NSTextAlignmentCenter;
     [self addSubview:answerTip];
     
-    spellField=[[UITextField alloc]initWithFrame:CGRectMake(119.23, 285.79, 276, 36.41)];
+    [answerTip mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel.mas_bottom).offset(20);
+        make.left.equalTo(self);
+        make.right.equalTo(self);
+        make.height.equalTo(@20);
+    }];
+    
+    spellField=[[UITextField alloc]init];
     [self addSubview:spellField];
     
-    UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(115.91, 318.89, 178.84, 1)];
+    [spellField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel.mas_bottom).with.offset(60);
+        make.centerX.equalTo(self);
+        make.width.equalTo(@250);
+        make.height.equalTo(@36.41);
+    }];
+    
+    UIView* lineView=[[UIView alloc]init];
     lineView.layer.borderWidth=1;
     lineView.layer.borderColor=ssRGBHex(0xF5A623).CGColor;
     [self addSubview:lineView];
     
-    UIButton* submitBtn=[[UIButton alloc]initWithFrame:CGRectMake(167, 400, 80,30)];
+    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel.mas_bottom).with.offset(90);
+        make.centerX.equalTo(self);
+        make.width.equalTo(@250);
+        make.height.equalTo(@1);
+    }];
+    
+    UIButton* submitBtn=[[UIButton alloc]init];
     submitBtn.backgroundColor=ssRGBHex(0xF5A623);
     submitBtn.layer.cornerRadius=10;
     [submitBtn addTarget:self action:@selector(judgeTheAnswer) forControlEvents:UIControlEventTouchUpInside];
     [submitBtn setTitle:@"完成" forState:UIControlStateNormal];
     
     [self addSubview:submitBtn];
+    
+    [submitBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel.mas_bottom).with.offset(140);
+        make.centerX.equalTo(self);
+        make.width.equalTo(@80);
+        make.height.equalTo(@30);
+    }];
         
 }
 
@@ -155,7 +206,7 @@
         }
     }
     
-    UILabel* rightAnswer=[[UILabel alloc]initWithFrame:CGRectMake(115.91, 334.34, 198.72, 36)];
+    UILabel* rightAnswer=[[UILabel alloc]init];
     
     rightAnswer.text=answer;
     rightAnswer.textColor=ssRGBHex(0xFF7474 );
@@ -163,10 +214,24 @@
     rightAnswer.textAlignment=NSTextAlignmentCenter;
     [self addSubview:rightAnswer];
     
+    [rightAnswer mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel.mas_bottom).with.offset(100);
+        make.centerX.equalTo(self);
+        make.width.equalTo(@200);
+        make.height.equalTo(@36);
+    }];
+    
     UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(115.91, 366, 178.84, 1)];
     lineView.layer.borderWidth=1;
     lineView.layer.borderColor=ssRGBHex(0xF5A623).CGColor;
     [self addSubview:lineView];
+    
+    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->questionPanel.mas_bottom).with.offset(130);
+        make.centerX.equalTo(self);
+        make.width.equalTo(@200);
+        make.height.equalTo(@1);
+    }];
     
     NSString* answerStr = spellField.text;
     NSCharacterSet  *set = [NSCharacterSet whitespaceAndNewlineCharacterSet];

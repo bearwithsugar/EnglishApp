@@ -48,7 +48,7 @@
         surfaceView = [UIView new];
         [self.view addSubview:surfaceView];
         [surfaceView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.view).offset(50);
+            make.top.equalTo(self.view).offset(75);
             make.left.equalTo(self.view);
             make.right.equalTo(self.view);
             make.bottom.equalTo(self.view);

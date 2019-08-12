@@ -23,8 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 //对于错题本
 @property int wordNum;
 
--(id)initWithFrame:(CGRect)frame
-          TestFlag:(int)testFlag
+-(id)initWithFlag:(int)testFlag
          TestArray:(NSArray*)testArray
           TestType:(NSString*)testType
           UserInfo:(NSDictionary*)userInfo;

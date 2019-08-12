@@ -33,7 +33,7 @@ typedef void (^JobBlock) (void);
 
 @property ShowContentBlock showContentBlock;
 
--(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock;
+-(id)initWithBookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock;
 
 @end
 

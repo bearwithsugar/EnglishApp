@@ -17,6 +17,7 @@
 #import "Common/LoadGif.h"
 #import "Functions/DownloadAudioService.h"
 #import "Functions/MyThreadPool.h"
+#import "Masonry.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -65,7 +66,7 @@
     //整个下方界面
     UIView* contentView;
     //右侧具体学习内容界面
-    UIScrollView* contentDetailView;
+    UIScrollView* contentDetailScrollView;
     //是否正在录音
     BOOL isRecord;
     
@@ -96,6 +97,8 @@
     BOOL translateIsHided;
     //连续播放下句
     BOOL continuePlay;
+    
+    UIImageView* loadPic;
     
 }
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
@@ -141,8 +144,8 @@
     
     [self chooseLessonViewInit];
     
-    contentDetailView=[[UIScrollView alloc]initWithFrame:CGRectMake(136.89, 0, 300, 603.58)];
-    [contentView addSubview:contentDetailView];
+//    contentDetailScrollView=[[UIScrollView alloc]init];
+//    [contentView addSubview:contentDetailScrollView];
     
     [self showChooseLessonView];
     
@@ -157,7 +160,7 @@
     NSLog(@"获取到的单元id是%@",_unitId);
 }
 -(void)titleShow{
-    UILabel* title=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.06, 414, 66.2)];
+    UILabel* title=[[UILabel alloc]init];
     title.text=_bookName;
     title.textColor=[UIColor whiteColor];
     title.backgroundColor=ssRGBHex(0xFF7474);
@@ -167,55 +170,119 @@
     [title setUserInteractionEnabled:YES];
     [self.view addSubview:title];
     
-    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(5, 15,35, 35)];
+    [title mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(22);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@66);
+    }];
+    
+    UILabel* touchField=[[UILabel alloc]init];
     [touchField setUserInteractionEnabled:YES];
     [title addSubview:touchField];
     
-    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(10.45, 7.06, 10.7, 22.62)];
+    [touchField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(title).with.offset(15);
+        make.left.equalTo(title).with.offset(5);
+        make.width.equalTo(@35);
+        make.height.equalTo(@35);
+    }];
+    
+    UIButton* returnBtn=[[UIButton alloc]init];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
     [returnBtn addTarget:self action:@selector(popBack) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
+    [returnBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(touchField).with.offset(10);
+        make.left.equalTo(touchField).with.offset(7);
+        make.width.equalTo(@11);
+        make.height.equalTo(@22.6);
+    }];
+    
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack)];
     [touchField addGestureRecognizer:touchFunc];
     
-    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
+    UIButton* setBtn=[[UIButton alloc]init];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
     [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
     [title addSubview:setBtn];
+    
+    [setBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(title).with.offset(22);
+        make.right.equalTo(title).with.offset(-15);
+        make.width.equalTo(@22);
+        make.height.equalTo(@22);
+    }];
 }
 //选择课程的上一课下一课
 -(void)chooseLesson{
-    presentLession=[[UIView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 44.13)];
+    presentLession=[[UIView alloc]init];
     presentLession.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:presentLession];
     
+    [presentLession mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(88);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@44);
+    }];
+    
     //上一课以及箭头
-    UIButton* lastLessonBtn=[[UIButton alloc]initWithFrame:CGRectMake(12.14, 14.34, 8.83, 16.55)];
+    UIButton* lastLessonBtn=[[UIButton alloc]init];
      [lastLessonBtn setBackgroundImage:[UIImage imageNamed:@"icon_shangyike"] forState:UIControlStateNormal];
     [lastLessonBtn addTarget:self action:@selector(clickLastLesson) forControlEvents:UIControlEventTouchUpInside];
     [presentLession addSubview:lastLessonBtn];
-    UIButton* lastLessonLabel=[[UIButton alloc]initWithFrame:CGRectMake(29.8, 13.24, 39.74, 18.75)];
+    
+    [lastLessonBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(14.34);
+        make.left.equalTo(self->presentLession).with.offset(12.14);
+        make.width.equalTo(@8.83);
+        make.height.equalTo(@16.55);
+    }];
+    
+    UIButton* lastLessonLabel=[[UIButton alloc]init];
     [lastLessonLabel addTarget:self action:@selector(clickLastLesson) forControlEvents:UIControlEventTouchUpInside];
     [lastLessonLabel setTitle:@"上一课" forState:UIControlStateNormal];
     [lastLessonLabel setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
     lastLessonLabel.titleLabel.font=[UIFont systemFontOfSize:12];
     [presentLession addSubview:lastLessonLabel];
     
+    [lastLessonLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(13.24);
+        make.left.equalTo(self->presentLession).with.offset(30);
+        make.width.equalTo(@40);
+        make.height.equalTo(@19);
+    }];
     
     //下一课以及箭头
-    UIButton* nextLessonBtn=[[UIButton alloc]initWithFrame:CGRectMake(391.91, 14.34, 8.83, 16.55)];
+    UIButton* nextLessonBtn=[[UIButton alloc]init];
     [nextLessonBtn setBackgroundImage:[UIImage imageNamed:@"icon_xiayike"] forState:UIControlStateNormal];
     [nextLessonBtn addTarget:self action:@selector(clickNextLesson) forControlEvents:UIControlEventTouchUpInside];
     [presentLession addSubview:nextLessonBtn];
-    UIButton* nextLessonLabel=[[UIButton alloc]initWithFrame:CGRectMake(341.13, 13.24, 39.74, 18.75)];
+    
+    [nextLessonBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(14.34);
+        make.width.equalTo(@8.83);
+        make.right.equalTo(self->presentLession).with.offset(-15);
+        make.height.equalTo(@16.55);
+    }];
+    
+    UIButton* nextLessonLabel=[[UIButton alloc]init];
     [nextLessonLabel addTarget:self action:@selector(clickNextLesson) forControlEvents:UIControlEventTouchUpInside];
     [nextLessonLabel setTitle:@"下一课" forState:UIControlStateNormal];
     [nextLessonLabel setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
     nextLessonLabel.titleLabel.font=[UIFont systemFontOfSize:12];
     [presentLession addSubview:nextLessonLabel];
+    
+    [nextLessonBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(13.24);
+        make.width.equalTo(@40);
+        make.right.equalTo(self->presentLession).with.offset(-30);
+        make.height.equalTo(@19);
+    }];
     
 }
 -(void)clickLastLesson{
@@ -295,7 +362,7 @@
 //中间显示标题
 -(void)presentLessionView{
     //中间标题
-    lessontitle=[[UILabel alloc]initWithFrame:CGRectMake(97.15, 7.72, 220.80, 28.68)];
+    lessontitle=[[UILabel alloc]init];
     lessontitle.layer.borderColor=ssRGBHex(0xFE8484).CGColor;
     lessontitle.layer.borderWidth=1;
     lessontitle.layer.cornerRadius=14.34;
@@ -322,6 +389,13 @@
     
     [presentLession addSubview:lessontitle];
     
+    [lessontitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(7.72);
+        make.left.equalTo(self->presentLession).with.offset(95);
+        make.right.equalTo(self->presentLession).with.offset(-95);
+        make.height.equalTo(@28.68);
+    }];
+    
     UITapGestureRecognizer* showLineGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showChooseLessonView)];
     [lessontitle addGestureRecognizer:showLineGesture];
 }
@@ -329,10 +403,17 @@
 -(void)learningBook{
     NSUInteger size=bookPicArray.count;
     
-    contentView=[[UIView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58)];
+    contentView=[[UIView alloc]init];
     [self.view addSubview:contentView];
     
-    bookPicView=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 124, 603.58)];
+    [contentView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(132.41);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view);
+    }];
+    
+    bookPicView=[[UIScrollView alloc]init];
     NSUInteger bookPicViewHeight;
     if (size<4) {
         bookPicViewHeight=700;
@@ -341,6 +422,13 @@
     }
     bookPicView.contentSize=CGSizeMake(124, bookPicViewHeight);
     [contentView addSubview:bookPicView];
+    
+    [bookPicView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->contentView);
+        make.left.equalTo(self->contentView);
+        make.width.equalTo(@124);
+        make.bottom.equalTo(self->contentView);
+    }];
     
     for (int i=0;i<size; i++) {
         float y=19.86+183.17*i;
@@ -373,15 +461,18 @@
         [showBigPic addGestureRecognizer:clickBigPic];
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            
+
             NSDictionary* bookDic=[self->bookPicArray objectAtIndex:i];
             //NSLog(@"bookDic%@",bookDic);
             NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
             //        //路径中有特殊字符，转换一下
             picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
             dispatch_async(dispatch_get_main_queue(), ^{
-                
+
                 theBook.image=[LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
+                if (theBook.tag==(size-1)) {
+                    [self->loadPic removeFromSuperview];
+                }
             });
         });
    }
@@ -392,18 +483,26 @@
     [self showBigPic:sender.view.tag];
 }
 -(void)showBigPic:(NSInteger)tag{
-    bigPicView=[[UIView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58)];
+    bigPicView=[[UIView alloc]init];
     theBigPic=nil;
-    theBigPic=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 414, 603.58)];
+    theBigPic=[[UIImageView alloc]init];
     theBigPic.image=[LocalDataOperation getImage:[[bookPicArray objectAtIndex:tag]valueForKey:@"pictureId"]
                                          httpUrl:[[bookPicArray objectAtIndex:tag]valueForKey:@"pictureUrl"]];
     
     [bigPicView addSubview:theBigPic];
     
+    [theBigPic mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(self->bigPicView);
+//        make.left.equalTo(self->bigPicView);
+//        make.right.equalTo(self->bigPicView);
+//        make.bottom.equalTo(self->bigPicView);
+        make.edges.equalTo(self->bigPicView);
+    }];
+    
     UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(exitShowBigPic:)];
     [bigPicView addGestureRecognizer:clickBigPic];
     
-    UILabel* exitShowBigPic=[[UILabel alloc]initWithFrame:CGRectMake(136.89, 29.79, 143.52, 26.48)];
+    UILabel* exitShowBigPic=[[UILabel alloc]init];
     exitShowBigPic.layer.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5].CGColor;
     exitShowBigPic.text=@"单击图片返回";
     exitShowBigPic.textColor=[UIColor whiteColor];
@@ -412,7 +511,21 @@
     exitShowBigPic.layer.cornerRadius=9;
     [bigPicView addSubview:exitShowBigPic];
     
+    [theBigPic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->bigPicView).with.offset(30);
+        make.centerX.equalTo(self->bigPicView);
+        make.height.equalTo(@27);
+        make.width.equalTo(@150);
+    }];
+    
     [self.view addSubview: bigPicView];
+    
+    [bigPicView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(132.41);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view);
+    }];
 }
 -(void)exitShowBigPic:(UITapGestureRecognizer*)sender{
     [bigPicView removeFromSuperview];
@@ -430,13 +543,13 @@
     //NSLog(@"添加图片学习信息的值是%@",dataDic);
     //强转一下类型，不然出来的类型对不上
     NSString* page=[NSString stringWithFormat:@"%@",[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"page"]];
-    [contentDetailView removeFromSuperview];
+    [contentDetailScrollView removeFromSuperview];
     [self learningContent:page PicTag:sender.view.tag];
 }
 
 //内容界面
 -(void)learningContent:(NSString*)page PicTag:(NSInteger)picTag{
-    contentDetailView=[[UIScrollView alloc]initWithFrame:CGRectMake(136.89, 0, 300, 603.58)];
+    contentDetailScrollView=[[UIScrollView alloc]init];
     
     NSUInteger contentDetailHeight = 0;
     titleArray=[[NSMutableArray alloc]init];
@@ -460,23 +573,52 @@
             [self showBigPic:picTag];
         }
     }
-    contentDetailView.contentSize=CGSizeMake(124, contentDetailHeight);
-    [contentView addSubview:contentDetailView];
+    [contentView addSubview:contentDetailScrollView];
+    
+    [contentDetailScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->contentView);
+        make.left.equalTo(self->contentView).with.offset(136);
+        make.bottom.equalTo(self->contentView);
+        make.right.equalTo(self->contentView).with.offset(-20);
+    }];
+    
+//    UIView* contentDetailView = [UIView new];
+//    [contentDetailView setUserInteractionEnabled:YES];
+//
+//    [self->contentDetailScrollView addSubview:contentDetailView];
+//
+//    [contentDetailView mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.edges.equalTo(self->contentDetailScrollView);
+//        make.width.equalTo(self->contentDetailScrollView);
+//        make.height.greaterThanOrEqualTo(@0.f);
+//    }];
+    
+//        
+//    self->contentDetailScrollView.contentSize=CGSizeMake((int)self->contentView.mas_right-136, contentDetailHeight);
     
     for (int i=0; i<titleArray.count; i++) {
         NSDictionary* titleDic=titleArray[i];
         //内容的底板
         float y=15.44*(i+1)+57.37*i;
-        content=[[UIView alloc]initWithFrame:CGRectMake(0, y, 256.12, 57.37)];
+        content=[[UIView alloc]init];
         content.layer.backgroundColor=[UIColor whiteColor].CGColor;
         content.layer.cornerRadius=10;
 //        //打开button父组件的人机交互
 //        [content setUserInteractionEnabled:YES];
-        [contentDetailView addSubview:content];
+        [contentDetailScrollView addSubview:content];
+        
+        [content mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->contentDetailScrollView).offset(y);
+            make.left.equalTo(self->contentDetailScrollView.mas_left);
+            make.right.equalTo(self->contentDetailScrollView.mas_right);
+            make.width.equalTo(self->contentDetailScrollView.mas_width);
+            make.height.equalTo(@58);
+        }];
+        
         content.clipsToBounds = YES;
         
         //显示0/4
-        UILabel* progressLabel=[[UILabel alloc]initWithFrame:CGRectMake(8.83, 4.41, 35.32, 15.44)];
+        UILabel* progressLabel=[[UILabel alloc]init];
         progressLabel.layer.cornerRadius=5;
         progressLabel.layer.backgroundColor=ssRGBHex(0x9B9B9B).CGColor;
         progressLabel.text=[NSString stringWithFormat:@"%d/%lu",(i+1),(unsigned long)titleArray.count];
@@ -484,6 +626,13 @@
         progressLabel.font=[UIFont systemFontOfSize:10];
         progressLabel.textColor=[UIColor whiteColor];
         [content addSubview:progressLabel];
+        
+        [progressLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->content).with.offset(4.41);
+            make.left.equalTo(self->content).with.offset(8.83);
+            make.height.equalTo(@15.44);
+            make.width.equalTo(@35.32);
+        }];
         
         // 获取句子学没学用的，
 //        JobBlock getMsgBlock = ^{
@@ -495,12 +644,26 @@
         laba.image=[UIImage imageNamed:@"icon_laba2"];
         [content addSubview:laba];
         
+//        [laba mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.top.equalTo(self->content).with.offset(32);
+//            make.left.equalTo(self->content).with.offset(17.66);
+//            make.height.equalTo(@16.55);
+//            make.width.equalTo(@17.66);
+//        }];
+        
         //学习内容
-        UILabel* title=[[UILabel alloc]initWithFrame:CGRectMake(46.36, 26.48, 200, 24.27)];
+        UILabel* title=[[UILabel alloc]init];
         title.text=[titleDic valueForKey:@"sentenceEng"];
         title.font=[UIFont systemFontOfSize:16];
         title.adjustsFontSizeToFitWidth =YES;
         [content addSubview:title];
+        
+        [title mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->content).with.offset(26.48);
+            make.left.equalTo(self->content).with.offset(46.36);
+            make.height.equalTo(@24.27);
+            make.right.equalTo(self->content);
+        }];
         
         UILabel* translateLabel=[[UILabel alloc]initWithFrame:CGRectMake(46.36, 59.58, 200, 24.27)];
         translateLabel.text=[titleDic valueForKey:@"sentenceChn"];
@@ -509,6 +672,13 @@
         [translateLabelArray addObject:translateLabel];
         if (!translateIsHided) {
             [content addSubview:translateLabel];
+            
+            [translateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self->content).with.offset(59.58);
+                make.left.equalTo(self->content).with.offset(46.36);
+                make.height.equalTo(@24.27);
+                make.right.equalTo(self->content);
+            }];
         }
         
 //        //添加各种按钮
@@ -522,13 +692,20 @@
 //        timeShow.font=[UIFont systemFontOfSize:12];
 //        [content addSubview:timeShow];
         
-        UIButton* playBtn=[[UIButton alloc]initWithFrame:CGRectMake(40.51, 119.17, 33.1, 33.1)];
+        UIButton* playBtn=[[UIButton alloc]init];
         [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_play"] forState:UIControlStateNormal];
         [playBtn addTarget:self action:@selector(playRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
         [content addSubview:playBtn];
         
+        [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->content).with.offset(120);
+            make.left.equalTo(self->content).with.offset(40.51);
+            make.height.equalTo(@33);
+            make.width.equalTo(@33);
+        }];
         
-        followReadBtn=[[UIButton alloc]initWithFrame:CGRectMake(90.40, 112.55, 136.89, 46.34)];
+        
+        followReadBtn=[[UIButton alloc]init];
         followReadBtn.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
         followReadBtn.layer.cornerRadius=5;
         [followReadBtn setTitle:@"我来跟读" forState:UIControlStateNormal];
@@ -541,6 +718,13 @@
         [followReadBtn addTarget:self action:@selector(startRecordBtnAction:) forControlEvents:UIControlEventTouchUpInside];
         followReadBtn.tag=i;
         [content addSubview:followReadBtn];
+        
+        [followReadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->content).with.offset(112.5);
+            make.left.equalTo(self->content).with.offset(90);
+            make.height.equalTo(@46);
+            make.width.equalTo(@140);
+        }];
         
 //        LabaImageBlock myLabaImageBlock = ^{
 //            [playBtn removeFromSuperview];
@@ -639,8 +823,14 @@
             
             //把喇叭换成动图
             [labaView removeFromSuperview];
-            UIImageView* labaWithLoop = [LoadGif imageViewfForPlaying:CGRectMake(17.66, 32, 17.66, 16.55)];
+            UIImageView* labaWithLoop = [LoadGif imageViewfForPlaying];
             [label addSubview:labaWithLoop];
+            [labaWithLoop mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(label).with.offset(32);
+                make.left.equalTo(label).with.offset(17.66);
+                make.width.equalTo(@17.66);
+                make.height.equalTo(@16.55);
+            }];
             
             myblock = ^{
                 NSLog(@"播放完成");
@@ -699,23 +889,37 @@
 
 -(void)initSettingView{
     //整体灰色背景
-    settingView=[[UIView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647.72)];
+    settingView=[[UIView alloc]init];
     settingView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     //上部分白色背景
-    UILabel* settingLabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 414, 180.13)];
+    UILabel* settingLabel=[[UILabel alloc]init];
     settingLabel.backgroundColor=[UIColor whiteColor];
     settingLabel.clipsToBounds = YES;
     [settingLabel setUserInteractionEnabled:YES];
     [settingView addSubview:settingLabel];
     
+    [settingLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->settingView);
+        make.left.equalTo(self->settingView);
+        make.right.equalTo(self->settingView);
+        make.height.equalTo(@180);
+    }];
+    
     //左侧标题数组  ,@"播放时间间隔",@"播放中文语音"
     NSArray* tagLabelArray=@[@"自动播放下句",@"显示中文翻译",@"单句重复次数"];
     for (NSString* title in tagLabelArray) {
         float y=-4.413+22.06*([tagLabelArray indexOfObject:title]+1)+22.06*[tagLabelArray indexOfObject:title];
-        UILabel* tagLabel=[[UILabel alloc]initWithFrame:CGRectMake(19.87, y, 92.73, 22.06)];
+        UILabel* tagLabel=[[UILabel alloc]init];
         tagLabel.text=title;
         tagLabel.font=[UIFont systemFontOfSize:14];
         [settingLabel addSubview:tagLabel];
+        
+        [tagLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(settingLabel).with.offset(y);
+            make.centerX.equalTo(settingLabel).with.offset(-120);
+            make.width.equalTo(@100);
+            make.height.equalTo(@22);
+        }];
     }
     
     //右侧label边框加载,@"252" ,@"168.01"
@@ -723,7 +927,7 @@
     NSMutableArray* btnLabelArray=[[NSMutableArray alloc]init];
     for (NSString* x in btnWidth) {
         float y=-4.413+17.65*([btnWidth indexOfObject:x]+1)+26.48*[btnWidth indexOfObject:x];
-        UILabel* btnLabel=[[UILabel alloc]initWithFrame:CGRectMake(134.68,y, x.floatValue, 26.48)];
+        UILabel* btnLabel=[[UILabel alloc]init];
         [settingLabel addSubview:btnLabel];
         btnLabel.layer.borderWidth=1;
         btnLabel.layer.borderColor=ssRGBHex(0xFF7474).CGColor;
@@ -731,6 +935,13 @@
         btnLabel.clipsToBounds = YES;
         [btnLabel setUserInteractionEnabled:YES];
         [btnLabelArray addObject:btnLabel];
+        
+        [btnLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(settingLabel).with.offset(y);
+            make.centerX.equalTo(settingLabel).with.offset(50);
+            make.width.equalTo(@(x.floatValue));
+            make.height.equalTo(@26.48);
+        }];
     }
 
     //右侧按钮数组
@@ -937,6 +1148,13 @@
     if (settingShow) {
         [self.view addSubview:settingView];
         
+        [settingView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(88.27);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
+        
     }else{
         [settingView removeFromSuperview];
     }
@@ -948,6 +1166,13 @@
 -(void)showChooseLessonView{
     if (chooseLessonShow) {
         [self.view addSubview:chooseLessonView];
+        [chooseLessonView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(132.41);
+            make.right.equalTo(self.view);
+            make.left.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+            //make.width.equalTo(self.view);
+        }];
     }else{
         if (chooseLessonView.unitName!=nil&&chooseLessonView.className!=nil) {
             lessonArray=chooseLessonView.lessonArray;
@@ -998,8 +1223,15 @@
     }else{
         //添加学习进度信息
         //加载gif动画
-        UIImageView* loadPic=[LoadGif imageViewStartAnimating:CGRectMake(177, 300, 60, 60)];
+        loadPic=[LoadGif imageViewStartAnimating];
         [self.view addSubview:loadPic];
+        
+        [loadPic mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(self.view);
+            make.centerX.equalTo(self.view);
+            make.width.equalTo(@60);
+            make.height.equalTo(@60);
+        }];
         
         NSDictionary* dataDic=[ConnectionFunction addUserArticleMsg:chooseLessonView.articleId UserKey:[userInfo valueForKey:@"userKey"]];
         NSLog(@"添加课程学习信息返回的是%@",dataDic);
@@ -1007,12 +1239,9 @@
         
         [self presentLessionView];
         [self learningBook];
-        
-        //加载完成，移除gif
-        [loadPic removeFromSuperview];
     }
     
-    [self loadAudioMsg];  
+    [self loadAudioMsg];
 }
 
 -(void)loadAudioMsg{
@@ -1032,6 +1261,7 @@
 //            }
         }
     });
+    //加载完成，移除gif
 }
 
 
@@ -1077,7 +1307,7 @@
         self->chooseLessonShow=!self->chooseLessonShow;
     };
     
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:_defaultUnit ShowBlock:showContentBlock];
+    chooseLessonView=[[ChooseLessonView alloc]initWithBookId:_bookId DefaultUnit:_defaultUnit ShowBlock:showContentBlock];
     
 }
 -(void)popBack{

@@ -12,6 +12,7 @@
 #import "../LearningViewController.h"
 #import "../Functions/DownloadAudioService.h"
 #import "../Functions/MyThreadPool.h"
+#import "Masonry.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -41,8 +42,8 @@
 @end
 
 @implementation ChooseLessonView
--(id)initWithFrame:(CGRect)frame bookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock{
-    self=[super initWithFrame:frame];
+-(id)initWithBookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock{
+    self=[super init];
     if (self) {
         self.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
@@ -55,23 +56,38 @@
         _dataArray=[[NSDictionary alloc]init];
         sentenceArray=[[NSArray alloc]init];
     
-        UITableView* unitsList=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, 150, 397.24)];
+        UITableView* unitsList=[[UITableView alloc]init];
         unitsList.dataSource=self;
         unitsList.delegate=self;
         unitsList.tag=1;
 //        [self tableView:unitsList didSelectRowAtIndexPath:[NSIndexPath indexPathForItem:3 inSection:0]];
         [self addSubview:unitsList];
+        
+        [unitsList mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self);
+            make.left.equalTo(self);
+            make.width.equalTo(self.mas_width).multipliedBy(0.4);
+            make.height.equalTo(@397.24);
+        }];
+        
 //        [unitsList reloadData];
         NSIndexPath* _lastIndex = [NSIndexPath indexPathForRow:_defaultUnit inSection:0];
         [unitsList selectRowAtIndexPath:_lastIndex animated:YES scrollPosition:UITableViewScrollPositionNone];
         NSIndexPath *path = [NSIndexPath indexPathForItem:_defaultUnit inSection:0];
         [self tableView:unitsList didSelectRowAtIndexPath:path];
         
-        lessonList=[[UITableView alloc]initWithFrame:CGRectMake(150, 0, 264, 397.24)];
+        lessonList=[[UITableView alloc]init];
         lessonList.dataSource=self;
         lessonList.delegate=self;
         lessonList.tag=2;
         [self addSubview:lessonList];
+        
+        [lessonList mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self);
+            make.right.equalTo(self);
+            make.width.equalTo(self).multipliedBy(0.6);
+            make.height.equalTo(@397.24);
+        }];
     }
     return self;
 }
@@ -117,6 +133,10 @@
         cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
         //cell.tag=[[unitMsg valueForKey:@"unitId"]intValue];
         cell.tag=indexPath.row;
+        
+        if (indexPath.row == _defaultUnit) {
+            cell.textLabel.textColor=[UIColor blackColor];
+        }
         return cell;
     }else if (tableView.tag==2){
         //课程选择列表
@@ -132,7 +152,6 @@
     else{
         return nil;
     }
-    
     
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{

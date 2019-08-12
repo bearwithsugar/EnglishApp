@@ -29,6 +29,7 @@
 #import "Functions/ConnectionInstance.h"
 #import "Reachability.h"
 #import "Functions/MyThreadPool.h"
+#import "Masonry.h"
 
 
 //使控制台打印完整信息
@@ -130,8 +131,8 @@
     if ([self updateInterfaceWithReachability:self.conn]) {
         //初始化、分配空间
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-        myShelfView=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
-        synchronousPractice=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 698.06)];
+        myShelfView=[[UIView alloc]init];
+        synchronousPractice=[[UIView alloc]init];
         selectedPublication=[[NSString alloc]init];
         //先为年级数组分配空间
         gradesArray=[[NSArray alloc]init];
@@ -141,12 +142,20 @@
         processDic=[[NSMutableDictionary alloc]init];
         timerFlag=true;
         //加载加载图
-        loadGifForRecentBook=[LoadGif imageViewStartAnimating:CGRectMake(100, 250, 30, 30)];
-        loadGifForProcess=[LoadGif imageViewStartAnimating:CGRectMake(290, 230, 30, 30)];
+        loadGifForRecentBook=[LoadGif imageViewStartAnimating];
+        loadGifForProcess=[LoadGif imageViewStartAnimating];
 
         //开始加载界面
         [self synchronousPracticeShow];
         [self.view addSubview:myShelfView];
+        
+        [myShelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(137.93);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
+        
         [self.navigationController setNavigationBarHidden:true];
         [self titleShow];
         [self titleMenu];
@@ -258,8 +267,23 @@
     NSLog(@"沙盒路径：%@",[DocuOperate homeDirectory]);
     
     //加载gif动画
-    [self.view addSubview:loadGifForRecentBook];
-    [self.view addSubview:loadGifForProcess];
+    [self->bookPicView addSubview:loadGifForRecentBook];
+    
+    [processDetails addSubview:loadGifForProcess];
+    
+    [loadGifForProcess mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self->processDetails);
+        make.centerY.equalTo(self->processDetails);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
+    }];
+
+    [loadGifForRecentBook mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self->bookPicView);
+        make.centerY.equalTo(self->bookPicView);
+        make.width.equalTo(@30);
+        make.height.equalTo(@30);
+    }];
     
     //写入进度文件，方便绕开接口相应时间达到实时刷新
     if([DocuOperate fileExistInPath:@"process.plist"]){
@@ -330,7 +354,7 @@
 
 -(void)titleShow{
     //标题
-    UILabel* titleShow=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.7, 414, 66.2)];
+    UILabel* titleShow=[[UILabel alloc]init];
     titleShow.backgroundColor=ssRGBHex(0xFF6565 );
     titleShow.text=@"小学英语同步练";
     titleShow.textColor=[UIColor whiteColor];
@@ -341,26 +365,47 @@
     //打开button父组件的人机交互
     [titleShow setUserInteractionEnabled:YES];
     
-    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(365, 15, 36, 35)];
+    UILabel* touchField=[[UILabel alloc]init];
     [touchField setUserInteractionEnabled:YES];
     [titleShow addSubview:touchField];
     
+    [touchField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(titleShow).with.offset(15);
+        make.right.equalTo(titleShow).with.offset(-15);
+        make.width.equalTo(@36);
+        make.height.equalTo(@35);
+    }];
+    
     //用户button
-    UIButton* userPic=[[UIButton alloc]initWithFrame:CGRectMake(7, 5, 23, 25)];
+    UIButton* userPic=[[UIButton alloc]init];
     [userPic setBackgroundImage:[UIImage imageNamed:@"icon_people"] forState:UIControlStateNormal];
     [userPic setBackgroundImage:[UIImage imageNamed:@"icon_people"] forState:UIControlStateHighlighted];
     [userPic addTarget:self action:@selector(pushToUser) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:userPic];
     
+    [userPic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(touchField).with.offset(5);
+        make.left.equalTo(touchField).with.offset(5);
+        make.width.equalTo(@23);
+        make.height.equalTo(@25);
+    }];
+    
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pushToUser)];
     [touchField addGestureRecognizer:touchFunc];
     
     [self.view addSubview:titleShow];
+    
+    [titleShow mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(22.7);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@66);
+    }];
 }
 -(void)titleMenu{
     NSArray *titleArray=@[@"我的书架",@"同步练习",@"选择课本"];
     for(NSString *title in titleArray ){
-        UIButton* titlebtn=[[UIButton alloc]initWithFrame:CGRectMake(138*[titleArray indexOfObject:title], 88.9, 138, 49.65)];
+        UIButton* titlebtn=[[UIButton alloc]init];
         titlebtn.backgroundColor=[UIColor whiteColor];
         [titlebtn setTitle:title forState:UIControlStateNormal];
         [titlebtn setTitleColor:(ssRGBHex(0x000000)) forState:UIControlStateNormal];
@@ -373,6 +418,18 @@
         }
         [self.view addSubview:titlebtn];
         [titleBtnArray addObject:titlebtn];
+        
+        [titlebtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(89);
+            if([titleArray indexOfObject:title] == 0)
+                make.left.equalTo(self.view);
+            else if([titleArray indexOfObject:title] == 1)
+                make.centerX.equalTo(self.view);
+            else
+                make.right.equalTo(self.view);
+            make.width.equalTo(self.view).multipliedBy(0.34);
+            make.height.equalTo(@50);
+        }];
     }
 }
 -(void)wasClicked:(UIButton*)btn{
@@ -380,17 +437,43 @@
         [myShelfView removeFromSuperview];
         [chooseBookView removeFromSuperview];
         [self.view addSubview:synchronousPractice];
+        
+        [synchronousPractice mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(137.93);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
+        
     }else if(btn.tag==0){
         [synchronousPractice removeFromSuperview];
         [chooseBookView removeFromSuperview];
         [self.view addSubview:myShelfView];
+        
+        [myShelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(137.93);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
+        
     }else if(btn.tag==2){
         if (userInfo==nil) {
             [self presentViewController: [WarningWindow transToLogin:@"你尚未登录！请登录后查看" Navigation:self.navigationController]
                                animated:YES
                              completion:nil];
+        }else{
+            [self chooseBook];
+            [self.view addSubview:chooseBookView];
+            
+            [chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self.view).with.offset(137.93);
+                make.left.equalTo(self.view);
+                make.right.equalTo(self.view);
+                make.bottom.equalTo(self.view);
+            }];
         }
-        [self.view addSubview:chooseBookView];
+        
     }
     
     for (UIButton* button in titleBtnArray) {
@@ -405,42 +488,83 @@
 #pragma mark --myshelf
 
 -(void)myGradeFixed{
-    myProgress=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 414, 275.84)];
+    myProgress=[[UIView alloc]init];
     myProgress.backgroundColor=ssRGBHex(0xFCF8F7);
     [myShelfView addSubview:myProgress];
+    
+    [myProgress mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->myShelfView);
+        make.left.equalTo(self->myShelfView);
+        make.right.equalTo(self->myShelfView);
+        make.height.equalTo(@275.84);
+    }];
+    
+    //右侧面板
+    UIView* progressPanel = [UIView new];
+    [myProgress addSubview:progressPanel];
+    
+    [progressPanel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->myProgress);
+        make.right.equalTo(self->myProgress);
+        make.width.equalTo(self->myProgress).multipliedBy(0.5);
+        make.bottom.equalTo(self->myProgress);
+    }];
 
     //右侧进度线束
-    processDetails=[[UIView alloc]initWithFrame:CGRectMake(220.80, 23.17, 171.11, 238.34)];
+    processDetails=[[UIView alloc]init];
     //processDetails.backgroundColor=[UIColor blueColor];
     processDetails.layer.borderColor=[UIColor blackColor].CGColor;
     processDetails.layer.borderWidth=1.0;
     processDetails.layer.borderColor=ssRGBHex(0x979797).CGColor;
     processDetails.layer.cornerRadius=10;
-    [myProgress addSubview:processDetails];
+    [progressPanel addSubview:processDetails];
     
-    UILabel* processDetailsTitle=[[UILabel alloc]initWithFrame:CGRectMake(250, 11.02, 120, 22.07)];
+    [processDetails mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(progressPanel).with.offset(23.17);
+        make.centerX.equalTo(progressPanel);
+        make.width.equalTo(@172);
+        make.height.equalTo(@238.34);
+    }];
+    
+    
+    UILabel* processDetailsTitle=[[UILabel alloc]init];
     processDetailsTitle.text=@"我的练习成绩";
     processDetailsTitle.textColor=ssRGBHex(0xF15252);
     processDetailsTitle.backgroundColor=ssRGBHex(0xFCF7F8);
     processDetailsTitle.textAlignment=NSTextAlignmentCenter;
     [myProgress addSubview:processDetailsTitle];
     
-    noRecordLabel=[[UILabel alloc]initWithFrame:CGRectMake(47.47, 109.24, 77.27, 18.75)];
+    [processDetailsTitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(progressPanel).with.offset(11);
+        make.centerX.equalTo(progressPanel);
+        make.width.equalTo(@120);
+        make.height.equalTo(@22);
+    }];
+    
+    noRecordLabel=[[UILabel alloc]init];
     noRecordLabel.text=@"暂无学习记录";
     noRecordLabel.textColor=ssRGBHex(0xF5A623);
     noRecordLabel.font=[UIFont systemFontOfSize:12];
-    [processDetails addSubview:noRecordLabel];
+    [progressPanel addSubview:noRecordLabel];
+    
+    [noRecordLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self->processDetails);
+        make.centerX.equalTo(self->processDetails);
+        make.width.equalTo(@77.27);
+        make.height.equalTo(@18.75);
+    }];
     
 }
 -(void)myGradeUnfixed{
+    
     
     [noRecordLabel removeFromSuperview];
     
     [processFixView removeFromSuperview];
     
-    processFixView=[[UIView alloc]initWithFrame:CGRectMake(220.80, 23.17, 171.11, 238.34)];
+    processFixView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 171.11, 238.34)];
     
-    [myProgress addSubview:processFixView];
+    [processDetails addSubview:processFixView];
     
     NSArray* titleArray=@[@"听课文",@"读句子",@"准确率",@"总时长",@"总排名"];
     
@@ -471,22 +595,15 @@
         
     }
     
-    //书籍图片
-    bookPicView=[[UIView alloc]initWithFrame:CGRectMake(22.08, 14.34, 176.63, 247.18)];
-    
-    bookPicView.backgroundColor=[UIColor whiteColor];
-    
-    bookPicView.layer.borderWidth=1.0;
-    
-    bookPicView.layer.borderColor=ssRGBHex(0x979797).CGColor;
-    
-    [myProgress addSubview:bookPicView];
-    
     if (userInfo==nil) {
         
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
-            UIImageView* bookpic=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 176.63,247.18)];
+            UIImageView* bookpic=[[UIImageView alloc]init];
+            
+            bookpic.layer.borderWidth=1.0;
+            
+            bookpic.layer.borderColor=ssRGBHex(0x979797).CGColor;
             
             bookpic.image=[UIImage imageNamed:@"group_book_1_unlogged"];
             
@@ -494,10 +611,28 @@
                 
                 [self->bookPicView addSubview:bookpic];
                 
+                [bookpic mas_makeConstraints:^(MASConstraintMaker *make) {
+                    make.centerX.equalTo(self->bookPicView);
+                    make.width.equalTo(@176.63);
+                    make.top.equalTo(self->bookPicView);
+                    make.height.equalTo(@247.18);
+                }];
+                
             });
         });
         
     }else{
+        if (bookPicView == nil) {
+            bookPicView = [UIView new];
+        }
+        [myProgress addSubview:bookPicView];
+        
+        [bookPicView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self->myProgress);
+            make.width.equalTo(self->myProgress).multipliedBy(0.5);
+            make.top.equalTo(self->myProgress).with.offset(14.34);
+            make.bottom.equalTo(self->myProgress);
+        }];
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
             //登录状态下才添加手势
@@ -511,13 +646,24 @@
             
         });
         
-        UIImageView* bookpic=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 176.63,247.18)];
+        UIImageView* bookpic=[[UIImageView alloc]init];
+        
+        bookpic.layer.borderWidth=1.0;
+        
+        bookpic.layer.borderColor=ssRGBHex(0x979797).CGColor;
         
         //临时图片
         //bookpic.image=[UIImage imageNamed:@"group_book_1_unlogged"];
         bookpic.image=[LocalDataOperation getImage:[recentBook valueForKey:@"bookId"] httpUrl:[recentBook valueForKey:@"coverPicture"]];
 
         [bookPicView addSubview:bookpic];
+        
+        [bookpic mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self->bookPicView);
+            make.width.equalTo(@176.63);
+            make.top.equalTo(self->bookPicView);
+            make.height.equalTo(@247.18);
+        }];
     }
     
     [self loadGrade];
@@ -528,9 +674,9 @@
     
     [refreshPanelProcess removeFromSuperview];
     
-    refreshPanelProcess=[[UIView alloc]initWithFrame:CGRectMake(220.80, 23.17, 171.11, 238.34)];
+    refreshPanelProcess=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 171.11, 238.34)];
     
-    [myProgress addSubview:refreshPanelProcess];
+    [processDetails addSubview:refreshPanelProcess];
     
     ProcessLine* tingkewenProcess=[[ProcessLine alloc]initWithFrame:CGRectMake(64.03, 26.48, 94.94, 13.24)];
     [tingkewenProcess percentLabel:[[processDic valueForKey:@"tingkewen"]floatValue]];
@@ -579,29 +725,71 @@
 }
 
 -(void)myProgressFixed{
-    myShelfThree=[[UIView alloc]initWithFrame:CGRectMake(0, 275.84, 414, 225.09)];
+    
+    //书籍图片
+    bookPicView=[[UIView alloc]init];
+    
+    [myProgress addSubview:bookPicView];
+    
+    [bookPicView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self->myProgress);
+        make.width.equalTo(self->myProgress).multipliedBy(0.5);
+        make.top.equalTo(self->myProgress).with.offset(14.34);
+        make.bottom.equalTo(self->myProgress);
+    }];
+    
+    myShelfThree=[[UIView alloc]init];
     myShelfThree.backgroundColor=ssRGBHex(0xFCF8F7);
     [myShelfView addSubview:myShelfThree];
     
-    UIView* myProgressTitle=[[UIView alloc]initWithFrame:CGRectMake(0, 0, 414, 44.12)];
+    [myShelfThree mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self->myShelfView);
+        make.left.equalTo(self->myShelfView);
+        make.top.equalTo(self->myShelfView).with.offset(275.84);
+        make.height.equalTo(@225.09);
+    }];
+    
+    UIView* myProgressTitle=[[UIView alloc]init];
     myProgressTitle.backgroundColor=[UIColor whiteColor];
     [myShelfThree addSubview:myProgressTitle];
+    
+    [myProgressTitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self->myShelfThree);
+        make.left.equalTo(self->myShelfThree);
+        make.top.equalTo(self->myShelfThree);
+        make.height.equalTo(@44.12);
+    }];
+    
     //显示子视图
     myProgressTitle.clipsToBounds = YES;
     //打开button父组件的人机交互
     [myProgressTitle setUserInteractionEnabled:YES];
     
-    UIImageView* clockPic=[[UIImageView alloc]initWithFrame:CGRectMake(13.24, 11.03, 19.87, 22.06)];
+    UIImageView* clockPic=[[UIImageView alloc]init];
     clockPic.image=[UIImage imageNamed:@"icon_rate"];
     [myProgressTitle addSubview:clockPic];
     
-    UILabel* lianxijindu=[[UILabel alloc]initWithFrame:CGRectMake(44.16, 11.03, 60.71, 22.06)];
+    [clockPic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(@19.87);
+        make.left.equalTo(myProgressTitle).with.offset(13.24);
+        make.top.equalTo(myProgressTitle).with.offset(11.03);
+        make.height.equalTo(@22);
+    }];
+    
+    UILabel* lianxijindu=[[UILabel alloc]init];
     lianxijindu.text=@"已选课本";
     lianxijindu.font=[UIFont systemFontOfSize:14];
     [myShelfThree addSubview:lianxijindu];
     
+    [lianxijindu mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(@70);
+        make.left.equalTo(clockPic.mas_right).with.offset(15);
+        make.top.equalTo(self->myShelfThree).with.offset(11.03);
+        make.height.equalTo(@22);
+    }];
+    
     //富文本方式设置查看我的书架标签
-    UILabel* myShelf=[[UILabel alloc]initWithFrame:CGRectMake(300, 10, 100, 22)];
+    UILabel* myShelf=[[UILabel alloc]init];
     NSString *str1 = @"查看我的书架 ";
     NSMutableAttributedString *attri = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@",str1]];
     [attri addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:12] range:NSMakeRange(0, str1.length)];
@@ -615,28 +803,45 @@
     UITapGestureRecognizer* clickmyShelf=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(action)];
     [myShelf addGestureRecognizer:clickmyShelf];
     [myProgressTitle addSubview:myShelf];
+    
+    [myShelf mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(@100);
+        make.right.equalTo(myProgressTitle).with.offset(-15);
+        make.top.equalTo(myProgressTitle).with.offset(10);
+        make.height.equalTo(@22);
+    }];
+    
 }
 -(void)myProgressUnfixed{
    
     [bookScanView removeFromSuperview];
     
-    bookScanView=[[UIView alloc]initWithFrame:CGRectMake(0, 57.36, 414, 154.49)];
+    bookScanView=[[UIView alloc]init];
 
     [myShelfThree addSubview:bookScanView];
     
-    bookshelfArray=[[ConnectionFunction getBookShelf:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
+    [bookScanView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->myShelfThree).with.offset(57.36);
+        make.left.equalTo(self->myShelfThree);
+        make.right.equalTo(self->myShelfThree);
+        make.height.equalTo(@154.49);
+    }];
     
-    NSLog(@"bookshelfArray:%@",bookshelfArray);
+    bookshelfArray=[[ConnectionFunction getBookShelf:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
     
     NSInteger size=bookshelfArray.count;
     
     float width=105.98*size+17.66*(size-1)+61.8;
     
-    UIScrollView* shelfView=[[UIScrollView alloc]initWithFrame:CGRectMake(0,0, 414, 154.49)];
+    UIScrollView* shelfView=[[UIScrollView alloc]init];
     
     shelfView.contentSize=CGSizeMake(width, 154.49);
         
     [self->bookScanView addSubview:shelfView];
+    
+    [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self->bookScanView);
+    }];
         
     for (int i=0; i<size; i++) {
         
@@ -773,36 +978,78 @@
 //    practiceBook.textAlignment=NSTextAlignmentCenter;
 //    [synchronousPractice addSubview:practiceBook];
     
-    UIView* functionView=[[UIView alloc]initWithFrame:CGRectMake(0, 49.65, 414, 92.68)];
+    UIView* functionView=[[UIView alloc]init];
     functionView.backgroundColor=[UIColor whiteColor];
     [synchronousPractice addSubview:functionView];
     
-    UIButton* wordListen=[[UIButton alloc]initWithFrame:CGRectMake(27.60, 11.03, 52.96, 75.03)];
+    [functionView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->synchronousPractice).with.offset(50);
+        make.right.equalTo(self->synchronousPractice);
+        make.width.equalTo(self->synchronousPractice);
+        make.height.equalTo(@92.68);
+    }];
+    
+    UIButton* wordListen=[[UIButton alloc]init];
     [wordListen setBackgroundImage:[UIImage imageNamed: @"btn_dancitingxie_logged"] forState:UIControlStateNormal];
     [wordListen addTarget:self action:@selector(pushToWordsListen) forControlEvents:UIControlEventTouchUpInside];
     [functionView addSubview:wordListen];
     
-    UIButton* sentenceListen=[[UIButton alloc]initWithFrame:CGRectMake(98.25, 11.03, 52.96, 75.03)];
+    UIButton* sentenceListen=[[UIButton alloc]init];
     [sentenceListen setBackgroundImage:[UIImage imageNamed: @"btn_juzitingxie_logged"] forState:UIControlStateNormal];
     [sentenceListen addTarget:self action:@selector(pushToSentenceListen) forControlEvents:UIControlEventTouchUpInside];
     [functionView addSubview:sentenceListen];
     
-    UIButton* wordTest=[[UIButton alloc]initWithFrame:CGRectMake(174.43, 11.03, 52.96, 75.03)];
+    UIButton* wordTest=[[UIButton alloc]init];
     wordTest.tag=1;
     [wordTest setBackgroundImage:[UIImage imageNamed: @"btn_danciceshi_logged"] forState:UIControlStateNormal];
     [wordTest addTarget:self action:@selector(pushToWordsTest:) forControlEvents:UIControlEventTouchUpInside];
     [functionView addSubview:wordTest];
     
-    UIButton* sentenceTest=[[UIButton alloc]initWithFrame:CGRectMake(250.60, 11.03, 52.96, 75.03)];
+    UIButton* sentenceTest=[[UIButton alloc]init];
     sentenceTest.tag=2;
     [sentenceTest setBackgroundImage:[UIImage imageNamed: @"btn_juziceshi_logged"] forState:UIControlStateNormal];
     [sentenceTest addTarget:self action:@selector(pushToWordsTest:) forControlEvents:UIControlEventTouchUpInside];
     [functionView addSubview:sentenceTest];
     
-    UIButton* questionNote=[[UIButton alloc]initWithFrame:CGRectMake(332.30, 11.03, 52.96, 75.03)];
+    UIButton* questionNote=[[UIButton alloc]init];
     [questionNote setBackgroundImage:[UIImage imageNamed: @"btn_cuotiben_logged"] forState:UIControlStateNormal];
     [questionNote addTarget:self action:@selector(pushToWrong) forControlEvents:UIControlEventTouchUpInside];
     [functionView addSubview:questionNote];
+    
+    [wordListen mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(functionView).with.offset(11);
+        make.left.equalTo(functionView).with.offset(20);
+        make.width.equalTo(@54);
+        make.height.equalTo(@75);
+    }];
+    
+    [sentenceListen mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(functionView).with.offset(11);
+        make.centerX.equalTo(functionView).multipliedBy(0.5).with.offset(20);
+        make.width.equalTo(@54);
+        make.height.equalTo(@75);
+    }];
+    
+    [wordTest mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(functionView).with.offset(11);
+        make.centerX.equalTo(functionView);
+        make.width.equalTo(@54);
+        make.height.equalTo(@75);
+    }];
+    
+    [sentenceTest mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(functionView).with.offset(11);
+        make.centerX.equalTo(functionView).multipliedBy(1.5).with.offset(-20);
+        make.width.equalTo(@54);
+        make.height.equalTo(@75);
+    }];
+    
+    [questionNote mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(functionView).with.offset(11);
+        make.right.equalTo(functionView).with.offset(-20);
+        make.width.equalTo(@54);
+        make.height.equalTo(@75);
+    }];
 }
 
 
@@ -818,20 +1065,34 @@
     NSLog(@"出版社列表%@",publicationArray);
 }
 -(void)chooseBook{
-    chooseBookView=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 598.06)];
+    chooseBookView=[[UIView alloc]init];
     chooseBookView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     
-    UITableView* choosePublishTable=[[UITableView alloc]initWithFrame:CGRectMake(277.1, 0, 136.9, 370.75)];
+    UITableView* choosePublishTable=[[UITableView alloc]init];
     choosePublishTable.dataSource=self;
     choosePublishTable.delegate=self;
     choosePublishTable.tag=4;
     [chooseBookView addSubview:choosePublishTable];
     
-    chooseGradeTable=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, 277.1, 370.75)];
+    chooseGradeTable=[[UITableView alloc]init];
     chooseGradeTable.dataSource=self;
     chooseGradeTable.delegate=self;
     chooseGradeTable.tag=3;
     [chooseBookView addSubview:chooseGradeTable];
+    
+    [chooseGradeTable mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->chooseBookView);
+        make.left.equalTo(self->chooseBookView);
+        make.width.equalTo(self->chooseBookView).multipliedBy(0.55);
+        make.height.equalTo(@370.75);
+    }];
+    
+    [choosePublishTable mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->chooseBookView);
+        make.right.equalTo(self->chooseBookView);
+        make.width.equalTo(self->chooseBookView).multipliedBy(0.45);
+        make.height.equalTo(@370.75);
+    }];
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -980,6 +1241,13 @@
    
     [bookPicView removeFromSuperview];
     [processDetails addSubview:noRecordLabel];
+    [noRecordLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self->processDetails);
+        make.centerX.equalTo(self->processDetails);
+        make.width.equalTo(@77.27);
+        make.height.equalTo(@18.75);
+    }];
+    
     [processFixView removeFromSuperview];
     [refreshPanelProcess removeFromSuperview];
     [bookScanView removeFromSuperview];

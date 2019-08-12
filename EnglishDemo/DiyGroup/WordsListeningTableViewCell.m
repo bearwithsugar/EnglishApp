@@ -7,10 +7,13 @@
 //
 
 #import "WordsListeningTableViewCell.h"
+#import "../Common/LoadGif.h"
+#import "Masonry.h"
 @interface WordsListeningTableViewCell(){
     
+    UIImageView* laba;
+    
 }
-@property (weak, nonatomic) IBOutlet UIButton *labaBtn;
 @property (weak, nonatomic) IBOutlet UILabel *description;
 @property (weak, nonatomic) IBOutlet UILabel *name;
 @end
@@ -28,18 +31,27 @@
     }
     return cell;
 }
--(void)loadData:(NSString*)image name:(NSString*)label1 description:(NSString*)label2{
-    [self.labaBtn setBackgroundImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
+-(void)loadData:(UIImageView*)image name:(NSString*)label1 description:(NSString*)label2{
+//    [_labaBtn setBackgroundImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
+    [_labaView addSubview:image];
+    [image mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(image);
+    }];
     self.name.text=label1;
     self.name.font=[UIFont systemFontOfSize:14];
     self.description.text=label2;
     self.description.font=[UIFont systemFontOfSize:12];
     self.name.adjustsFontSizeToFitWidth =YES;
     self.description.adjustsFontSizeToFitWidth = YES;
+    laba = image;
 }
 - (void)awakeFromNib;{
     [super awakeFromNib];
     // Initialization code
+}
+
+-(void)clearLaba{
+    [laba removeFromSuperview];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

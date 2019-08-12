@@ -28,6 +28,7 @@
     UIView* strategyView;
     //学分提示
     UILabel* moneyTip;
+    UITextField* inputMoneyField;
     int score;
     int money;
 }
@@ -73,7 +74,7 @@
         make.width.equalTo(@77);
     }];
     
-    UITextField* inputMoneyField=[[UITextField alloc]init];
+    inputMoneyField=[[UITextField alloc]init];
     inputMoneyField.backgroundColor=ssRGBHex(0xFCF8F7);
     inputMoneyField.placeholder=@"请输入金额";
     [inputMoneyField setValue:[UIFont boldSystemFontOfSize:14] forKeyPath:@"_placeholderLabel.font"];
@@ -93,8 +94,8 @@
     [self.view addSubview:moneyTip];
     
     [moneyTip mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(inputMoneyField);
-        make.top.equalTo(inputMoneyField.mas_bottom).offset(12);
+        make.left.equalTo(self->inputMoneyField);
+        make.top.equalTo(self->inputMoneyField.mas_bottom).offset(12);
         make.width.equalTo(@200);
     }];
     
@@ -222,6 +223,11 @@
     
 }
 -(void)Alipay{
+    if(![self isNumber:inputMoneyField.text]){
+        [self presentViewController:[WarningWindow MsgWithoutTrans:@"输入金额格式不正确。"] animated:YES completion:nil];
+        return;
+        
+    }
     if (userInfo==nil) {
         NSLog(@"请先登录");
         [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，请先登录再充值！" Navigation:self.navigationController] animated:YES completion:nil];
@@ -236,6 +242,11 @@
     }
 }
 -(void)WeChatpay{
+    if(![self isNumber:inputMoneyField.text]){
+        [self presentViewController:[WarningWindow MsgWithoutTrans:@"输入金额格式不正确。"] animated:YES completion:nil];
+        return;
+        
+    }
     if (userInfo==nil) {
         NSLog(@"请先登录");
         [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，请先登录再充值！" Navigation:self.navigationController] animated:YES completion:nil];
@@ -257,7 +268,22 @@
     }
 }
 
-
+- (BOOL)isNumber:(NSString *)strValue
+{
+    if (strValue == nil || [strValue length] <= 0)
+    {
+        return NO;
+    }
+    
+    NSCharacterSet *cs = [[NSCharacterSet characterSetWithCharactersInString:@"0123456789."] invertedSet];
+    NSString *filtered = [[strValue componentsSeparatedByCharactersInSet:cs] componentsJoinedByString:@""];
+    
+    if (![strValue isEqualToString:filtered])
+    {
+        return NO;
+    }
+    return YES;
+}
 //点击背景收起键盘
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的

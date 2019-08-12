@@ -15,6 +15,7 @@
 #import "Common/LoadGif.h"
 #import "Common/HeadView.h"
 #import "Functions/ConnectionInstance.h"
+#import "Masonry.h"
 
 @interface MyShelfViewController (){
    // NSDictionary* shelf
@@ -43,8 +44,15 @@
     NSLog(@"这个书架共有%lu本书",(unsigned long)bookArray.count);
     
     //加载gif动画
-    UIImageView* loadGif=[LoadGif imageViewStartAnimating:CGRectMake(177, 300, 60, 60)];
+    UIImageView* loadGif=[LoadGif imageViewStartAnimating];
     [self.view addSubview:loadGif];
+    
+    [loadGif mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self.view);
+        make.centerX.equalTo(self.view);
+        make.width.equalTo(@60);
+        make.height.equalTo(@60);
+    }];
     
     [self bookView];
     
@@ -84,15 +92,34 @@
 }
 
 -(void)bookView{
+    
+    CGRect rect_screen = [[UIScreen mainScreen]bounds];
+    
+    CGSize size_screen = rect_screen.size;
+    
+    NSInteger totalWidth = size_screen.width;
+    
+    float picWidth = (totalWidth - (4*12))/3;
+    
+    float picHeight = picWidth * 1.28;
+    
     NSUInteger size=bookArray.count;
     float heigh=ceilf(size/3.0)*187.58+26.48;
-    UIScrollView* shelfView=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647.72)];
+    UIScrollView* shelfView=[[UIScrollView alloc]init];
     shelfView.contentSize=CGSizeMake(414, heigh);
     [self.view addSubview:shelfView];
+    
+    [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(88.27);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view);
+    }];
+    
     for (int i=0;i<size; i++) {
-        float y=26.48+187.58*(i/3);
-        float x=11.4+133.58*(i%3);
-        UIButton* theBook=[[UIButton alloc]initWithFrame:CGRectMake(x,y, 125.85, 161.1)];
+        float y=26 + (picHeight+26)*(i/3);
+        float x=12 + (picWidth+12)*(i%3);
+        UIButton* theBook=[[UIButton alloc]initWithFrame:CGRectMake(x,y, picWidth, picHeight)];
 //        NSLog(@"bookarray%@",[bookArray objectAtIndex:i]);
 //        NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[bookArray objectAtIndex:i]valueForKey:@"coverPicture"]]];
 //
@@ -114,9 +141,9 @@
     }
     
     //'添加课本'图标
-    float y=26.48+187.58*((size)/3);
-    float x=11.4+133.58*((size)%3);
-    UIButton* addBook=[[UIButton alloc]initWithFrame:CGRectMake(x, y, 125.85, 161.1)];
+    float y=26 +(picHeight+26)*((size)/3);
+    float x=12 +(picWidth+12)*((size)%3);
+    UIButton* addBook=[[UIButton alloc]initWithFrame:CGRectMake(x, y, picWidth, picHeight)];
     [addBook setBackgroundImage:[UIImage imageNamed:@"btn_tianjiakeben"] forState:UIControlStateNormal];
     [addBook addTarget:self action:@selector(addBook) forControlEvents:UIControlEventTouchUpInside];
     [shelfView addSubview:addBook];

@@ -13,11 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ConnectionFunction : NSObject
 
 //登录
-+(NSDictionary*)getYzm:(long)phoneNumber;
++(NSDictionary*)getYzmForReg:(long)phoneNumber;
+//获取验证码用于修改密码
++(NSDictionary*)getYzmForPassword:(long)phoneNumber;
 +(NSDictionary*)verifyYzm:(long)phoneNumber yzm:(NSString*)yzm;
 +(NSDictionary*)toRegister:(long)phone Pass:(NSString*)password Nick:(NSString*)nickname;
 +(NSDictionary*)login_password:(long)phone Pass:(NSString*)password Name:(NSString*)deviceName Id:(NSString*)deviceId;
-+(NSDictionary*)login_yzm:(long)phoneNumber yzm:(NSString*)yzm;
++(NSDictionary*)login_yzm:(long)phoneNumber Yzm:(NSString*)yzm Device:(NSString*)device_id Name:(NSString*)device_name;
 
 //第三方登录
 +(NSDictionary*)OtherLogin:(NSString*)openid Nickname:(NSString*)nickname DeviceId:(NSString*)device_id DeviceName:(NSString*)device_name Type:(NSString*)type Pic:(NSString*)picurl;

@@ -18,8 +18,8 @@
 }
 */
 
-+(UIImageView*)imageViewStartAnimating:(CGRect)cgrect {
-    UIImageView* imageView=[[UIImageView alloc]initWithFrame:cgrect];
++(UIImageView*)imageViewStartAnimating{
+    UIImageView* imageView=[[UIImageView alloc]init];
     //    imageView.backgroundColor=[UIColor redColor];
     //    [self.view addSubview:imageView];
     
@@ -40,8 +40,8 @@
     return imageView;
 }
 
-+(UIImageView*)imageViewfForPlaying:(CGRect)cgrect {
-    UIImageView* imageView=[[UIImageView alloc]initWithFrame:cgrect];
++(UIImageView*)imageViewfForPlaying{
+    UIImageView* imageView=[[UIImageView alloc]init];
     NSMutableArray *imageArr = [[NSMutableArray alloc]init];
     for (int i = 0; i<=1; i++) {
         NSString *imageStr = [NSString stringWithFormat:@"icon_laba%d",i + 1];

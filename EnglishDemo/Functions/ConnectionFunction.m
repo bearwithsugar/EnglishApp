@@ -25,8 +25,8 @@
 
 
 #pragma mark --用户管理接口
-//获取验证码用于登录
-+(NSDictionary*)getYzm:(long)phoneNumber{
+//获取修改密码的验证码
++(NSDictionary*)getYzmForPassword:(long)phoneNumber{
     NSNumber* b=[NSNumber numberWithLong:phoneNumber];
     NSURL* url=[FixValues getUrl];
     NSString* str=[NSString stringWithFormat:@"%@",url];
@@ -35,8 +35,8 @@
     url=[NSURL URLWithString:str];
     return [self postRequest:url];
 }
-//获取修改密码的验证码
-+(NSDictionary*)getYzmForPassword:(long)phoneNumber{
+//获取验证码用于登录
++(NSDictionary*)getYzmForReg:(long)phoneNumber{
     NSNumber* b=[NSNumber numberWithLong:phoneNumber];
     NSURL* url=[FixValues getUrl];
     NSString* str=[NSString stringWithFormat:@"%@",url];
@@ -69,12 +69,11 @@
     NSString* str=[NSString stringWithFormat:@"%@",url];
     NSString* str2=[str stringByAppendingString:@"/user/register?phone="];
     str=[str2 stringByAppendingString:[a stringValue]];
-    str2=[str stringByAppendingString:@"&password='"];
+    str2=[str stringByAppendingString:@"&password="];
     str=[str2 stringByAppendingString:password];
-    str2=[str stringByAppendingString:@"'&nickname='"];
+    str2=[str stringByAppendingString:@"&nickname="];
     str=[str2 stringByAppendingString:nickname];
-    str2=[str stringByAppendingString:@"'"];
-    url=[NSURL URLWithString:str2];
+    url=[NSURL URLWithString:str];
     NSDictionary* dataDic=[self postRequest:url];
     return dataDic;
 }
@@ -98,8 +97,8 @@
     return dataDic;
 }
 
-//验证码登录接口  接口通过
-+(NSDictionary*)login_yzm:(long)phoneNumber yzm:(NSString*)yzm{
+//验证码登录接口
++(NSDictionary*)login_yzm:(long)phoneNumber Yzm:(NSString*)yzm Device:(NSString*)device_id Name:(NSString*)device_name {
     NSNumber* a=[NSNumber numberWithLong:phoneNumber];
     NSURL* url=[FixValues getUrl];
     NSString* str=[NSString stringWithFormat:@"%@",url];
@@ -107,7 +106,12 @@
     str=[str2 stringByAppendingString:[a stringValue]];
     str2=[str stringByAppendingString:@"&messageCode="];
     str=[str2 stringByAppendingString:yzm];
-    url=[NSURL URLWithString:str];
+    str2=[str stringByAppendingString:@"&device_id="];
+    str=[str2 stringByAppendingString:device_id];
+    str2=[str stringByAppendingString:@"&device_name="];
+    str=[str2 stringByAppendingString:device_name];
+    str2=[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    url=[NSURL URLWithString:str2];
     NSDictionary* dataDic=[self postRequest:url];
     return dataDic;
 }

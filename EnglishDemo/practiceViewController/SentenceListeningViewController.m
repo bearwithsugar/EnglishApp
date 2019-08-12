@@ -17,6 +17,8 @@
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Functions/DownloadAudioService.h"
 #import "../Functions/MyThreadPool.h"
+#import "../Common/HeadView.h"
+#import "Masonry.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -88,27 +90,30 @@
 
 
 -(void)titleShow{
-    UILabel* title=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.06, 414, 66.2)];
-    title.text=@"句子听写";
-    title.textColor=[UIColor whiteColor];
-    title.backgroundColor=ssRGBHex(0xFF7474);
-    title.font=[UIFont systemFontOfSize:18];
-    title.textAlignment=NSTextAlignmentCenter;
-    title.clipsToBounds = YES;
-    [title setUserInteractionEnabled:YES];
-    [self.view addSubview:title];
     
-    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(10, 20,30, 30)];
-    [touchField setUserInteractionEnabled:YES];
-    [title addSubview:touchField];
+    [HeadView titleShow:@"句子听写" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
     
-    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
-    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
-    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
-    [touchField addSubview:returnBtn];
-    
-    UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
-    [touchField addGestureRecognizer:touchFunc];
+//    UILabel* title=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.06, 414, 66.2)];
+//    title.text=@"句子听写";
+//    title.textColor=[UIColor whiteColor];
+//    title.backgroundColor=ssRGBHex(0xFF7474);
+//    title.font=[UIFont systemFontOfSize:18];
+//    title.textAlignment=NSTextAlignmentCenter;
+//    title.clipsToBounds = YES;
+//    [title setUserInteractionEnabled:YES];
+//    [self.view addSubview:title];
+//
+//    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(10, 20,30, 30)];
+//    [touchField setUserInteractionEnabled:YES];
+//    [title addSubview:touchField];
+//
+//    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
+//    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
+//    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
+//    [touchField addSubview:returnBtn];
+//
+//    UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
+//    [touchField addGestureRecognizer:touchFunc];
 
     
 //    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
@@ -136,38 +141,75 @@
                       classId:classid];
         self->chooseLessonShow=!self->chooseLessonShow;
     };
-    chooseLessonView=[[ChooseLessonView alloc]initWithFrame:CGRectMake(0, 132.41, 414, 603.58) bookId:_bookId DefaultUnit:0 ShowBlock:showContentBlock];
+    chooseLessonView=[[ChooseLessonView alloc]initWithBookId:_bookId DefaultUnit:0 ShowBlock:showContentBlock];
 }
 //上一课下一课
 -(void)chooseLesson{
-    presentLession=[[UIView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 44.13)];
+    presentLession=[[UIView alloc]init];
     presentLession.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:presentLession];
     
+    [presentLession mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(88.27);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.height.equalTo(@44);
+    }];
+    
     //上一课以及箭头
-    UIButton* lastLessonBtn=[[UIButton alloc]initWithFrame:CGRectMake(12.14, 14.34, 8.83, 16.55)];
+    UIButton* lastLessonBtn=[[UIButton alloc]init];
     [lastLessonBtn setBackgroundImage:[UIImage imageNamed:@"icon_shangyike"] forState:UIControlStateNormal];
     [lastLessonBtn addTarget:self action:@selector(clickLastLesson) forControlEvents:UIControlEventTouchUpInside];
     [presentLession addSubview:lastLessonBtn];
-    UIButton* lastLessonLabel=[[UIButton alloc]initWithFrame:CGRectMake(29.8, 13.24, 39.74, 18.75)];
+    
+    [lastLessonBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(14.34);
+        make.left.equalTo(self->presentLession).with.offset(15);
+        make.width.equalTo(@8.83);
+        make.height.equalTo(@16.55);
+    }];
+    
+    UIButton* lastLessonLabel=[[UIButton alloc]init];
     [lastLessonLabel addTarget:self action:@selector(clickLastLesson) forControlEvents:UIControlEventTouchUpInside];
     [lastLessonLabel setTitle:@"上一课" forState:UIControlStateNormal];
     [lastLessonLabel setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
     lastLessonLabel.titleLabel.font=[UIFont systemFontOfSize:12];
     [presentLession addSubview:lastLessonLabel];
     
+    [lastLessonLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(13.24);
+        make.left.equalTo(self->presentLession).with.offset(30);
+        make.width.equalTo(@40);
+        make.height.equalTo(@19);
+    }];
     
     //下一课以及箭头
-    UIButton* nextLessonBtn=[[UIButton alloc]initWithFrame:CGRectMake(391.91, 14.34, 8.83, 16.55)];
+    UIButton* nextLessonBtn=[[UIButton alloc]init];
     [nextLessonBtn setBackgroundImage:[UIImage imageNamed:@"icon_xiayike"] forState:UIControlStateNormal];
     [nextLessonBtn addTarget:self action:@selector(clickNextLesson) forControlEvents:UIControlEventTouchUpInside];
     [presentLession addSubview:nextLessonBtn];
-    UIButton* nextLessonLabel=[[UIButton alloc]initWithFrame:CGRectMake(341.13, 13.24, 39.74, 18.75)];
+    
+    [nextLessonBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(14.34);
+        make.width.equalTo(@8.83);
+        make.right.equalTo(self->presentLession).with.offset(-15);
+        make.height.equalTo(@16.55);
+    }];
+    
+    
+    UIButton* nextLessonLabel=[[UIButton alloc]init];
     [nextLessonLabel setTitle:@"下一课" forState:UIControlStateNormal];
     [nextLessonLabel addTarget:self action:@selector(clickNextLesson) forControlEvents:UIControlEventTouchUpInside];
     [nextLessonLabel setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
     nextLessonLabel.titleLabel.font=[UIFont systemFontOfSize:12];
     [presentLession addSubview:nextLessonLabel];
+    
+    [nextLessonLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(13.24);
+        make.width.equalTo(@40);
+        make.right.equalTo(self->presentLession).with.offset(-30);
+        make.height.equalTo(@19);
+    }];
     
 }
 -(void)clickLastLesson{
@@ -234,7 +276,7 @@
     lessontitle.layer.borderWidth=1;
     lessontitle.layer.cornerRadius=14.34;
     if (unitName==nil||className==nil) {
-        lessontitle.text=@"请先选择课程";
+        lessontitle.text=@"请先点击这里选择课程";
         NSLog(@"为空");
     }else{
         NSString* title=[unitName stringByAppendingString:@"-"];
@@ -247,17 +289,29 @@
     lessontitle.clipsToBounds = YES;
     //打开button父组件的人机交互
     [lessontitle setUserInteractionEnabled:YES];
-    UIButton* angleBtn=[[UIButton alloc]initWithFrame:CGRectMake(186.57, 9.93, 20.97, 12.13)];
-    [angleBtn setBackgroundImage:[UIImage imageNamed:@"btn_down"] forState:UIControlStateNormal];
-    [angleBtn setBackgroundImage:[UIImage imageNamed:@"icon_Rectangle_up"] forState:UIControlStateSelected];
-    [angleBtn addTarget:self action:@selector(showChooseLessonView:) forControlEvents:UIControlEventTouchUpInside];
-    [lessontitle addSubview:angleBtn];
+    
+    UITapGestureRecognizer* showLineGesture=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showChooseLessonView)];
+    [lessontitle addGestureRecognizer:showLineGesture];
+    
     [presentLession addSubview:lessontitle];
+    
+    [lessontitle mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->presentLession).with.offset(7.72);
+        make.left.equalTo(self->presentLession).with.offset(95);
+        make.right.equalTo(self->presentLession).with.offset(-95);
+        make.height.equalTo(@28.68);
+    }];
 }
 //收起课程选择并显示内容
--(void)showChooseLessonView:(UIButton*)button{
+-(void)showChooseLessonView{
     if (chooseLessonShow) {
         [self.view addSubview:chooseLessonView];
+        [chooseLessonView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(132.41);
+            make.right.equalTo(self.view);
+            make.left.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
     }else{
         if (chooseLessonView.unitName!=nil&&chooseLessonView.className!=nil) {
             lessonArray=chooseLessonView.lessonArray;
@@ -272,7 +326,6 @@
         }
     }
     chooseLessonShow=!chooseLessonShow;
-    button.selected=!button.selected;
     
 }
 -(void)showContent:(NSString*)unitname className:(NSString*)classname sentenceArray:(NSArray*)sentencearray classId:(NSString*)classid{
@@ -315,10 +368,23 @@
 }
 
 -(void)contentView{
-    UITableView* wordsList=[[UITableView alloc]initWithFrame:CGRectMake(0, 134.62, 414, 603.58)];
+    UITableView* wordsList=[[UITableView alloc]init];
     wordsList.dataSource=self;
     wordsList.delegate=self;
     [self.view addSubview:wordsList];
+    
+    //无内容时不显示下划线
+    UIView *v = [[UIView alloc] initWithFrame:CGRectZero];
+    [wordsList setTableFooterView:v];
+    
+    
+    [wordsList mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(134.62);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view);
+    }];
+    
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -332,7 +398,9 @@
     NSString* pic=@"icon_juzitingxia_laba";
     NSString* name=[cellDic valueForKey:@"sentenceEng"];
     NSString* description=[cellDic valueForKey:@"sentenceChn"];
-    [cell loadData:pic name:name description:description];
+    [cell loadData:[[UIImageView alloc]initWithImage:[UIImage imageNamed:pic]]
+              name:name
+       description:description];
     return cell;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -362,16 +430,6 @@
     [MyThreadPool executeJob:playBlock Main:^{}];
 }
 
--(void)showChooseLessonView{
-    NSLog(@"执行了这里的代码");
-    if (chooseLessonShow) {
-        [self.view addSubview:chooseLessonView];
-    }else{
-        [chooseLessonView removeFromSuperview];
-    }
-    chooseLessonShow=!chooseLessonShow;
-    
-}
 -(void)popBack:(UITapGestureRecognizer*)sender{
     [self.navigationController popViewControllerAnimated:true];
 }

@@ -140,7 +140,7 @@
             [deviceShowView addSubview:deviceLabel];
             
             [deviceLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.left.equalTo(self->deviceShowView).with.offset(17);
+                make.left.equalTo(self->deviceShowView).with.offset(20);
                 make.right.equalTo(self->deviceShowView);
                 make.top.equalTo(self->deviceShowView).with.offset(y);
                 make.height.equalTo(@53);

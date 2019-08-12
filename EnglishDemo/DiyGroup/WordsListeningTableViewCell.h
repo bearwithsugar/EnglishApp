@@ -12,7 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WordsListeningTableViewCell : UITableViewCell
 +(instancetype)createCellWithTableView:(UITableView*)tableView;
--(void)loadData:(NSString*)image name:(NSString*)label1 description:(NSString*)label2;
+-(void)loadData:(UIImageView*)image name:(NSString*)label1 description:(NSString*)label2;
+-(void)clearLaba;
+
+@property (weak, nonatomic) IBOutlet UIView *labaView;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -43,6 +43,8 @@
         _tencentOAuth.authShareType = AuthShareType_QQ;
         [_tencentOAuth authorize:permissions inSafari:NO];
         
+    }else{
+        [[FixValues navigationViewController] presentViewController: [WarningWindow MsgWithoutTrans:@"您的手机未安装qq！"] animated:YES completion:nil];
     }
 }
 

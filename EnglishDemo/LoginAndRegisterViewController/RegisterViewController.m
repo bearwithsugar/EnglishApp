@@ -10,6 +10,8 @@
 #import "RegisterSetPassViewController.h"
 #import "../Functions/ConnectionFunction.h"
 #import "../Common/HeadView.h"
+#import "../Functions/WarningWindow.h"
+#import "Masonry.h"
 
 @interface RegisterViewController (){
     RegisterSetPassViewController* setPass;
@@ -32,43 +34,83 @@
     [HeadView titleShow:@"手机验证" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
 }
 -(void)inputArea{
-    UILabel* phonenumberLabel=[[UILabel alloc]initWithFrame:CGRectMake(66.23, 177.65, 61.82, 22.06)];
+    UILabel* phonenumberLabel=[[UILabel alloc]init];
     phonenumberLabel.text=@"手机号：";
     phonenumberLabel.textColor=ssRGBHex(0xFF7474);
     phonenumberLabel.font=[UIFont systemFontOfSize:14];
     [self.view addSubview:phonenumberLabel];
     
-    UILabel* yanzhengLabel=[[UILabel alloc]initWithFrame:CGRectMake(66.23, 222.89, 61.82, 22.06)];
+    UILabel* yanzhengLabel=[[UILabel alloc]init];
     yanzhengLabel.text=@"验证码：";
     yanzhengLabel.textColor=ssRGBHex(0xFF7474);
     yanzhengLabel.font=[UIFont systemFontOfSize:14];
     [self.view addSubview:yanzhengLabel];
     
-    phonenumberTextField=[[UITextField alloc]initWithFrame:CGRectMake(128.06, 166.62, 200, 25)];
+    phonenumberTextField=[[UITextField alloc]init];
     phonenumberTextField.placeholder=@"请输入手机号码";
-    phonenumberTextField.text=@"13142220635";
     [phonenumberTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     [self.view addSubview:phonenumberTextField];
     
-    yanzhengTextField=[[UITextField alloc]initWithFrame:CGRectMake(128.06, 219.58, 200, 25)];
+    yanzhengTextField=[[UITextField alloc]init];
     yanzhengTextField.placeholder=@"请输入验证码";
     [yanzhengTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     [self.view addSubview:yanzhengTextField];
     
-    UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(128.06, 192, 223, 1)];
+    UIView* lineView=[[UIView alloc]init];
     lineView.layer.borderWidth=1;
     lineView.layer.borderColor=ssRGBHex(0xFF7474).CGColor;
     [self.view addSubview:lineView];
     
-    UIView* lineView2=[[UIView alloc]initWithFrame:CGRectMake(128.06, 244.96, 223, 1)];
+    UIView* lineView2=[[UIView alloc]init];
     lineView2.layer.borderWidth=1;
     lineView2.layer.borderColor=ssRGBHex(0xFF7474).CGColor;
     [self.view addSubview:lineView2];
     
+    [phonenumberLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(145);
+        make.centerX.equalTo(self.view).with.offset(-110);
+        make.width.equalTo(@70);
+        make.height.equalTo(@22);
+    }];
+    
+    [yanzhengLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(195);
+        make.centerX.equalTo(self.view).with.offset(-110);
+        make.width.equalTo(@70);
+        make.height.equalTo(@22);
+    }];
+    
+    [phonenumberTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(140);
+        make.centerX.equalTo(self.view).with.offset(40);
+        make.width.equalTo(@210);
+        make.height.equalTo(@25);
+    }];
+    
+    [yanzhengTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(190);
+        make.centerX.equalTo(self.view).with.offset(40);
+        make.width.equalTo(@210);
+        make.height.equalTo(@25);
+    }];
+    
+    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(167);
+        make.centerX.equalTo(self.view).with.offset(40);
+        make.width.equalTo(@210);
+        make.height.equalTo(@1);
+    }];
+    
+    [lineView2 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(217);
+        make.centerX.equalTo(self.view).with.offset(40);
+        make.width.equalTo(@210);
+        make.height.equalTo(@1);
+    }];
     
 }
 -(void)someButoon{
-    UIButton* getYzmBtn=[[UIButton alloc]initWithFrame:CGRectMake(58.51, 532.96, 298.08, 46.34)];
+    UIButton* getYzmBtn=[[UIButton alloc]init];
     getYzmBtn.layer.cornerRadius=25;
     getYzmBtn.layer.borderColor=ssRGBHex(0xFF7474).CGColor;
     getYzmBtn.layer.borderWidth=1;
@@ -78,7 +120,7 @@
     [getYzmBtn addTarget:self action:@selector(getYzm) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:getYzmBtn];
     
-    UIButton* defineBtn=[[UIButton alloc]initWithFrame:CGRectMake(58.51, 601.37, 298.08, 46.34)];
+    UIButton* defineBtn=[[UIButton alloc]init];
     defineBtn.layer.cornerRadius=25;
     defineBtn.backgroundColor=ssRGBHex(0xFF7474);
     [defineBtn setTitle:@"确认" forState:UIControlStateNormal];
@@ -86,15 +128,31 @@
     [defineBtn setTitleColor:[UIColor whiteColor]forState:UIControlStateNormal];
     [defineBtn addTarget:self action:@selector(pushToSetPass) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:defineBtn];
+    
+    [getYzmBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self.view).with.offset(50);
+        make.left.equalTo(self.view).with.offset(50);
+        make.right.equalTo(self.view).with.offset(-50);
+        make.height.equalTo(@50);
+    }];
+    
+    [defineBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self.view).with.offset(120);
+        make.left.equalTo(self.view).with.offset(50);
+        make.right.equalTo(self.view).with.offset(-50);
+        make.height.equalTo(@50);
+    }];
 }
 //获取验证码
 -(void)getYzm{
-    if ([self verifyMobile:phonenumberTextField.text]) {
-        NSDictionary* dataDic=[ConnectionFunction getYzm:[phonenumberTextField.text longLongValue]];
+
+    NSDictionary* dataDic=[ConnectionFunction getYzmForReg:[phonenumberTextField.text longLongValue]];
+    if (![[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
         [self warnMsg:[dataDic valueForKey:@"message"]];
     }else{
-        NSLog(@"手机号不合法!");
+        [self warnMsg:[dataDic valueForKey:@"data"]];
     }
+
 }
 //验证电话号码格式
 -(BOOL)verifyMobile:(NSString *)mobilePhone{
@@ -117,7 +175,18 @@
 -(void)popBack{
     [self.navigationController popViewControllerAnimated:true];
 }
+
+//点击背景收起键盘
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [self.view endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的
+}
+
 -(void)pushToSetPass{
+    
+    if ([phonenumberTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length==0||[yanzhengTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length==0) {
+        [self presentViewController: [WarningWindow MsgWithoutTrans:@"手机号或验证码为空！"] animated:YES completion:nil];
+        return;
+    }
     NSDictionary* dataDic=[ConnectionFunction verifyYzm:[phonenumberTextField.text longLongValue] yzm:yanzhengTextField.text ];
     NSLog(@"%@",[dataDic valueForKey:@"message"]);
 
