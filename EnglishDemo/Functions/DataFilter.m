@@ -15,9 +15,6 @@
     NSMutableDictionary* afterDic=[[NSMutableDictionary alloc]initWithDictionary:beforeDic];
     for (NSString* item in beforeDic) {
         if ([[beforeDic valueForKey:item] isKindOfClass:[NSNull class]]) {
-            //删除key
-            // [dictionaryTwo removeObjectForKey:item];
-            //修改value
             [afterDic setObject:@"" forKey:item];
         }
     }

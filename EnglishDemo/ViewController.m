@@ -32,14 +32,6 @@
 #import "Masonry.h"
 
 
-//使控制台打印完整信息
-//#ifdef DEBUG
-//#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
-//#else
-//#define NSLog(FORMAT, ...) nil
-//#endif
-
-
 //首先为需要的对象分配内存空间
 //当页面d第一次出现时一次性加载 单元练习  标题栏 标题菜单 和其他固定界面
 
@@ -224,13 +216,6 @@
             }else{
 
                 [self myProgressUnfixed];
-
-                //如果不是第一次下载本软件则直接加载
-//                if (![[processDic valueForKey:@"picture"]isEqualToString:@"a"]) {
-//
-//                    [self myGradeUnfixed];
-//
-//                }
 
                 [self myGradeUnfixed];
 
@@ -434,8 +419,7 @@
 }
 -(void)wasClicked:(UIButton*)btn{
     if (btn.tag==1) {
-        [myShelfView removeFromSuperview];
-        [chooseBookView removeFromSuperview];
+        [self cleanView];
         [self.view addSubview:synchronousPractice];
         
         [synchronousPractice mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -446,8 +430,7 @@
         }];
         
     }else if(btn.tag==0){
-        [synchronousPractice removeFromSuperview];
-        [chooseBookView removeFromSuperview];
+        [self cleanView];
         [self.view addSubview:myShelfView];
         
         [myShelfView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -463,6 +446,7 @@
                                animated:YES
                              completion:nil];
         }else{
+            [self cleanView];
             [self chooseBook];
             [self.view addSubview:chooseBookView];
             
@@ -483,6 +467,12 @@
             button.selected = NO;
         }
     }
+}
+
+-(void)cleanView{
+    [synchronousPractice removeFromSuperview];
+    [chooseBookView removeFromSuperview];
+    [myShelfView removeFromSuperview];
 }
 
 #pragma mark --myshelf
@@ -512,7 +502,6 @@
 
     //右侧进度线束
     processDetails=[[UIView alloc]init];
-    //processDetails.backgroundColor=[UIColor blueColor];
     processDetails.layer.borderColor=[UIColor blackColor].CGColor;
     processDetails.layer.borderWidth=1.0;
     processDetails.layer.borderColor=ssRGBHex(0x979797).CGColor;
@@ -969,14 +958,6 @@
 
 -(void)synchronousPracticeShow{
     synchronousPractice.backgroundColor=ssRGBHex(0xFCF8F7);
-//    practiceBook=[[UILabel alloc]initWithFrame:CGRectMake(0, 5.51, 414, 44.13)];
-//    practiceBook.text=@"暂无课本";
-//    practiceBook.backgroundColor=[UIColor whiteColor];
-//    practiceBook.textAlignment=NSTextAlignmentLeft;
-//    practiceBook.textColor=ssRGBHex(0x9B9B9B);
-//    practiceBook.font=[UIFont systemFontOfSize:14];
-//    practiceBook.textAlignment=NSTextAlignmentCenter;
-//    [synchronousPractice addSubview:practiceBook];
     
     UIView* functionView=[[UIView alloc]init];
     functionView.backgroundColor=[UIColor whiteColor];
@@ -1056,13 +1037,10 @@
 #pragma mark --chooseBook
 -(void)chooseBookinit{
     //存放返回数据的字典
-    NSString* tr=[userInfo valueForKey:@"userKey"];
-    NSLog(@"userkey的内容是%@",tr);
     publicationMsgDic=[ConnectionFunction getLineByType:@"3" UserKey:[userInfo valueForKey:@"userKey"]];
     //存放列表对象的数组，每个元素是一个字典
     publicationArray=[publicationMsgDic valueForKey:@"data"];
-    //selectedPublication=[dataDic valueForKey:@"categoryName"];
-    NSLog(@"出版社列表%@",publicationArray);
+   
 }
 -(void)chooseBook{
     chooseBookView=[[UIView alloc]init];
@@ -1139,8 +1117,7 @@
                  cell.textLabel.text=[gradeMsg valueForKey:@"categoryName"];
                  NSLog(@"获取到的出版社id%@",[gradeMsg valueForKey:@"categoryId"]);
                  cell.tag=[[gradeMsg valueForKey:@"categoryId"]integerValue];
-//                 NSLog(@"id转换成tag的值%@",[NSString stringWithFormat: @"%ld", cell.tag] );
-//                 NSLog(@"id转换成tag的值%ld",(long)cell.tag);
+
              }
             cell.textLabel.font=[UIFont systemFontOfSize:12];
             cell.textLabel.textColor=ssRGBHex(0x4A4A4A);
@@ -1175,7 +1152,6 @@
         //选择完年级和出版社之后返回的书籍信息
         NSDictionary* returnMsg=[ConnectionFunction getBookMsg:[[gradesArray objectAtIndex:indexPath.row]valueForKey:@"categoryId"] UserKey:[userInfo valueForKey:@"userKey"] UserId:[userInfo valueForKey:@"userId"]];
         //把返回信息加入到书籍数组
-        //NSLog(@"returnMsg的值%@",returnMsg);
         bookArray=[returnMsg valueForKey:@"data"];
         //加载显示选择书籍的页面
         [self startChooseView];
@@ -1388,14 +1364,6 @@
     }
     
 }
-
-//-(void)pushToSentencesTest{
-//    if (sentencesTest==nil) {
-//        sentencesTest=[[SentencesTestViewController alloc]init];
-//        sentencesTest.recentBookId=[recentBook valueForKey:@"bookId"];
-//    }
-//    [self.navigationController pushViewController:sentencesTest animated:true];
-//}
 
 #pragma mark network
 

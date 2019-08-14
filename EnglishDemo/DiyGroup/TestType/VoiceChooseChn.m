@@ -278,7 +278,7 @@
             if (super.testFlag < super.wordNum) {
                 //错题本中单词
                 playUrl=[DownloadAudioService getAudioPath:
-                         [NSString stringWithFormat:@"%@",[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"wordId"]]];
+                         [NSString stringWithFormat:@"%@",[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookWord"] valueForKey:@"wordId"]]];
             }else{
                 //错题本中句子
                 playUrl=[DownloadAudioService getAudioPath:

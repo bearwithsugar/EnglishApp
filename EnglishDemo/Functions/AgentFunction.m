@@ -43,9 +43,6 @@
     SendMessageToWXReq *req = [[SendMessageToWXReq alloc]init];
     // 是否是文档
     req.bText =  NO;
-    //    WXSceneSession  = 0,        /**< 聊天界面    */
-    //    WXSceneTimeline = 1,        /**< 朋友圈      */
-    //    WXSceneFavorite = 2,
     // 好友列表
     req.scene = WXSceneSession;
     //创建分享内容对象
@@ -82,12 +79,10 @@
 //如果token过期显示提示框
 +(BOOL)isTokenExpired:(NSDictionary*)dic {
     if ([[dic valueForKey:@"message"]isEqualToString:@"token认证失败"]) {
-        NSLog(@"您的账号在别处登录，请重新登录！");
         //提示框
         dispatch_sync(dispatch_get_main_queue(), ^{
             [[self theTopviewControler]
              presentViewController:
-             //[WarningWindow MsgWithoutTrans:@"啊啊啊！"]
              [WarningWindow transToLogin:@"您的账号在别处登录，请重新登录！"
                               Navigation:[[UIApplication sharedApplication].delegate window].rootViewController.navigationController]
              animated:YES

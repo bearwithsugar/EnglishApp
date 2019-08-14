@@ -78,15 +78,10 @@
 }
 //写入plist文件
 +(BOOL)writeIntoPlist:(NSString*)fileName dictionary:(NSDictionary*)dictionary{
-    //获取沙盒根根路径,每一个应用在手机当中都有一个文件夹,这个方法就是获取当前应用在手机里安装的文件.
-    NSLog(@"传到这里的字典是：%@",dictionary);
-    //NSLog(@"沙盒路径是：%@",[self homeDirectory]);
     NSString *filePathName = [[self documentsDirectory] stringByAppendingPathComponent:fileName];
     if ([dictionary writeToFile:filePathName atomically:YES]) {
-        NSLog(@"存入文件成功");
         return YES;
     }else{
-        NSLog(@"存入文件失败");
         return NO;
     }
 }
@@ -103,7 +98,6 @@
     NSError *err;
     if ([self fileExistInPath:fileName]) {
         flag=[fileMger removeItemAtPath:[[DocuOperate documentsDirectory] stringByAppendingPathComponent:fileName] error:&err];
-        NSLog(@"删除plist文件的错误信息%@",err);
         return flag;
     }else{
         return NO;
@@ -147,7 +141,6 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *err;
     BOOL flag=[fileManager removeItemAtPath:imageDir error:&err];
-    NSLog(@"删除文件夹的错误信息%@",err);
     return flag;
    
 }
@@ -158,7 +151,6 @@
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSError *err;
     BOOL flag=[fileManager removeItemAtPath:imageDir error:&err];
-    NSLog(@"删除文件的错误信息%@",err);
     return flag;
     
 }

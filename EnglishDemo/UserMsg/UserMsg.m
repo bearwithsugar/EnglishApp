@@ -58,7 +58,6 @@
     [super viewDidLoad];
     NSString *path=[[NSBundle mainBundle]pathForResource:@"UserMsg.plist" ofType:nil];
     saintArray=[NSArray arrayWithContentsOfFile:path];
-    //self.navigationController.title=@"user";
     self.view.backgroundColor=[UIColor whiteColor];
     
     qqlogin=[QQLogin getInstance];
@@ -75,7 +74,6 @@
     [self headPicView];
     [self userMsg];
     [self refreshScore];
-    //[userMsg reloadData];
     
 }
 -(void)refreshScore{
@@ -271,8 +269,7 @@
         make.right.equalTo(self.view);
         make.bottom.equalTo(self.view);
     }];
-    //NSMutableArray* msgArray=[[NSMutableArray alloc]init];
-    
+  
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return saintArray.count;
@@ -293,7 +290,6 @@
             return xuefenCell;
         }else{
             NewVersonTableViewCell* cell=[NewVersonTableViewCell createCellWithTableView:tableView];
-            //            dispatch_async(dispatch_get_global_queue(0, 0), ^{
             if(userInfo==nil){
                 [cell loadData:@""];
                 [cell setNoVersion];
@@ -310,12 +306,9 @@
                     [DocuOperate writeIntoPlist:@"version.plist" dictionary:[NSDictionary dictionaryWithObjectsAndKeys:[self->versionMsg valueForKey:@"versionId"],@"version", nil]];
                     [cell setNoVersion];
                 }
-                //                dispatch_async(dispatch_get_main_queue(), ^{
                 [cell loadData:[self->versionMsg valueForKey:@"versionName"]];
             }
         
-            //                });
-            //            });
 
             return cell;
         }
@@ -468,15 +461,8 @@
     [DocuOperate deletePlist:@"userInfo.plist"];
     [DocuOperate deletePlist:@"testDetails.plist"];
     [DocuOperate deletePlist:@"wrongsDetails.plist"];
-    //[DocuOperate deleteFolder:@"imageFile"];
     [self pushToLogin];
-    
-//    if (flag&&flag2&&flag3&&flag4) {
-//        [self pushToLogin];
-//    }else{
-//        NSLog(@"登出失败");
-//    }
-
+ 
 }
 @end
 

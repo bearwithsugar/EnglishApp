@@ -16,8 +16,7 @@
         self.backgroundColor=[UIColor whiteColor];
         self.layer.borderWidth=1;
         self.layer.borderColor=ssRGBHex(0xFF7474).CGColor;
-//        UILabel* percentLabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, frame.origin.x, 2)];
-//        [self addSubview:percentLabel];
+
     }
     return self;
 }

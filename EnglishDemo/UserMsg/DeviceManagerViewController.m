@@ -161,7 +161,6 @@
             [DocuOperate deletePlist:@"userInfo.plist"];
             [self pushToLogin];
         }else{
-            //[[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定成功！"] animated:YES completion:nil];
             [self popBack];
         }
         
@@ -179,7 +178,6 @@
         loginAndRegister = [[LoginViewController alloc]init];
     }
     [self.navigationController pushViewController:loginAndRegister animated:true];
-    //[self.view removeFromSuperview];
     
     NSMutableArray * array =[[NSMutableArray alloc]initWithArray:self.navigationController.viewControllers];
     //删除最后一个，也就是自己

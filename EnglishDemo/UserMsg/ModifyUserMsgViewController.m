@@ -118,37 +118,13 @@
     
     [self warnMsg:@"此功能暂未开放"];
     return;
-
-//    NSLog(@"上传头像");
-//    //创建图片选取器对象
-//    UIImagePickerController * pickerViwController = [[UIImagePickerController alloc] init];
-//    /*
-//     图片来源
-//     UIImagePickerControllerSourceTypePhotoLibrary：表示显示所有的照片
-//     UIImagePickerControllerSourceTypeCamera：表示从摄像头选取照片
-//     UIImagePickerControllerSourceTypeSavedPhotosAlbum：表示仅仅从相册中选取照片。
-//     */
-//    pickerViwController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-//
-//    //允许用户编辑图片 (YES可以编辑，NO只能选择照片)
-//    pickerViwController.allowsEditing = YES;
-//
-//    //设置代理
-//    pickerViwController.delegate = self;
-//
-//    [self presentViewController:pickerViwController animated:YES completion:nil];
 }
 #pragma mark <2>相册协议中方法，选中某张图片后调用方法
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
     
     UIImage *image= [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    // 如果是相机拍照的，保存在本地
-//    if (picker.sourceType == UIImagePickerControllerSourceTypeCamera)
-//    {
-//        UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
-//    }
-    
+
     //让界面的imageview中图片换成得到选中的图片
     headPic.image = image;
     
@@ -161,7 +137,6 @@
     
 }
 -(void)pushPic:(NSString*)headMsg FileUrl:(NSString*)fileUrl
-//PathUrl:(NSString*)pathurl
 {
     NSDictionary *headers = @{ @"content-type": @"multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
                                @"English-user": headMsg,

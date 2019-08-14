@@ -573,12 +573,10 @@
 //===============下面的三个方法必须分为三个方法且在一个类中，
 //微信登录代理方法
 +(void)WXLoginAgent:(NSString*)code{
-    NSLog(@"接受的授权的信息%@",code);
     NSDictionary* accessDic=[self getWXaccess:code];
     NSString* access_token=[accessDic valueForKey:@"access_token"];
     NSString* openid=[accessDic valueForKey:@"openid"];
     NSDictionary* userMsg=[self getWXuserMsg:access_token Openid:openid];
-    NSLog(@"userMsg=%@",userMsg);
     [self WXtoLogin:userMsg];
 }
 //微信登录
@@ -589,7 +587,6 @@
                                  DeviceName:[[UIDevice currentDevice] name]
                                        Type:@"WEIXIN"
                                         Pic:[userMsg valueForKey:@"headimgurl"]];
-    NSLog(@"微信登录结果%@",wxLogDic);
     if ([[wxLogDic valueForKey:@"message"]isEqualToString:@"success"]) {
         //dictionary：过滤字典中空值
         if ([DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[wxLogDic valueForKey:@"data"]]]) {
@@ -647,7 +644,6 @@
     str=[str stringByAppendingString:picurl];
     str=[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     url=[NSURL URLWithString:str];
-    //NSLog(@"测试路径%@",url);
     NSDictionary* dataDic=[self postRequest:url];
     return dataDic;
 }
@@ -657,7 +653,6 @@
 +(NSDictionary*)postRequest:(NSURL*)url{
     NSURLSession *session=[NSURLSession sharedSession];
     NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
-    NSLog(@"post方法中url是：%@",url);
     request.HTTPMethod=@"POST";
     [request setValue: @"application/json" forHTTPHeaderField:@"Content-Type"];
     static NSDictionary *dataDic;
@@ -666,10 +661,6 @@
         dataDic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据是：%@",html);
-        NSLog(@"错误是：%@",error);
-        //NSLog(@"响应是：%@",response);
         [AgentFunction isTokenExpired:dataDic];
         
     }];
@@ -683,7 +674,6 @@
 +(NSDictionary*)postRequestWithHead:(NSURL*)url Head:(NSString*)headMsg{
     NSURLSession *session=[NSURLSession sharedSession];
     NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
-    NSLog(@"post方法的url是：%@",url);
     
     //添加请求头
     NSDictionary *headers = @{ @"English-user": headMsg};
@@ -697,10 +687,6 @@
         dataDic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据是：%@",html);
-        NSLog(@"错误是：%@",error);
-        //NSLog(@"响应是：%@",response);
         [AgentFunction isTokenExpired:dataDic];
         
     }];
@@ -714,17 +700,11 @@
 +(NSDictionary*)getRequest:(NSURL*)url{
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     NSURLSession *session=[NSURLSession sharedSession];
-    NSLog(@"request请求%@",request);
     static NSDictionary* dictionary;
     NSURLSessionDataTask *dataTask=[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        //NSLog(@"网络响应：response：%@",response);
-        // NSLog(@"返回数据：response：%@",data);
-        NSLog(@"错误：response：%@",error);
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据为：%@",html);
         [AgentFunction isTokenExpired:dictionary];
     }];
     [dataTask resume];
@@ -736,7 +716,6 @@
 +(NSDictionary*)getRequestWithHead:(NSString*)userkey Path:(NSURL*)url{
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     NSURLSession *session=[NSURLSession sharedSession];
-    NSLog(@"get方法中url是：%@",url);
     //添加请求头
     NSDictionary *headers = @{@"English-user": userkey};
     [request setHTTPMethod:@"GET"];
@@ -747,16 +726,8 @@
         dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        //NSLog(@"网络响应：response：%@",response);
-       // NSLog(@"返回数据：response：%@",data);
-        NSLog(@"错误：%@",error);
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据为：%@",html);
         [AgentFunction isTokenExpired:dictionary];
-//        if ([AgentFunction isTokenExpired:dictionary]) {
-//            
-//            dictionary=@{@"1":@"code"};
-//        }
+
     }];
     [dataTask resume];
     //这里恢复RunLoop
@@ -768,8 +739,6 @@
 +(NSDictionary*)threadGetRequestWithHead:(NSString*)userkey Path:(NSURL*)url{
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     NSURLSession *session=[NSURLSession sharedSession];
-    NSLog(@"get方法中url是：%@",url);
-    //添加请求头
     NSDictionary *headers = @{@"English-user": userkey};
     [request setHTTPMethod:@"GET"];
     [request setAllHTTPHeaderFields:headers];
@@ -779,11 +748,6 @@
         dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        //NSLog(@"网络响应：response：%@",response);
-        // NSLog(@"返回数据：response：%@",data);
-        NSLog(@"错误：%@",error);
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据为：%@",html);
         [AgentFunction isTokenExpired:dictionary];
     }];
     [dataTask resume];
@@ -794,7 +758,6 @@
 +(NSDictionary*)threadTwoGetRequestWithHead:(NSString*)userkey Path:(NSURL*)url{
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     NSURLSession *session=[NSURLSession sharedSession];
-    NSLog(@"get方法中url是：%@",url);
     //添加请求头
     NSDictionary *headers = @{@"English-user": userkey};
     [request setHTTPMethod:@"GET"];
@@ -805,12 +768,7 @@
         dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        //NSLog(@"网络响应：response：%@",response);
-        // NSLog(@"返回数据：response：%@",data);
-        NSLog(@"错误：%@",error);
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据为：%@",html);
-       [AgentFunction isTokenExpired:dictionary];
+        [AgentFunction isTokenExpired:dictionary];
     }];
     [dataTask resume];
     //这里恢复RunLoop
@@ -822,7 +780,6 @@
 +(NSDictionary*)putRequestWithHead:(NSURL*)url Head:(NSString*)headMsg{
     NSURLSession *session=[NSURLSession sharedSession];
     NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
-    NSLog(@"url是：%@",url);
     
     //添加请求头
     NSDictionary *headers = @{ @"English-user": headMsg};
@@ -836,10 +793,6 @@
         dataDic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据是：%@",html);
-        NSLog(@"错误是：%@",error);
-        //NSLog(@"响应是：%@",response);
         [AgentFunction isTokenExpired:dataDic];
     }];
     
@@ -852,7 +805,6 @@
 +(NSDictionary*)deleteRequestWithHead:(NSURL*)url Head:(NSString*)headMsg{
     NSURLSession *session=[NSURLSession sharedSession];
     NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
-    NSLog(@"url是：%@",url);
     
     //添加请求头
     NSDictionary *headers = @{ @"English-user": headMsg};
@@ -866,10 +818,6 @@
         dataDic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据是：%@",html);
-        NSLog(@"错误是：%@",error);
-        //NSLog(@"响应是：%@",response);
         [AgentFunction isTokenExpired:dataDic];
     }];
     

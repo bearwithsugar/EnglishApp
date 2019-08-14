@@ -20,12 +20,6 @@
 #import "../Common/HeadView.h"
 #import "Masonry.h"
 
-//使控制台打印完整信息
-//#ifdef DEBUG
-//#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
-//#else
-//#define NSLog(FORMAT, ...) nil
-//#endif
 
 @interface SentenceListeningViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
@@ -92,35 +86,6 @@
 -(void)titleShow{
     
     [HeadView titleShow:@"句子听写" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
-    
-//    UILabel* title=[[UILabel alloc]initWithFrame:CGRectMake(0, 22.06, 414, 66.2)];
-//    title.text=@"句子听写";
-//    title.textColor=[UIColor whiteColor];
-//    title.backgroundColor=ssRGBHex(0xFF7474);
-//    title.font=[UIFont systemFontOfSize:18];
-//    title.textAlignment=NSTextAlignmentCenter;
-//    title.clipsToBounds = YES;
-//    [title setUserInteractionEnabled:YES];
-//    [self.view addSubview:title];
-//
-//    UILabel* touchField=[[UILabel alloc]initWithFrame:CGRectMake(10, 20,30, 30)];
-//    [touchField setUserInteractionEnabled:YES];
-//    [title addSubview:touchField];
-//
-//    UIButton* returnBtn=[[UIButton alloc]initWithFrame:CGRectMake(5.45, 2.06, 10.7, 22.62)];
-//    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
-//    [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
-//    [touchField addSubview:returnBtn];
-//
-//    UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
-//    [touchField addGestureRecognizer:touchFunc];
-
-    
-//    UIButton* setBtn=[[UIButton alloc]initWithFrame:CGRectMake(376.46, 22.06 , 22.06, 22.06)];
-//    [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
-//    [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
-////    [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
-//    [title addSubview:setBtn];
 }
 
 -(void)chooseLessonViewInit{
@@ -256,9 +221,6 @@
                 }
                 i++;
             }
-            //            NSDictionary* dataDic=
-            //            [[ConnectionFunction getLessonMsg:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]
-            //                                      UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
             
             [self showContent:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleName"]
                     className:@""
@@ -421,10 +383,7 @@
         self->voiceplayer.url = playUrl;
         self->voiceplayer.myblock = ^{};
         [self->voiceplayer playAudio:0];
-        //        if (self->continuePlay) {
-        //            self->voiceplayer.urlArray = self->voiceArray;
-        //            self->voiceplayer.startIndex = id+1;
-        //        }
+       
     };
     
     [MyThreadPool executeJob:playBlock Main:^{}];

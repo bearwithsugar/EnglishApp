@@ -22,13 +22,6 @@
 #import "../Functions/MyThreadPool.h"
 #import "Masonry.h"
 
-//#ifdef DEBUG
-//#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
-//#else
-//#define NSLog(FORMAT, ...) nil
-//#endif
-
-
 @interface WordsTestViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
     UIView* settingView;
@@ -304,10 +297,7 @@
                 }
                 i++;
             }
-            //            NSDictionary* dataDic=
-            //            [[ConnectionFunction getLessonMsg:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]
-            //                                      UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-            
+          
             [self showContent:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleName"]
                     className:@""
                    testArray:[[ConnectionFunction getTestWordMsg:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"] UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
@@ -335,10 +325,7 @@
                 }
                 i++;
             }
-            //            NSDictionary* dataDic=
-            //            [[ConnectionFunction getLessonMsg:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]
-            //                                      UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-            
+        
             [self showContent:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleName"]
                     className:@""
                    testArray:[[ConnectionFunction getTestWordMsg:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleId"] UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
@@ -539,9 +526,7 @@
     cell.textLabel.font=[UIFont systemFontOfSize:14];
     cell.textLabel.textColor=ssRGBHex(0x4A4A4A);
     cell.textLabel.textAlignment=NSTextAlignmentCenter;
-    // cell.imageView.image=[UIImage imageNamed:image];
-    
-    
+   
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -651,12 +636,8 @@
     className=classname;
     //调用接口获取信息
     testArray=testarray;
-    //NSLog(@"测试内容为%@",testarray);
-    
+
     classId=classid;
-    //    //显示调用接口结果
-    //    NSLog(@"获取单词听写信息返回的是%@",dataDic);
-    //重新加载当前单元课程标签
     
     [lessontitle removeFromSuperview];
     [self presentLessionView];
@@ -693,7 +674,6 @@
 }
 
 -(void)popBack:(UITapGestureRecognizer*)sender{
-    //[DocuOperate deletePlist:@"testDetails.plist"];
     [DocuOperate writeIntoPlist:@"testDetails.plist" dictionary:testDetails];
     [self.navigationController popViewControllerAnimated:true];
 }

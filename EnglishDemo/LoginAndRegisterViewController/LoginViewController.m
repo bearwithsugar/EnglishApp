@@ -29,6 +29,11 @@
     
     UITextField* usernameTextField;
     UITextField* passwordTextField;
+    
+    UIButton* weixinBtn;
+    UILabel* weixinlabel;
+    UIButton* qqBtn;
+    UILabel* qqlabel;
 }
 
 @end
@@ -42,6 +47,8 @@
     [self inputArea];
     [self someButoon];
     [self devideLine];
+}
+-(void)viewWillAppear:(BOOL)animated{
     [self otherLogin];
 }
 -(void)titleShow{
@@ -243,57 +250,79 @@
     }];
 }
 -(void)otherLogin{
-    UIButton* weixinBtn=[[UIButton alloc]init];
+    [weixinBtn removeFromSuperview];
+    [weixinlabel removeFromSuperview];
+    [qqBtn removeFromSuperview];
+    [qqlabel removeFromSuperview];
+    
+    weixinBtn=[[UIButton alloc]init];
     [weixinBtn setBackgroundImage:[UIImage imageNamed:@"icon_weixindenglu"] forState:UIControlStateNormal];
     [weixinBtn addTarget:self action:@selector(WXlogin) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:weixinBtn];
     
-    UILabel* weixinlabel=[[UILabel alloc]init];
+    weixinlabel=[[UILabel alloc]init];
     weixinlabel.text=@"微信登录";
     weixinlabel.textColor=ssRGBHex(0x50B674);
     weixinlabel.font=[UIFont systemFontOfSize:12];
     weixinlabel.textAlignment=NSTextAlignmentCenter;
     [self.view addSubview:weixinlabel];
     
-    UIButton* qqBtn=[[UIButton alloc]init];
+    qqBtn=[[UIButton alloc]init];
     [qqBtn setBackgroundImage:[UIImage imageNamed:@"icon_qqdenglu"] forState:UIControlStateNormal];
     [qqBtn addTarget:self action:@selector(QQlogin) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:qqBtn];
     
-    UILabel* qqlabel=[[UILabel alloc]init];
+    qqlabel=[[UILabel alloc]init];
     qqlabel.text=@"QQ登录";
     qqlabel.textColor=ssRGBHex(0x4A90E2);
     qqlabel.font=[UIFont systemFontOfSize:12];
     qqlabel.textAlignment=NSTextAlignmentCenter;
     [self.view addSubview:qqlabel];
+
     
-    [weixinBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.view).with.offset(-80);
-        make.bottom.equalTo(self.view).with.offset(-120);
-        make.width.equalTo(@70);
-        make.height.equalTo(@70);
-    }];
-    
-    [qqBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.view).with.offset(80);
-        make.bottom.equalTo(self.view).with.offset(-120);
-        make.width.equalTo(@70);
-        make.height.equalTo(@70);
-    }];
-    
-    [qqlabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.view).with.offset(80);
-        make.bottom.equalTo(self.view).with.offset(-60);
-        make.width.equalTo(@70);
-        make.height.equalTo(@19);
-    }];
-    
-    [weixinlabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.view).with.offset(-80);
-        make.bottom.equalTo(self.view).with.offset(-60);
-        make.width.equalTo(@70);
-        make.height.equalTo(@19);
-    }];
+    if ([WXApi isWXAppInstalled]) {
+        [weixinBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view).with.offset(-80);
+            make.bottom.equalTo(self.view).with.offset(-120);
+            make.width.equalTo(@70);
+            make.height.equalTo(@70);
+        }];
+        [weixinlabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view).with.offset(-80);
+            make.bottom.equalTo(self.view).with.offset(-60);
+            make.width.equalTo(@70);
+            make.height.equalTo(@19);
+        }];
+        
+        [qqBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view).with.offset(80);
+            make.bottom.equalTo(self.view).with.offset(-120);
+            make.width.equalTo(@70);
+            make.height.equalTo(@70);
+        }];
+        
+        [qqlabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view).with.offset(80);
+            make.bottom.equalTo(self.view).with.offset(-60);
+            make.width.equalTo(@70);
+            make.height.equalTo(@19);
+        }];
+        
+    }else {
+        [qqBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.bottom.equalTo(self.view).with.offset(-120);
+            make.width.equalTo(@70);
+            make.height.equalTo(@70);
+        }];
+        
+        [qqlabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.view);
+            make.bottom.equalTo(self.view).with.offset(-60);
+            make.width.equalTo(@70);
+            make.height.equalTo(@19);
+        }];
+    }
     
 }
 
@@ -401,7 +430,6 @@
 
 -(void)popBack{
     [self.navigationController popViewControllerAnimated:true];
-    //[self.navigationController popToRootViewControllerAnimated:true];
 }
 
 @end

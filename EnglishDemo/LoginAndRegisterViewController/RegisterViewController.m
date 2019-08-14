@@ -199,11 +199,6 @@
     }else{
         [self warnMsg:[dataDic valueForKey:@"message"]];
     }
-//            if (setPass==nil) {
-//                setPass = [[RegisterSetPassViewController alloc]init];
-//                setPass.phoneNumber=phonenumberTextField.text;
-//            }
-//            [self.navigationController pushViewController:setPass animated:true];
 }
 
 

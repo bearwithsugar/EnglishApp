@@ -27,7 +27,7 @@
 - (instancetype)init{
     self = [super init];
     if (self) {
-        // 参数设置 格式、采样率、录音通道、线性采样位数、录音质量
+        
         [self initAudioRecorderSetting];
     }
     return self;
@@ -36,18 +36,17 @@
 /// 参数设置 格式、采样率、录音通道、线性采样位数、录音质量
 - (void)initAudioRecorderSetting{
     self.audioRecorderSetting = [NSMutableDictionary dictionary];
-    //设置录音格式,kAudioFormatLinearPCM
+    
     [self.audioRecorderSetting setValue:[NSNumber numberWithInt:kAudioFormatMPEG4AAC] forKey:AVFormatIDKey];
-    //设置录音采样率(Hz) 如：AVSampleRateKey==8000/44100/96000（影响音频的质量）
-    //设置录音采样率，8000是电话采样率，对于一般的录音已经够了
+    
     [self.audioRecorderSetting setValue:[NSNumber numberWithInt:11025] forKey:AVSampleRateKey];
-    //设置通道，1和2，这里采用单声道
+   
     [self.audioRecorderSetting setValue:[NSNumber numberWithInt:1] forKey:AVNumberOfChannelsKey];
-    //每个采样点位数，分为8，16，24，32
+    
     [self.audioRecorderSetting setValue:[NSNumber numberWithInt:16] forKey:AVLinearPCMBitDepthKey];
-    //是否使用浮点数采样
+    
     [self.audioRecorderSetting setObject:@(YES) forKey:AVLinearPCMIsFloatKey];
-    //录音的质量
+    
     [self.audioRecorderSetting setValue:[NSNumber numberWithInt:AVAudioQualityHigh] forKey:AVEncoderAudioQualityKey];
 }
 
@@ -155,12 +154,7 @@
     if (self.avAudioRecorder) {
         // 刷新音量数据
         [self.avAudioRecorder updateMeters];
-        
-        //    // 获取音量的平均值
-        //    [self.audioRecorder averagePowerForChannel:0];
-        //    // 音量的最大值
-        //    [self.audioRecorder peakPowerForChannel:0];
-        
+      
         //获取第一个通道的音频，注音音频的强度方位-160到0
         float power = [self.avAudioRecorder averagePowerForChannel:0];
         double lowPassResults = pow(10, (0.05 * power));//0~1

@@ -58,22 +58,7 @@
     
     //k加载完成，取消动画
     [loadGif removeFromSuperview];
-    
-//    //多线程异步请求
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//
-//            //加载gif动画
-//            UIImageView* loadGif=[LoadGif imageViewStartAnimating:CGRectMake(177, 300, 60, 60)];
-//            [self.view addSubview:loadGif];
-//
-//            [self bookView];
-//
-//            //k加载完成，取消动画
-//            [loadGif removeFromSuperview];
-//        });
-//    });
+
     if([DocuOperate fileExistInPath:@"process.plist"]){
         NSDictionary* dic=[DocuOperate readFromPlist:@"process.plist"];
         for (int i=0; i<[dic allKeys].count; i++) {
@@ -120,12 +105,7 @@
         float y=26 + (picHeight+26)*(i/3);
         float x=12 + (picWidth+12)*(i%3);
         UIButton* theBook=[[UIButton alloc]initWithFrame:CGRectMake(x,y, picWidth, picHeight)];
-//        NSLog(@"bookarray%@",[bookArray objectAtIndex:i]);
-//        NSData *imgData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[[bookArray objectAtIndex:i]valueForKey:@"coverPicture"]]];
-//
-//
-//
-//        [theBook setBackgroundImage:[UIImage imageWithData:imgData] forState:UIControlStateNormal];
+
         [theBook setBackgroundImage:
          [LocalDataOperation getImage:[[[bookArray objectAtIndex:i]
                                         valueForKey:@"userBook"]

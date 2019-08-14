@@ -51,8 +51,6 @@
 		594B248D21ECAB1600807A4A /* ChnChooseEng.m in Sources */ = {isa = PBXBuildFile; fileRef = 594B248C21ECAB1600807A4A /* ChnChooseEng.m */; };
 		594B249021ECADAE00807A4A /* EngChooseChi.m in Sources */ = {isa = PBXBuildFile; fileRef = 594B248F21ECADAE00807A4A /* EngChooseChi.m */; };
 		5967211521F09BD800409403 /* WrongNotesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967211421F09BD800409403 /* WrongNotesViewController.m */; };
-		5967211A21F16A5C00409403 /* QuestionVoiceOnly.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967211921F16A5C00409403 /* QuestionVoiceOnly.m */; };
-		5967211D21F16A8200409403 /* QueationView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967211C21F16A8200409403 /* QueationView.m */; };
 		5967212321F2E88300409403 /* BackgroundImageWithColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967212221F2E88300409403 /* BackgroundImageWithColor.m */; };
 		5967214121F3101600409403 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967214021F3101600409403 /* libc++.tbd */; };
 		5967214321F3101E00409403 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967214221F3101D00409403 /* libz.tbd */; };
@@ -67,7 +65,6 @@
 		5967215521F3108F00409403 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967215421F3108F00409403 /* CoreMotion.framework */; };
 		5967215721F310A400409403 /* AlipaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967215621F310A300409403 /* AlipaySDK.framework */; };
 		5967215A21F310F100409403 /* PayMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967215921F310F100409403 /* PayMethods.m */; };
-		5967215D21F31AB300409403 /* RefreshUserInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967215C21F31AB300409403 /* RefreshUserInfo.m */; };
 		5967216121F31DB500409403 /* getUserMsg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967216021F31DB500409403 /* getUserMsg.m */; };
 		596721AC21F386B400409403 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596721AB21F386B400409403 /* Security.framework */; };
 		596721B421F3876A00409403 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 596721B321F3876A00409403 /* libsqlite3.0.tbd */; };
@@ -217,10 +214,6 @@
 		594B248F21ECADAE00807A4A /* EngChooseChi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EngChooseChi.m; sourceTree = "<group>"; };
 		5967211321F09BD800409403 /* WrongNotesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WrongNotesViewController.h; sourceTree = "<group>"; };
 		5967211421F09BD800409403 /* WrongNotesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WrongNotesViewController.m; sourceTree = "<group>"; };
-		5967211821F16A5C00409403 /* QuestionVoiceOnly.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QuestionVoiceOnly.h; sourceTree = "<group>"; };
-		5967211921F16A5C00409403 /* QuestionVoiceOnly.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QuestionVoiceOnly.m; sourceTree = "<group>"; };
-		5967211B21F16A8200409403 /* QueationView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueationView.h; sourceTree = "<group>"; };
-		5967211C21F16A8200409403 /* QueationView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueationView.m; sourceTree = "<group>"; };
 		5967212121F2E88300409403 /* BackgroundImageWithColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundImageWithColor.h; sourceTree = "<group>"; };
 		5967212221F2E88300409403 /* BackgroundImageWithColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BackgroundImageWithColor.m; sourceTree = "<group>"; };
 		5967214021F3101600409403 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
@@ -237,8 +230,6 @@
 		5967215621F310A300409403 /* AlipaySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlipaySDK.framework; sourceTree = "<group>"; };
 		5967215821F310F100409403 /* PayMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PayMethods.h; sourceTree = "<group>"; };
 		5967215921F310F100409403 /* PayMethods.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PayMethods.m; sourceTree = "<group>"; };
-		5967215B21F31AB300409403 /* RefreshUserInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefreshUserInfo.h; sourceTree = "<group>"; };
-		5967215C21F31AB300409403 /* RefreshUserInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RefreshUserInfo.m; sourceTree = "<group>"; };
 		5967215F21F31DB500409403 /* getUserMsg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = getUserMsg.h; sourceTree = "<group>"; };
 		5967216021F31DB500409403 /* getUserMsg.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = getUserMsg.m; sourceTree = "<group>"; };
 		596721AB21F386B400409403 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -561,17 +552,6 @@
 			path = TestType;
 			sourceTree = "<group>";
 		};
-		5967211721F169EF00409403 /* CommonQAview */ = {
-			isa = PBXGroup;
-			children = (
-				5967211821F16A5C00409403 /* QuestionVoiceOnly.h */,
-				5967211921F16A5C00409403 /* QuestionVoiceOnly.m */,
-				5967211B21F16A8200409403 /* QueationView.h */,
-				5967211C21F16A8200409403 /* QueationView.m */,
-			);
-			path = CommonQAview;
-			sourceTree = "<group>";
-		};
 		5967213F21F3101500409403 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -597,8 +577,6 @@
 		5967215E21F31DA000409403 /* userOperate */ = {
 			isa = PBXGroup;
 			children = (
-				5967215B21F31AB300409403 /* RefreshUserInfo.h */,
-				5967215C21F31AB300409403 /* RefreshUserInfo.m */,
 				5967215F21F31DB500409403 /* getUserMsg.h */,
 				5967216021F31DB500409403 /* getUserMsg.m */,
 			);
@@ -728,7 +706,6 @@
 		59DE4238217C18B3008D65CC /* DiyGroup */ = {
 			isa = PBXGroup;
 			children = (
-				5967211721F169EF00409403 /* CommonQAview */,
 				594B246221EADB7200807A4A /* TestType */,
 				59DE4234217C189D008D65CC /* WordsListeningTableViewCell.m */,
 				59DE4233217C189D008D65CC /* WordsListeningTableViewCell.h */,
@@ -868,7 +845,6 @@
 				590CA3D2224B84B6004D1AFD /* ConnectionInstance.m in Sources */,
 				5910AC57218050F40024768A /* UserMsgTableViewCell.m in Sources */,
 				59341B9F22FD54B100838941 /* NSArray+MASAdditions.m in Sources */,
-				5967211D21F16A8200409403 /* QueationView.m in Sources */,
 				59341BA222FD54B100838941 /* MASViewConstraint.m in Sources */,
 				596E4BB321FB15E60046F215 /* UnloginMsgView.m in Sources */,
 				59341BA022FD54B100838941 /* View+MASAdditions.m in Sources */,
@@ -911,7 +887,6 @@
 				59D4616E21F6CB7E00CF29D8 /* FixValues.m in Sources */,
 				59DE421721780D78008D65CC /* MyShelfViewController.m in Sources */,
 				59D4617421F6D20B00CF29D8 /* JumpToSomeView.m in Sources */,
-				5967211A21F16A5C00409403 /* QuestionVoiceOnly.m in Sources */,
 				597392A321C63B2F0050CA1B /* FSParsePlaylistRequest.m in Sources */,
 				59DE42042172EE01008D65CC /* ResetPassViewController.m in Sources */,
 				597392AA21C63B2F0050CA1B /* Reachability.m in Sources */,
@@ -921,7 +896,6 @@
 				594B248A21EC729400807A4A /* TestFunctions.m in Sources */,
 				59DE420D2175B85C008D65CC /* CreditInstructionViewController.m in Sources */,
 				5910AC4E217F05000024768A /* UnitsListDownTableViewCell.m in Sources */,
-				5967215D21F31AB300409403 /* RefreshUserInfo.m in Sources */,
 				59D4617121F6CF1D00CF29D8 /* WarningWindow.m in Sources */,
 				596E4B8921F984A00046F215 /* QQLogin.m in Sources */,
 				59477C0921719179000205A5 /* UserMsg.m in Sources */,

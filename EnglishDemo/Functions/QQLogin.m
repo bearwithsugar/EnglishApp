@@ -34,8 +34,8 @@
 
 //qq登录启动
 -(void)toQQlogin{
-    if ([QQApiInterface isQQInstalled] && [QQApiInterface isQQSupportApi])
-    {
+//    if ([QQApiInterface isQQInstalled] && [QQApiInterface isQQSupportApi])
+//    {
         NSArray* permissions = [self getPermissions];
         //授权列表数组 根据实际需要添加
         _tencentOAuth = [[TencentOAuth alloc]initWithAppId:@"101537865" andDelegate:self];
@@ -43,9 +43,9 @@
         _tencentOAuth.authShareType = AuthShareType_QQ;
         [_tencentOAuth authorize:permissions inSafari:NO];
         
-    }else{
-        [[FixValues navigationViewController] presentViewController: [WarningWindow MsgWithoutTrans:@"您的手机未安装qq！"] animated:YES completion:nil];
-    }
+//    }else{
+//        [[FixValues navigationViewController] presentViewController: [WarningWindow MsgWithoutTrans:@"您的手机未安装qq！"] animated:YES completion:nil];
+//    }
 }
 
 //========================================================
@@ -63,9 +63,8 @@
                                                  DeviceName:[[UIDevice currentDevice] name]
                                                        Type:@"QQ"
                                                         Pic:[userMsg valueForKey:@"figureurl_2"]];
-    NSLog(@"qq登录结果%@",qqLoginDic);
     if ([[qqLoginDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        //dictionary：过滤字典中空值
+       
         if ([DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[qqLoginDic valueForKey:@"data"]]]) {
             [[FixValues navigationViewController] popViewControllerAnimated:true];
         }else{
@@ -112,13 +111,10 @@
 
 
 - (void)tencentDidLogin {
-    NSLog(@"登录完成");
     [_tencentOAuth getUserInfo];
     
     if (_tencentOAuth.accessToken && 0 != [_tencentOAuth.accessToken length]) {
         // 记录登录用户的OpenID、Token以及过期时间
-        //NSLog(@"_tencentOAuth.accessToken的内容是%@",_tencentOAuth.accessToken);
-        NSLog(@"登录成功");
     } else {
         NSLog(@"登录不成功 没有获取accesstoken");
     }

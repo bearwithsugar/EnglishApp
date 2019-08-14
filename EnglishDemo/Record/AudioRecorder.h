@@ -24,21 +24,20 @@
 
 #pragma mark - 录音
 
-///单例
 + (AudioRecorder *)shareInstance;
-///设置委托
+
 - (void)setRecorderDelegate:(id<AudioRecorderDelegate>)recorderDelegate;
-///设置录音配置
+
 - (void)setRecorderSetting:(NSMutableDictionary *)settingDict;
-///开始录音
+
 - (NSError *)startRecordWithFilePath:(NSString *)filePath;
-///停止录音
+
 - (void)stopRecord;
-///获取录音路径
+
 - (NSString *)getRecordFilePath;
-///获取录音时长
+
 - (NSTimeInterval )getRecordDurationWithFilePath:(NSString *)filePath;
-///获得录音实例
+
 - (AVAudioRecorder *)getAVAudioRecorder;
 
 @end

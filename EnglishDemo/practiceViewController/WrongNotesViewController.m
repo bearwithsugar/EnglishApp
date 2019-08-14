@@ -21,12 +21,6 @@
 #import "../Functions/MyThreadPool.h"
 #import "Masonry.h"
 
-//#ifdef DEBUG
-//#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
-//#else
-//#define NSLog(FORMAT, ...) nil
-//#endif
-
 @interface WrongNotesViewController ()<UITableViewDelegate,UITableViewDataSource>
 {
     //设置界面
@@ -83,9 +77,6 @@
     [self titleShow];
     [self settingView];
     [self initDataOnlyOnce];
-//    [self lastAndNext];
-//    [self processTip];
-//    [self addQAview];
     
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -373,9 +364,7 @@
     cell.textLabel.font=[UIFont systemFontOfSize:14];
     cell.textLabel.textColor=ssRGBHex(0x4A4A4A);
     cell.textLabel.textAlignment=NSTextAlignmentCenter;
-    // cell.imageView.image=[UIImage imageNamed:image];
-    
-    
+   
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -384,7 +373,6 @@
     if (indexPath.row!=[[testDetails valueForKey:@"testFunc"]integerValue]) {
         [questionAndAnswerView removeFromSuperview];
         [testDetails setValue:[NSString stringWithFormat:@"%ld",(long)indexPath.row] forKey:@"testFunc"];
-        //NSLog(@"字典的值是%@",testDetails);
         [self addQAview];
     }
     
@@ -470,7 +458,6 @@
 }
 
 -(void)popBack:(UITapGestureRecognizer*)sender{
-    //[DocuOperate deletePlist:@"wrongsDetails.plist"];
     [settingView removeFromSuperview];
     [DocuOperate writeIntoPlist:@"wrongsDetails.plist" dictionary:testDetails];
     [self.navigationController popViewControllerAnimated:true];

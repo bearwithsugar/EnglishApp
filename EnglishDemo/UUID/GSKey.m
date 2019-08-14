@@ -9,10 +9,6 @@
 #import "GSKey.h"
 #import "GSKey.h"
 
-
-//static NSString* const KEY_INKEYCHAIN_UUID =@"唯一识别的KEY_UUID";
-//static NSString* const KEY_UUID =@"唯一识别的key_uuid";
-
 @implementation GSKey
 
 + (NSMutableDictionary *)getKeychainQuery:(NSString *)service {
@@ -25,21 +21,15 @@
 }
 
 + (void)save:(NSString *)service data:(id)data {
-    //Get search dictionary
     NSMutableDictionary *keychainQuery = [self getKeychainQuery:service];
-    //Delete old item before add new item
     SecItemDelete((CFDictionaryRef)keychainQuery);
-    //Add new object to search dictionary(Attention:the data format)
     [keychainQuery setObject:[NSKeyedArchiver archivedDataWithRootObject:data requiringSecureCoding:false error:nil] forKey:(id)kSecValueData];
-    //Add item to keychain with the search dictionary
     SecItemAdd((CFDictionaryRef)keychainQuery, NULL);
 }
 
 + (id)load:(NSString *)service {
     id ret = nil;
     NSMutableDictionary *keychainQuery = [self getKeychainQuery:service];
-    //Configure the search setting
-    //Since in our simple case we are expecting only a single attribute to be returned (the password) we can set the attribute kSecReturnData to kCFBooleanTrue
     [keychainQuery setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];
     [keychainQuery setObject:(id)kSecMatchLimitOne forKey:(id)kSecMatchLimit];
     CFDataRef keyData = NULL;
@@ -49,8 +39,6 @@
             #pragma clang diagnostic ignored "-Wdeprecated-declarations"
             ret = [NSKeyedUnarchiver unarchiveObjectWithData:(__bridge NSData *)keyData];
             #pragma clang diagnostic pop
-
-            //ret = [NSKeyedUnarchiver unarchivedObjectOfClass:(__bridge NSData *)keyData fromData:(__bridge NSData *)keyData error:nil];
         } @catch (NSException *e) {
             NSLog(@"Unarchive of %@ failed: %@", service, e);
         } @finally {

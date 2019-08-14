@@ -50,9 +50,6 @@
     if ([_testType isEqualToString:@"wrong"]) {
         UILabel* wrongFrom=[[UILabel alloc]init];
         wrongFrom.textAlignment=NSTextAlignmentCenter;
-        //        if (super.testFlag<super.wordNum) {
-        //            wrongFrom.text=@"错题来源";
-        //        }
         wrongFrom.text=[@"错题来源：" stringByAppendingString:[[_testArray objectAtIndex:_testFlag] valueForKey:@"articleName"]];
         wrongFrom.textColor=ssRGBHex(0x9B9B9B);
         wrongFrom.font=[UIFont systemFontOfSize:12];

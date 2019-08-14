@@ -14,7 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 +(UIImageView*)imageViewStartAnimating;
 
-//喇叭循环动画
 +(UIImageView*)imageViewfForPlaying;
 
 @end

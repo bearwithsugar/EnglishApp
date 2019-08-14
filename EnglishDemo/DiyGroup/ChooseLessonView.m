@@ -14,14 +14,6 @@
 #import "../Functions/MyThreadPool.h"
 #import "Masonry.h"
 
-//使控制台打印完整信息
-//#ifdef DEBUG
-//#define NSLog(FORMAT, ...) fprintf(stderr, "%s:%zd\t%s\n", [[[NSString stringWithUTF8String: __FILE__] lastPathComponent] UTF8String], __LINE__, [[NSString stringWithFormat: FORMAT, ## __VA_ARGS__] UTF8String]);
-//#else
-//#define NSLog(FORMAT, ...) nil
-//#endif
-
-
 @interface ChooseLessonView()<UITableViewDataSource,UITableViewDelegate>{
     ChooseLessonView* chooseLessonView;
     LearningViewController* learnView;
@@ -36,8 +28,6 @@
     //NSArray* bookPicArray;
     //书籍句子数组
     NSArray* sentenceArray;
-    //课程数组
-    //NSArray* c
 }
 @end
 
@@ -60,7 +50,6 @@
         unitsList.dataSource=self;
         unitsList.delegate=self;
         unitsList.tag=1;
-//        [self tableView:unitsList didSelectRowAtIndexPath:[NSIndexPath indexPathForItem:3 inSection:0]];
         [self addSubview:unitsList];
         
         [unitsList mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -120,8 +109,6 @@
     if (tableView.tag==1){
         //单元选择列表
     
-        //NSString* title=[chooseLessonArray objectAtIndex:indexPath.row];
-        
         NSDictionary* unitMsg=unitArray[indexPath.row];
         
         cell.backgroundColor=ssRGBHex(0xFF7474);
@@ -131,7 +118,6 @@
         cell.textLabel.font=[UIFont systemFontOfSize:14];
         cell.textLabel.textColor=[UIColor whiteColor];
         cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
-        //cell.tag=[[unitMsg valueForKey:@"unitId"]intValue];
         cell.tag=indexPath.row;
         
         if (indexPath.row == _defaultUnit) {
@@ -167,8 +153,6 @@
     UITableViewCell* celltwo=[tableView cellForRowAtIndexPath:indexPath];
     if (tableView.tag==1) {
         celltwo.textLabel.textColor=[UIColor blackColor];
-//        NSLog(@"点击的cell的tag是%ld",(long)celltwo.tag);
-//        NSLog(@"点击的cell的tag是%@",[unitArray objectAtIndex:celltwo.tag]);
         NSDictionary* dataDic=[ConnectionFunction getClassMsg:[[unitArray objectAtIndex:celltwo.tag] valueForKey:@"unitId"] UserKey:[userInfo valueForKey:@"userKey"]];
         _lessonArray=[dataDic valueForKey:@"data"];
         _unitName=[[unitArray objectAtIndex:celltwo.tag] valueForKey:@"unitName"];

@@ -21,11 +21,6 @@
         dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         //这里改变RunLoop模式
         CFRunLoopStop(CFRunLoopGetMain());
-        //NSLog(@"网络响应：response：%@",response);
-        // NSLog(@"返回数据：response：%@",data);
-        NSLog(@"错误：response：%@",error);
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据为：%@",html);
         [AgentFunction isTokenExpired:dictionary];
     }];
     [dataTask resume];

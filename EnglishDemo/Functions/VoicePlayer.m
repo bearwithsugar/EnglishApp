@@ -40,13 +40,8 @@
         
         _audioStream.onFailure = ^(FSAudioStreamError error,NSString *description){
             NSLog(@"播放过程中发生错误，错误信息：%@",description);
-           // NSLog(@"错误播放的路径是%@",url);
         };
-//        _audioStream.onCompletion = ^(){
-//            NSLog(@"播放完成!");
-//           // NSLog(@"正确播放的路径是%@",url);
-//
-//        };
+
         _audioStream.onCompletion = _myblock;
         [_audioStream setVolume:0.5];//设置声音
     }

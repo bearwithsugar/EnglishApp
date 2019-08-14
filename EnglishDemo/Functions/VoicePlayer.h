@@ -21,10 +21,6 @@ typedef void (^VoidBlock) (void);
 
 @property VoidBlock myblock;
 
-//-(FSAudioStream *)audioStream:(NSString*)urlStr;
-
-//根据l本地路径播放声音
-//-(void)playAudio;
 -(void)playAudio:(NSInteger)times;
 -(void)interruptPlay;
 

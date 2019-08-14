@@ -277,7 +277,7 @@
     nextLessonLabel.titleLabel.font=[UIFont systemFontOfSize:12];
     [presentLession addSubview:nextLessonLabel];
     
-    [nextLessonBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+    [nextLessonLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self->presentLession).with.offset(13.24);
         make.width.equalTo(@40);
         make.right.equalTo(self->presentLession).with.offset(-30);
@@ -286,7 +286,6 @@
     
 }
 -(void)clickLastLesson{
-    //[ConnectionFunction getLessonMsg:_articleId UserKey:[userInfo valueForKey:@"userKey"]];
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
@@ -320,7 +319,6 @@
     
 }
 -(void)clickNextLesson{
-    //[ConnectionFunction getLessonMsg:_articleId UserKey:[userInfo valueForKey:@"userKey"]];
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
@@ -381,12 +379,6 @@
     //打开button父组件的人机交互
     [lessontitle setUserInteractionEnabled:YES];
     
-//    UIButton* angleBtn=[[UIButton alloc]initWithFrame:CGRectMake(186.57, 9.93, 20.97, 12.13)];
-//    [angleBtn setBackgroundImage:[UIImage imageNamed:@"btn_down"] forState:UIControlStateNormal];
-//    [angleBtn setBackgroundImage:[UIImage imageNamed:@"icon_Rectangle_up"] forState:UIControlStateSelected];
-//    [angleBtn addTarget:self action:@selector(showChooseLessonView:) forControlEvents:UIControlEventTouchUpInside];
-//    [lessontitle addSubview:angleBtn];
-    
     [presentLession addSubview:lessontitle];
     
     [lessontitle mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -437,10 +429,6 @@
         [theBook setUserInteractionEnabled:YES];
         theBook.tag=i;
         
-        //暂时用其他图片代替
-        //theBook.image=[UIImage imageNamed:@"group_book_learning"];
-        
-        
         [self->bookPicView addSubview:theBook];
         
         UILabel* showBigPic=[[UILabel alloc]initWithFrame:CGRectMake(16.55, 11.03, 77.27, 17.65)];
@@ -463,7 +451,6 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 
             NSDictionary* bookDic=[self->bookPicArray objectAtIndex:i];
-            //NSLog(@"bookDic%@",bookDic);
             NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
             //        //路径中有特殊字符，转换一下
             picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
@@ -492,10 +479,6 @@
     [bigPicView addSubview:theBigPic];
     
     [theBigPic mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(self->bigPicView);
-//        make.left.equalTo(self->bigPicView);
-//        make.right.equalTo(self->bigPicView);
-//        make.bottom.equalTo(self->bigPicView);
         make.edges.equalTo(self->bigPicView);
     }];
     
@@ -540,7 +523,6 @@
     //添加图片学习信息
     [ConnectionFunction addUserPictureMsg:[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"pictureId"]
                                                         UserKey:[userInfo valueForKey:@"userKey"]];
-    //NSLog(@"添加图片学习信息的值是%@",dataDic);
     //强转一下类型，不然出来的类型对不上
     NSString* page=[NSString stringWithFormat:@"%@",[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"page"]];
     [contentDetailScrollView removeFromSuperview];
@@ -582,20 +564,6 @@
         make.right.equalTo(self->contentView).with.offset(-20);
     }];
     
-//    UIView* contentDetailView = [UIView new];
-//    [contentDetailView setUserInteractionEnabled:YES];
-//
-//    [self->contentDetailScrollView addSubview:contentDetailView];
-//
-//    [contentDetailView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.edges.equalTo(self->contentDetailScrollView);
-//        make.width.equalTo(self->contentDetailScrollView);
-//        make.height.greaterThanOrEqualTo(@0.f);
-//    }];
-    
-//        
-//    self->contentDetailScrollView.contentSize=CGSizeMake((int)self->contentView.mas_right-136, contentDetailHeight);
-    
     for (int i=0; i<titleArray.count; i++) {
         NSDictionary* titleDic=titleArray[i];
         //内容的底板
@@ -603,8 +571,6 @@
         content=[[UIView alloc]init];
         content.layer.backgroundColor=[UIColor whiteColor].CGColor;
         content.layer.cornerRadius=10;
-//        //打开button父组件的人机交互
-//        [content setUserInteractionEnabled:YES];
         [contentDetailScrollView addSubview:content];
         
         [content mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -633,23 +599,14 @@
             make.height.equalTo(@15.44);
             make.width.equalTo(@35.32);
         }];
-        
-        // 获取句子学没学用的，
-//        JobBlock getMsgBlock = ^{
-//            [ConnectionFunction getUserSentenceMsg:[titleDic valueForKey:@"sentenceId"] UserKey:[userInfo valueForKey:@"userKey"]];
-//        };
+
         
         //喇叭图标
         laba=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 32, 17.66, 16.55)];
         laba.image=[UIImage imageNamed:@"icon_laba2"];
         [content addSubview:laba];
         
-//        [laba mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.top.equalTo(self->content).with.offset(32);
-//            make.left.equalTo(self->content).with.offset(17.66);
-//            make.height.equalTo(@16.55);
-//            make.width.equalTo(@17.66);
-//        }];
+
         
         //学习内容
         UILabel* title=[[UILabel alloc]init];
@@ -680,17 +637,6 @@
                 make.right.equalTo(self->content);
             }];
         }
-        
-//        //添加各种按钮
-//        UILabel* timeShow=[[UILabel alloc]initWithFrame:CGRectMake(15.45, 119.17, 33.1, 33.1)];
-//        timeShow.layer.borderColor=ssRGBHex(0xFF7474).CGColor;
-//        timeShow.layer.borderWidth=1;
-//        timeShow.layer.cornerRadius=16.5;
-//        timeShow.text=@"98";
-//        timeShow.textAlignment=NSTextAlignmentCenter;
-//        timeShow.textColor=ssRGBHex(0xFF7474);
-//        timeShow.font=[UIFont systemFontOfSize:12];
-//        [content addSubview:timeShow];
         
         UIButton* playBtn=[[UIButton alloc]init];
         [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_play"] forState:UIControlStateNormal];
@@ -725,10 +671,6 @@
             make.height.equalTo(@46);
             make.width.equalTo(@140);
         }];
-        
-//        LabaImageBlock myLabaImageBlock = ^{
-//            [playBtn removeFromSuperview];
-//        };
         
         //添加点击事件
         clickRecognize=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickContent:)];
@@ -816,9 +758,7 @@
                 label.frame = originFrame;
             }
             flag=false;
-            //label.userInteractionEnabled=NO;
-            //去除手势
-            //[label removeGestureRecognizer:clickRecognize];
+    
             progressLabel.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
             
             //把喇叭换成动图
@@ -946,8 +886,6 @@
 
     //右侧按钮数组
     autoPlayNextBtnArray=[[NSMutableArray alloc]init];
-//    timeIntervalBtnArray=[[NSMutableArray alloc]init];
-//    playChineseBtnArray=[[NSMutableArray alloc]init];
     showTranslationBtnArray=[[NSMutableArray alloc]init];
     replayTimesBtnArray=[[NSMutableArray alloc]init];
     
@@ -970,13 +908,6 @@
                 openBtn.tag=[openBtnArray indexOfObject:title];
                 [openBtn addTarget:self action:@selector(actionOfAutoPlay:) forControlEvents:UIControlEventTouchUpInside];
             }
-//            if ([addArray indexOfObject:number]==1) {
-//                //把按钮加到对应的按钮数组中
-//                [playChineseBtnArray addObject:openBtn];
-//                //2和3
-//                openBtn.tag=[openBtnArray indexOfObject:title]+2;
-//                [openBtn addTarget:self action:@selector(actionOfPlayChinese:) forControlEvents:UIControlEventTouchUpInside];
-//            }
             if ([addArray indexOfObject:number]==1) {
                 //把按钮加到对应的按钮数组中
                 [showTranslationBtnArray addObject:openBtn];
@@ -987,20 +918,6 @@
 
         }
     }
-    
-//    NSArray* secondBtnArray=@[@"1s",@"2s",@"3s"];
-//    for (NSString* title in secondBtnArray) {
-//        float x=84*[secondBtnArray indexOfObject:title];
-//        UIButton* secondBtn=[[UIButton alloc]initWithFrame:CGRectMake(x, 0, 84, 26.48)];
-//        [secondBtn setTitle:title forState:UIControlStateNormal];
-//        [secondBtn setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
-//        [secondBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
-//        secondBtn.titleLabel.font=[UIFont systemFontOfSize:13];
-//        secondBtn.tag=[secondBtnArray indexOfObject:title];
-//        [[btnLabelArray objectAtIndex:1] addSubview:secondBtn];
-//        [timeIntervalBtnArray addObject:secondBtn];
-//        [secondBtn addTarget:self action:@selector(actionOfTimeInterval:) forControlEvents:UIControlEventTouchUpInside];
-//    }
 
     NSArray* timesBtnArray=@[@"1遍",@"2遍",@"3遍"];
     for (NSString* title in timesBtnArray) {
@@ -1021,12 +938,6 @@
     flag=@"1";
     UIButton* btn1=[autoPlayNextBtnArray objectAtIndex:flag.intValue];
     btn1.selected=true;
-//    flag=[settingArray objectAtIndex:1];
-//    UIButton* btn2=[timeIntervalBtnArray objectAtIndex:flag.intValue];
-//    btn2.selected=true;
-//    flag=[settingArray objectAtIndex:2];
-//    UIButton* btn3=[playChineseBtnArray objectAtIndex:0];
-//    btn3.selected=true;
     flag=[settingArray objectAtIndex:3];
     UIButton* btn4=[showTranslationBtnArray objectAtIndex:flag.intValue];
     btn4.selected=true;
@@ -1041,16 +952,6 @@
             
         }
     }
-//    for (UIButton* btn in timeIntervalBtnArray) {
-//        if (btn.selected) {
-//            btn.backgroundColor=ssRGBHex(0xFF7474);
-//        }
-//    }
-//    for (UIButton* btn in playChineseBtnArray) {
-//        if (btn.selected) {
-//            btn.backgroundColor=ssRGBHex(0xFF7474);
-//        }
-//    }
     for (UIButton* btn in showTranslationBtnArray) {
         if (btn.selected) {
             btn.backgroundColor=ssRGBHex(0xFF7474);
@@ -1083,28 +984,7 @@
         button.backgroundColor=[UIColor whiteColor];
     }
 }
-//-(void)actionOfTimeInterval:(UIButton*)btn{
-//    for (UIButton* button in timeIntervalBtnArray) {
-//        if(button.tag==btn.tag){
-//            button.selected=true;
-//            button.backgroundColor=ssRGBHex(0xFF7474);
-//            continue;
-//        }
-//        button.selected=false;
-//        button.backgroundColor=[UIColor whiteColor];
-//    }
-//}
-//-(void)actionOfPlayChinese:(UIButton*)btn{
-//    for (UIButton* button in playChineseBtnArray) {
-//        if(button.tag==btn.tag){
-//            button.selected=true;
-//            button.backgroundColor=ssRGBHex(0xFF7474);
-//            continue;
-//        }
-//        button.selected=false;
-//        button.backgroundColor=[UIColor whiteColor];
-//    }
-//}
+
 -(void)actionOfShowTranslation:(UIButton*)btn{
     for (UIButton* button in showTranslationBtnArray) {
         if(button.tag==btn.tag){
@@ -1176,8 +1056,6 @@
     }else{
         if (chooseLessonView.unitName!=nil&&chooseLessonView.className!=nil) {
             lessonArray=chooseLessonView.lessonArray;
-            //NSLog(@"lessonArray:%@",lessonArray);
-            //classid：在这个dataArray中很多字典中都可以返回id，此处拿其中一个字典：bookSentences
             [self showContent:[chooseLessonView.dataArray valueForKey:@"bookPictures"]
                      senArray:[chooseLessonView.dataArray valueForKey:@"bookSentences"]
                       classId:[[[chooseLessonView.dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
@@ -1214,8 +1092,6 @@
     className=classname;
     //NSDictionary * dataDic=
     NSDictionary* buyState=[ConnectionFunction articleBuyState:chooseLessonView.articleId UserKey:[userInfo valueForKey:@"userKey"]];
-//    NSLog(@"课程购买状态%@",buyState);
-//    NSLog(@"课程状态%@",[buyState valueForKey:@"data"]);
     //判断字典内容为空
     if ([[buyState valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
         NSLog(@"您还未购买该课程");
@@ -1254,14 +1130,8 @@
                 [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
             }
             
-//            for (NSObject *object in self->sentenceArray) {
-//                NSString* playUrl=[object valueForKey:@"engUrl"];
-//                playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-//                [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
-//            }
         }
     });
-    //加载完成，移除gif
 }
 
 
@@ -1272,7 +1142,6 @@
     
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"购买" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         int score=[[[ConnectionFunction getScore:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"]intValue];
-        //NSLog(@"学分是%@",[ConnectionFunction getScore:[self->userInfo valueForKey:@"userKey"]]);
         if (score>=100) {
             //添加学习进度信息
             NSDictionary* dataDic=[ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
@@ -1324,30 +1193,7 @@
 }
 //开始录音和停止录音
 -(void)startRecordBtnAction:(UIButton*)btn{
-    //手动停止录音
-//    if (!isRecord) {
-//        NSLog(@"开始录音");
-//        //转换为录音状态
-//        isRecord=true;
-//        //设置手势点击任何一点结束录音
-//        [followReadBtn setEnabled:NO];
-//        stopRecordTap=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(stopRecord:)];
-//        stopRecordTap.cancelsTouchesInView=NO;
-//        [self.view addGestureRecognizer:stopRecordTap];
-//
-//        recordingSentenceId=[[sentenceArray objectAtIndex:btn.tag]valueForKey:@"sentenceId"];
-//        recordingSentenceId=[recordingSentenceId stringByAppendingString:@".caf"];
-//
-//        [[AudioRecorder shareInstance] startRecordWithFilePath:[self getFilePathWithFileName:recordingSentenceId]];
-//        [[AudioRecorder shareInstance] setRecorderDelegate:self];
-//
-//    }else{
-//        //self.progressView.progress = 0;
-//        [[AudioRecorder shareInstance] stopRecord];
-//        [self.view endEditing:YES];
-//        isRecord=false;
-//    }
-    
+
     //下面是根据网络给的，使得录音声音大一点
     NSError *audioError = nil;
     BOOL success = [[AVAudioSession sharedInstance] overrideOutputAudioPort:AVAudioSessionPortOverrideSpeaker error:&audioError];
@@ -1396,20 +1242,6 @@
 }
 //播放录音声音
 -(void)playRecordBtnAction{
-//    NSLog(@"播放声音");
-//    //由于录音配置那里设置了是pcm，avaudioplayer播放器是播放不了的，需要加头部变成wav才能播放，此处不使用avaudioplayer
-//    //直接使用系统铃声的接口播放录音，30秒内还是可以播放的,不过要第二次运行才出声音，原因未明
-//    NSLog(@"录音文件名%@",recordingSentenceId);
-//    NSURL * url = [NSURL fileURLWithPath:[self getFilePathWithFileName:recordingSentenceId]];
-//    SystemSoundID soundID;
-//    /*根据声音的路径创建ID    （__bridge在两个框架之间强制转换类型，值转换内存，不修改内存管理的
-//     权限）在转换数据类型的时候，不希望该对象的内存管理权限发生改变，原来是MRC类型，转换了还是 MRC。*/
-//    AudioServicesCreateSystemSoundID((__bridge CFURLRef _Nonnull)(url), &soundID);
-//    //播放音频
-//    AudioServicesPlayAlertSound(soundID);
-//    //添加震动，只有在iphone上才可以，模拟器没有效果。
-//    //    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-    /* 初始化url */
     
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     //默认情况下扬声器播放

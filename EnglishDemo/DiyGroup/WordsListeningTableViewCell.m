@@ -32,7 +32,6 @@
     return cell;
 }
 -(void)loadData:(UIImageView*)image name:(NSString*)label1 description:(NSString*)label2{
-//    [_labaBtn setBackgroundImage:[UIImage imageNamed:image] forState:UIControlStateNormal];
     [_labaView addSubview:image];
     [image mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(image);
@@ -47,7 +46,6 @@
 }
 - (void)awakeFromNib;{
     [super awakeFromNib];
-    // Initialization code
 }
 
 -(void)clearLaba{

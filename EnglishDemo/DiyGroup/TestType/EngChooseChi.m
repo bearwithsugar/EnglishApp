@@ -288,7 +288,6 @@
             NSDictionary* dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"wordId"]] Type:subjectType];
             NSLog(@"testarray是%@",[super.testArray objectAtIndex:super.testFlag]);
             NSLog(@"错题添加结果%@",dic);
-            //[self highlightAnswer];
         }
         btn.selected=true;
     }
@@ -349,10 +348,7 @@
         self->voiceplayer.url = playUrl;
         self->voiceplayer.myblock = ^{};
         [self->voiceplayer playAudio:0];
-        //        if (self->continuePlay) {
-        //            self->voiceplayer.urlArray = self->voiceArray;
-        //            self->voiceplayer.startIndex = id+1;
-        //        }
+
     };
     
     [MyThreadPool executeJob:playBlock Main:^{}];
