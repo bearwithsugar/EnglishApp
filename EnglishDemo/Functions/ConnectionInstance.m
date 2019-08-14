@@ -53,6 +53,19 @@
     return dataDic;
 }
 
+#pragma mark --书本信息接口
+//获取选取书籍的出版社列表(根据书本分类type查询分类信息) 参数是分类的级别
+-(NSDictionary*)getLineByType:(NSString*)menuType UserKey:(NSString*)userkey{
+    NSURL* url=[FixValues getUrl];
+    NSString* str=[NSString stringWithFormat:@"%@",url];
+    NSString* str2=[str stringByAppendingString:@"/category/type/"];
+    str=[str2 stringByAppendingString:menuType];
+    str=[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    url=[NSURL URLWithString:str];
+    RequestInstance* getReq=[[RequestInstance alloc]init];
+    NSDictionary* dataDic=[getReq getRequestWithHead:url Head:userkey];
+    return dataDic;
+}
 
 
 

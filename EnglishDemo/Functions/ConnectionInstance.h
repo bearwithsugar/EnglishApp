@@ -24,6 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 //根据书籍获取最近学习信息
 -(NSDictionary*)recentLearnMsgByBook:(NSString*)userkey Id:(NSString*)bookId;
 
+#pragma mark --书本信息接口
+//获取选取书籍的出版社列表(根据书本分类type查询分类信息) 参数是分类的级别
+-(NSDictionary*)getLineByType:(NSString*)menuType UserKey:(NSString*)userkey;
+
 @end
 
 NS_ASSUME_NONNULL_END

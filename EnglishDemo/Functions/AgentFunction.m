@@ -84,7 +84,7 @@
             [[self theTopviewControler]
              presentViewController:
              [WarningWindow transToLogin:@"您的账号在别处登录，请重新登录！"
-                              Navigation:[[UIApplication sharedApplication].delegate window].rootViewController.navigationController]
+                              Navigation:[self theTopviewControler].navigationController]
              animated:YES
              completion:nil];
         });

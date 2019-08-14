@@ -154,8 +154,7 @@
 
         [self myGradeFixed];
         [self myProgressFixed];
-
-        //[self recommend];
+        
         if ([userInfo valueForKey:@"userKey"]!=nil) {
             [self chooseBookinit];
             [self chooseBook];
@@ -187,12 +186,17 @@
 
             NSLog(@"账号在别处登录");
 
+            [loadGifForProcess removeFromSuperview];
+            [loadGifForRecentBook removeFromSuperview];
+            
             //警告窗
-            [self presentViewController:
-             [WarningWindow transToLogin:@"您的账号在别处登录请重新登录！"
-                              Navigation:self.navigationController]
-                               animated:YES
-                             completion:nil];
+//            [self presentViewController:
+//             [WarningWindow transToLogin:@"您的账号在别处登录请重新登录！"
+//                              Navigation:self.navigationController]
+//                               animated:YES
+//                             completion:nil];
+            
+           // [self presentViewController:[WarningWindow MsgWithoutTrans:@"您的账号在别处登录"] animated:YES completion:nil];
 
         }else{
             //如果没有其他设备登录则进行数据加载---------------------------------------------------------------
@@ -447,6 +451,9 @@
                              completion:nil];
         }else{
             [self cleanView];
+            if (publicationMsgDic == nil) {
+                [self chooseBookinit];
+            }
             [self chooseBook];
             [self.view addSubview:chooseBookView];
             
@@ -1228,6 +1235,8 @@
     [refreshPanelProcess removeFromSuperview];
     [bookScanView removeFromSuperview];
     
+    [loadGifForProcess removeFromSuperview];
+    [loadGifForRecentBook removeFromSuperview];
     //提示框
     [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
                        animated:YES

@@ -7,6 +7,7 @@
 //
 
 #import "UnloginMsgView.h"
+#import "Masonry.h"
 
 @implementation UnloginMsgView
 
@@ -22,12 +23,19 @@
     [self msgLabel];
 }
 -(void)msgLabel{
-    UILabel* msgLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 200, 314, 60)];
+    UILabel* msgLabel=[[UILabel alloc]init];
     msgLabel.text=@"您还没登录，等登录后查看！";
     msgLabel.font=[UIFont systemFontOfSize:17];
     msgLabel.textAlignment=NSTextAlignmentCenter;
     msgLabel.textColor=ssRGBHex(0x4A4A4A);
     [self addSubview:msgLabel];
+    
+    [msgLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self);
+        make.right.equalTo(self);
+        make.left.equalTo(self);
+        make.height.equalTo(@60);
+    }];
 }
 
 @end
