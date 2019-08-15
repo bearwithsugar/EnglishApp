@@ -289,6 +289,9 @@
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
+        if(!lessonArray){
+            lessonArray=chooseLessonView.lessonArray;
+        }
         if ([classId isEqualToString:[[lessonArray objectAtIndex:0]valueForKey:@"articleId"]]){
             NSLog(@"这是当前单元的第一课！没有上一课了！");
             [self presentViewController:[WarningWindow MsgWithoutTrans:@"这是当前单元的第一课！没有上一课了！"]
