@@ -36,11 +36,16 @@
         [self rechargeMsg];
     }
     else{
-        UnloginMsgView* unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
+        UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
         [self.view addSubview:unloginView];
+        [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(88.27);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
     }
 
-    //NSLog(@"拿到的日期是%@",[self returndate:[NSNumber numberWithLong:1547883896000]]);
 }
 -(NSString *)returndate:(NSNumber *)num{
     NSString *str1=[NSString stringWithFormat:@"%@",num];

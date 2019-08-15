@@ -181,9 +181,12 @@
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
+        if(!lessonArray || lessonArray.count == 0){
+            lessonArray=chooseLessonView.lessonArray;
+        }
         if ([classId isEqualToString:[[lessonArray objectAtIndex:0]valueForKey:@"articleId"]]){
             NSLog(@"这是当前单元的第一课！没有上一课了！");
-            [WarningWindow MsgWithoutTrans:@"这是当前单元的第一课！没有上一课了！"];
+            [self presentViewController:[WarningWindow MsgWithoutTrans:@"这是当前单元的第一课！没有上一课了！"] animated:YES completion:nil];
         }else{
             NSLog(@"上一课");
             int i=0;
@@ -207,9 +210,12 @@
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
+        if(!lessonArray || lessonArray.count == 0){
+            lessonArray=chooseLessonView.lessonArray;
+        }
         if ([classId isEqualToString:[[lessonArray objectAtIndex:(lessonArray.count-1)]valueForKey:@"articleId"]]){
             NSLog(@"这是当前单元的最后一课！没有下一课了！");
-             [WarningWindow MsgWithoutTrans:@"这是当前单元的最后一课！没有下一课了！"];
+            [self presentViewController:[WarningWindow MsgWithoutTrans:@"这是当前单元的最后一课！没有下一课了！"] animated:YES completion:nil];
         }else{
             NSLog(@"下一课");
             int i=0;

@@ -15,6 +15,8 @@
 #import "Common/LoadGif.h"
 #import "Common/HeadView.h"
 #import "Functions/ConnectionInstance.h"
+#import "Functions/MyThreadPool.h"
+#import "DiyGroup/UnloginMsgView.h"
 #import "Masonry.h"
 
 @interface MyShelfViewController (){
@@ -27,7 +29,11 @@
     //跳转单元的界面
     UnitViewController* unitMsg;
     
+    UIImageView* loadGif;
+    
     NSMutableDictionary* processDic;
+    
+    UIScrollView* shelfView;
 }
 
 @end
@@ -39,12 +45,22 @@
     self.view.backgroundColor=[UIColor whiteColor];
     [self titleShow];
     userInfo=[[NSDictionary alloc]initWithDictionary:[DocuOperate readFromPlist:@"userInfo.plist"]];
-    shelfDic=[ConnectionFunction getBookShelf:[userInfo valueForKey:@"userKey"]];
-    bookArray=[shelfDic valueForKey:@"data"];
     NSLog(@"这个书架共有%lu本书",(unsigned long)bookArray.count);
     
+    if (!userInfo) {
+        UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
+        [self.view addSubview:unloginView];
+        [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(88.27);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
+        return;
+    }
+    
     //加载gif动画
-    UIImageView* loadGif=[LoadGif imageViewStartAnimating];
+    loadGif=[LoadGif imageViewStartAnimating];
     [self.view addSubview:loadGif];
     
     [loadGif mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -53,11 +69,6 @@
         make.width.equalTo(@60);
         make.height.equalTo(@60);
     }];
-    
-    [self bookView];
-    
-    //k加载完成，取消动画
-    [loadGif removeFromSuperview];
 
     if([DocuOperate fileExistInPath:@"process.plist"]){
         NSDictionary* dic=[DocuOperate readFromPlist:@"process.plist"];
@@ -65,11 +76,23 @@
             [processDic setValue:[dic valueForKey:[[dic allKeys]objectAtIndex:i]]
                           forKey:[[dic allKeys]objectAtIndex:i]];
         }
+    }else{
+        processDic = [NSMutableDictionary new];
     }
 }
 -(void)viewWillAppear:(BOOL)animated{
-    bookArray=[shelfDic valueForKey:@"data"];
-//    NSLog(@"打印bookarray：%@",bookArray);
+    JobBlock initBookBlock = ^{
+        self->shelfDic=[ConnectionFunction getBookShelf:[self->userInfo valueForKey:@"userKey"]];
+        self->bookArray=[self->shelfDic valueForKey:@"data"];
+    };
+    
+    [MyThreadPool executeJob:initBookBlock Main:^{
+        [self->shelfView removeFromSuperview];
+        [self bookView];
+        //k加载完成，取消动画
+        [self->loadGif removeFromSuperview];
+    }];
+
     
 }
 -(void)titleShow{
@@ -90,8 +113,8 @@
     
     NSUInteger size=bookArray.count;
     float heigh=ceilf(size/3.0)*187.58+26.48;
-    UIScrollView* shelfView=[[UIScrollView alloc]init];
-    shelfView.contentSize=CGSizeMake(414, heigh);
+    shelfView=[[UIScrollView alloc]init];
+    shelfView.contentSize=CGSizeMake(totalWidth, heigh);
     [self.view addSubview:shelfView];
     
     [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {

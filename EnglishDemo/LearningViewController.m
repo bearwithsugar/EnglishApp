@@ -289,7 +289,7 @@
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
-        if(!lessonArray){
+        if(!lessonArray || lessonArray.count == 0){
             lessonArray=chooseLessonView.lessonArray;
         }
         if ([classId isEqualToString:[[lessonArray objectAtIndex:0]valueForKey:@"articleId"]]){
@@ -325,7 +325,7 @@
     if (classId==nil) {
         NSLog(@"请先选择课程");
     }else{
-        if(!lessonArray){
+        if(!lessonArray || lessonArray.count == 0){
             lessonArray=chooseLessonView.lessonArray;
         }
         if ([classId isEqualToString:
@@ -432,8 +432,6 @@
         [theBook setUserInteractionEnabled:YES];
         theBook.tag=i;
         
-        [self->bookPicView addSubview:theBook];
-        
         UILabel* showBigPic=[[UILabel alloc]initWithFrame:CGRectMake(16.55, 11.03, 77.27, 17.65)];
         [showBigPic setUserInteractionEnabled:YES];
         showBigPic.layer.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5].CGColor;
@@ -443,23 +441,26 @@
         showBigPic.font=[UIFont systemFontOfSize:12];
         showBigPic.textAlignment=NSTextAlignmentCenter;
         showBigPic.layer.cornerRadius=9;
-        [theBook addSubview:showBigPic];
         
-        UITapGestureRecognizer* clickClassPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showContent:)];
-        [theBook addGestureRecognizer:clickClassPic];
-        
-        UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPicGesture:)];
-        [showBigPic addGestureRecognizer:clickBigPic];
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
 
             NSDictionary* bookDic=[self->bookPicArray objectAtIndex:i];
             NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
             //        //路径中有特殊字符，转换一下
             picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+            UIImage* image = [LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
+            
             dispatch_async(dispatch_get_main_queue(), ^{
 
-                theBook.image=[LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
+                theBook.image= image;
+                 [theBook addSubview:showBigPic];
+                 [self->bookPicView addSubview:theBook];
+                
+                UITapGestureRecognizer* clickClassPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showContent:)];
+                [theBook addGestureRecognizer:clickClassPic];
+                
+                UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPicGesture:)];
+                [showBigPic addGestureRecognizer:clickBigPic];
                 if (theBook.tag==(size-1)) {
                     [self->loadPic removeFromSuperview];
                 }
