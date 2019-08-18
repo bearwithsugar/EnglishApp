@@ -12,6 +12,8 @@
 #import "../LearningViewController.h"
 #import "../Functions/DownloadAudioService.h"
 #import "../Functions/MyThreadPool.h"
+#import "../Functions/AgentFunction.h"
+#import "../Functions/WarningWindow.h"
 #import "Masonry.h"
 
 @interface ChooseLessonView()<UITableViewDataSource,UITableViewDelegate>{
@@ -165,10 +167,23 @@
         NSDictionary* lessonMsg=_lessonArray[indexPath.row];
         _className=[lessonMsg valueForKey:@"articleName"];
         
-        _showContentBlock([_dataArray valueForKey:@"bookPictures"],
-                          [_dataArray valueForKey:@"bookSentences"],
-                          [[[_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
-                          _unitName,_className);
+        NSDictionary* buyState=[ConnectionFunction articleBuyState:_articleId UserKey:[userInfo valueForKey:@"userKey"]];
+        //判断字典内容为空
+        if ([[buyState valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
+            NSLog(@"您还未购买该课程");
+            
+            [[AgentFunction theTopviewControler]
+             presentViewController:
+             [self warnWindow:@"您还未购买该课程，购买该课程需要100学分！"]
+             animated:YES
+             completion:nil];
+            
+        }else{
+            _showContentBlock([_dataArray valueForKey:@"bookPictures"],
+                              [_dataArray valueForKey:@"bookSentences"],
+                              [[[_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
+                              _unitName,_className);
+        }
     }
     
 }
@@ -179,5 +194,35 @@
     }else{
         celltwo.textLabel.textColor=ssRGBHex(0x9B9B9B);
     }
+}
+
+#pragma mark 用户提示框
+-(UIAlertController*)warnWindow:(NSString*)message{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"购买" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        int score=[[[ConnectionFunction getScore:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"]intValue];
+        if (score>=100) {
+            self->_showContentBlock([self->_dataArray valueForKey:@"bookPictures"],
+                              [self->_dataArray valueForKey:@"bookSentences"],
+                              [[[self->_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
+                              self->_unitName,self->_className);
+        }
+        else{
+            [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"您的学分不足，请充值！"] animated:YES completion:nil];
+        }
+        
+        
+        
+    }];
+    UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    
+    [alert addAction:action1];
+    [alert addAction:action2];
+    
+    return alert;
 }
 @end

@@ -42,6 +42,7 @@
     return @"imageFile";
 }
 +(UIImage*)getImage:(NSString*)imageId httpUrl:(NSString*)imageUrl{
+    
     NSString *filePath = [[DocuOperate cacheDirectory]stringByAppendingString:@"/"];
     filePath=[filePath stringByAppendingString:[self getImageDirName]];
     filePath=[filePath stringByAppendingString:@"/"];

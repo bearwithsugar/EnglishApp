@@ -426,47 +426,47 @@
     }];
     
     for (int i=0;i<size; i++) {
-        float y=19.86+183.17*i;
-        float x=13.24;
-        UIImageView* theBook=[[UIImageView alloc]initWithFrame:CGRectMake(x,y, 110, 172)];
-        [theBook setUserInteractionEnabled:YES];
-        theBook.tag=i;
+            float y=19.86+183.17*i;
+            float x=13.24;
+            UIImageView* theBook=[[UIImageView alloc]initWithFrame:CGRectMake(x,y, 110, 172)];
+            [theBook setUserInteractionEnabled:YES];
+            theBook.tag=i;
         
-        UILabel* showBigPic=[[UILabel alloc]initWithFrame:CGRectMake(16.55, 11.03, 77.27, 17.65)];
-        [showBigPic setUserInteractionEnabled:YES];
-        showBigPic.layer.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5].CGColor;
-        showBigPic.text=@"查看大图";
-        showBigPic.tag=i;
-        showBigPic.textColor=[UIColor whiteColor];
-        showBigPic.font=[UIFont systemFontOfSize:12];
-        showBigPic.textAlignment=NSTextAlignmentCenter;
-        showBigPic.layer.cornerRadius=9;
-        
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-
-            NSDictionary* bookDic=[self->bookPicArray objectAtIndex:i];
-            NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
-            //        //路径中有特殊字符，转换一下
-            picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-            UIImage* image = [LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
+            UILabel* showBigPic=[[UILabel alloc]initWithFrame:CGRectMake(16.55, 11.03, 77.27, 17.65)];
+            [showBigPic setUserInteractionEnabled:YES];
+            showBigPic.layer.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5].CGColor;
+            showBigPic.text=@"查看大图";
+            showBigPic.tag=i;
+            showBigPic.textColor=[UIColor whiteColor];
+            showBigPic.font=[UIFont systemFontOfSize:12];
+            showBigPic.textAlignment=NSTextAlignmentCenter;
+            showBigPic.layer.cornerRadius=9;
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
 
-                theBook.image= image;
-                 [theBook addSubview:showBigPic];
-                 [self->bookPicView addSubview:theBook];
+                NSDictionary* bookDic=[self->bookPicArray objectAtIndex:i];
+                NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
+                //路径中有特殊字符，转换一下
+                picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                UIImage*  image = [LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
                 
-                UITapGestureRecognizer* clickClassPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showContent:)];
-                [theBook addGestureRecognizer:clickClassPic];
-                
-                UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPicGesture:)];
-                [showBigPic addGestureRecognizer:clickBigPic];
-                if (theBook.tag==(size-1)) {
-                    [self->loadPic removeFromSuperview];
-                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    theBook.image= image;
+                     [theBook addSubview:showBigPic];
+                     [self->bookPicView addSubview:theBook];
+                    
+                    UITapGestureRecognizer* clickClassPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showContent:)];
+                    [theBook addGestureRecognizer:clickClassPic];
+                    
+                    UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPicGesture:)];
+                    [showBigPic addGestureRecognizer:clickBigPic];
+                    if (theBook.tag==(size-1)) {
+                        [self->loadPic removeFromSuperview];
+                    }
+                });
+
             });
-        });
-   }
+       }
 }
 
 -(void)showBigPicGesture:(UITapGestureRecognizer*)sender{
@@ -1095,12 +1095,12 @@
     unitName=unitname;
     className=classname;
     //NSDictionary * dataDic=
-    NSDictionary* buyState=[ConnectionFunction articleBuyState:chooseLessonView.articleId UserKey:[userInfo valueForKey:@"userKey"]];
-    //判断字典内容为空
-    if ([[buyState valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
-        NSLog(@"您还未购买该课程");
-        [self presentViewController:[self warnWindow:@"您还未购买该课程，购买该课程需要100学分！"] animated:YES completion:nil];
-    }else{
+//    NSDictionary* buyState=[ConnectionFunction articleBuyState:chooseLessonView.articleId UserKey:[userInfo valueForKey:@"userKey"]];
+//    //判断字典内容为空
+//    if ([[buyState valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
+//        NSLog(@"您还未购买该课程");
+//        [self presentViewController:[self warnWindow:@"您还未购买该课程，购买该课程需要100学分！"] animated:YES completion:nil];
+//    }else{
         //添加学习进度信息
         //加载gif动画
         loadPic=[LoadGif imageViewStartAnimating];
@@ -1112,14 +1112,16 @@
             make.width.equalTo(@60);
             make.height.equalTo(@60);
         }];
-        
-        NSDictionary* dataDic=[ConnectionFunction addUserArticleMsg:chooseLessonView.articleId UserKey:[userInfo valueForKey:@"userKey"]];
-        NSLog(@"添加课程学习信息返回的是%@",dataDic);
+    
+        [MyThreadPool executeJob:^{
+            [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
+        } Main:^{}];
+    
         [lessontitle removeFromSuperview];
         
         [self presentLessionView];
         [self learningBook];
-    }
+ //   }
     
     [self loadAudioMsg];
 }
@@ -1136,40 +1138,6 @@
             
         }
     });
-}
-
-
-#pragma mark 用户提示框
--(UIAlertController*)warnWindow:(NSString*)message{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
-                                                            preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"购买" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        int score=[[[ConnectionFunction getScore:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"]intValue];
-        if (score>=100) {
-            //添加学习进度信息
-            NSDictionary* dataDic=[ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
-            NSLog(@"添加课程学习信息返回的是%@",dataDic);
-            [self->lessontitle removeFromSuperview];
-            
-            [self presentLessionView];
-            [self learningBook];
-        }
-        else{
-            [self presentViewController:[WarningWindow MsgWithoutTrans:@"您的学分不足，请充值！"] animated:YES completion:nil];
-        }
-
-        
-        
-    }];
-    UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-        
-    }];
-    
-    [alert addAction:action1];
-    [alert addAction:action2];
-    
-    return alert;
 }
 
 #pragma mark --chooseLesson
