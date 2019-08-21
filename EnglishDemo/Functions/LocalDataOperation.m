@@ -58,6 +58,24 @@
     return img;
 }
 
+//返回图片本地路径
++(NSURL*)getImagePath:(NSString*)imageId httpUrl:(NSString*)imageUrl{
+    
+    NSString *filePath = [[DocuOperate cacheDirectory]stringByAppendingString:@"/"];
+    filePath=[filePath stringByAppendingString:[self getImageDirName]];
+    filePath=[filePath stringByAppendingString:@"/"];
+    filePath=[filePath stringByAppendingString:imageId];
+    //filePath=[filePath stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    filePath=[filePath stringByAppendingString:@".png"];
+    
+    if (![DocuOperate isExitInPath:filePath]) {
+        [self saveImage:imageUrl Name:imageId];
+    }
+
+    filePath = [@"file://" stringByAppendingString:filePath];
+    return [NSURL URLWithString: filePath];
+}
+
 //压缩图片
 + (UIImage*)imageWithImageSimple:(UIImage*)image scaledToSize:(CGSize)newSize
 {

@@ -18,6 +18,7 @@
 #import "Functions/DownloadAudioService.h"
 #import "Functions/MyThreadPool.h"
 #import "Masonry.h"
+#import <SDWebImage/SDWebImage.h>
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -448,10 +449,11 @@
                 NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
                 //路径中有特殊字符，转换一下
                 picUrl=[picUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-                UIImage*  image = [LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
-                
+                //UIImage*  image = [LocalDataOperation getImage:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
+                NSURL* imagePath = [LocalDataOperation getImagePath:[bookDic valueForKey:@"pictureId"] httpUrl:picUrl];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    theBook.image= image;
+                    //theBook.image= image;
+                    [theBook sd_setImageWithURL:imagePath];
                      [theBook addSubview:showBigPic];
                      [self->bookPicView addSubview:theBook];
                     
@@ -559,14 +561,6 @@
             [self showBigPic:picTag];
         }
     }
-    [contentView addSubview:contentDetailScrollView];
-    
-    [contentDetailScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->contentView);
-        make.left.equalTo(self->contentView).with.offset(136);
-        make.bottom.equalTo(self->contentView);
-        make.right.equalTo(self->contentView).with.offset(-20);
-    }];
     
     for (int i=0; i<titleArray.count; i++) {
         NSDictionary* titleDic=titleArray[i];
@@ -686,6 +680,15 @@
         content.tag=i;
         [contentArray addObject:content];
     }
+    contentDetailScrollView.contentSize=CGSizeMake(414, contentDetailHeight);
+    [contentView addSubview:contentDetailScrollView];
+    
+    [contentDetailScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->contentView);
+        make.left.equalTo(self->contentView).with.offset(136);
+        make.bottom.equalTo(self->contentView);
+        make.right.equalTo(self->contentView).with.offset(-20);
+    }];
 }
 //点击内容展示收缩
 -(void)clickContent:(UITapGestureRecognizer*)sender{

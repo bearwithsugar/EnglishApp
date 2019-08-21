@@ -35,6 +35,9 @@
 		59341BA322FD54B100838941 /* MASViewAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 59341B9822FD54B100838941 /* MASViewAttribute.m */; };
 		59344ADB21C24AF700198E8F /* load.gif in Resources */ = {isa = PBXBuildFile; fileRef = 59344ADA21C24AF700198E8F /* load.gif */; };
 		593D8EF422D2205A0064FBD1 /* DownloadAudioService.m in Sources */ = {isa = PBXBuildFile; fileRef = 593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */; };
+		593F6968230BB87000582A8B /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; };
+		593F6969230BF6CB00582A8B /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; };
+		593F696A230BF6CB00582A8B /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59477BB3216F3FC5000205A5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 59477BB2216F3FC5000205A5 /* AppDelegate.m */; };
 		59477BB6216F3FC5000205A5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59477BB5216F3FC5000205A5 /* ViewController.m */; };
 		59477BB9216F3FC5000205A5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59477BB7216F3FC5000205A5 /* Main.storyboard */; };
@@ -129,6 +132,20 @@
 		59EFFB3021AA333300127FF6 /* ModifyUserMsgViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59EFFB2F21AA333300127FF6 /* ModifyUserMsgViewController.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		593F696B230BF6CB00582A8B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				593F696A230BF6CB00582A8B /* SDWebImage.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		5901E4992192C5270084156E /* DocuOperate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocuOperate.h; sourceTree = "<group>"; };
 		5901E49A2192C5270084156E /* DocuOperate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DocuOperate.m; sourceTree = "<group>"; };
@@ -185,6 +202,8 @@
 		59344ADA21C24AF700198E8F /* load.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = load.gif; sourceTree = "<group>"; };
 		593D8EF222D2205A0064FBD1 /* DownloadAudioService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadAudioService.h; sourceTree = "<group>"; };
 		593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadAudioService.m; sourceTree = "<group>"; };
+		593F6962230BB7A000582A8B /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage/Products/Library/Frameworks/SDWebImage.framework; sourceTree = "<group>"; };
+		593F6967230BB86F00582A8B /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDWebImage.framework; sourceTree = "<group>"; };
 		59477BAE216F3FC5000205A5 /* EnglishDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EnglishDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59477BB1216F3FC5000205A5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		59477BB2216F3FC5000205A5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -357,6 +376,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				593F6968230BB87000582A8B /* SDWebImage.framework in Frameworks */,
 				59840A4422FC12A100BF8754 /* libWeChatSDK.a in Frameworks */,
 				596721B421F3876A00409403 /* libsqlite3.0.tbd in Frameworks */,
 				596E4B8621F980760046F215 /* TencentOpenAPI.framework in Frameworks */,
@@ -372,6 +392,7 @@
 				5967214921F3105200409403 /* QuartzCore.framework in Frameworks */,
 				5967214721F3103900409403 /* CoreTelephony.framework in Frameworks */,
 				5967214521F3102600409403 /* SystemConfiguration.framework in Frameworks */,
+				593F6969230BF6CB00582A8B /* SDWebImage.framework in Frameworks */,
 				5967214321F3101E00409403 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -460,6 +481,22 @@
 			path = loadgif;
 			sourceTree = "<group>";
 		};
+		593F6965230BB84000582A8B /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				593F6966230BB85500582A8B /* SDWebImage */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		593F6966230BB85500582A8B /* SDWebImage */ = {
+			isa = PBXGroup;
+			children = (
+				593F6967230BB86F00582A8B /* SDWebImage.framework */,
+			);
+			path = SDWebImage;
+			sourceTree = "<group>";
+		};
 		59477BA5216F3FC5000205A5 = {
 			isa = PBXGroup;
 			children = (
@@ -481,6 +518,7 @@
 		59477BB0216F3FC5000205A5 /* EnglishDemo */ = {
 			isa = PBXGroup;
 			children = (
+				593F6965230BB84000582A8B /* Vendor */,
 				59341B7F22FD54B100838941 /* Masonry */,
 				59840A3D22FC05A500BF8754 /* WeChatSDK */,
 				598E16A92269A98D00DDF959 /* EnglishDemo.entitlements */,
@@ -555,6 +593,7 @@
 		5967213F21F3101500409403 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				593F6962230BB7A000582A8B /* SDWebImage.framework */,
 				59840A4322FC12A100BF8754 /* libWeChatSDK.a */,
 				596721B321F3876A00409403 /* libsqlite3.0.tbd */,
 				596721AB21F386B400409403 /* Security.framework */,
@@ -760,6 +799,7 @@
 				59477BAA216F3FC5000205A5 /* Sources */,
 				59477BAB216F3FC5000205A5 /* Frameworks */,
 				59477BAC216F3FC5000205A5 /* Resources */,
+				593F696B230BF6CB00582A8B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1078,6 +1118,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/EnglishDemo/Vendor",
+					"$(PROJECT_DIR)/EnglishDemo/Vendor/SDWebImage",
 				);
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = EnglishDemo/Info.plist;
@@ -1113,6 +1155,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/EnglishDemo/Vendor",
+					"$(PROJECT_DIR)/EnglishDemo/Vendor/SDWebImage",
 				);
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = EnglishDemo/Info.plist;

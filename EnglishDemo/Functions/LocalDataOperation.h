@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 +(UIImage*)getImage:(NSString*)imageId httpUrl:(NSString*)imageUrl;
 //压缩图片
 + (UIImage*)imageWithImageSimple:(UIImage*)image scaledToSize:(CGSize)newSize;
+//返回图片本地路径
++(NSURL*)getImagePath:(NSString*)imageId httpUrl:(NSString*)imageUrl;
 @end
 
 NS_ASSUME_NONNULL_END
