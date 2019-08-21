@@ -561,23 +561,25 @@
             [self showBigPic:picTag];
         }
     }
+    [contentView addSubview:contentDetailScrollView];
+    
+    [contentDetailScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->contentView);
+        make.left.equalTo(self->contentView).with.offset(136);
+        make.bottom.equalTo(self->contentView);
+        make.right.equalTo(self->contentView).with.offset(-20);
+    }];
+    
+    [contentDetailScrollView setContentSize:CGSizeMake(contentView.frame.size.width-156, contentDetailHeight)];
     
     for (int i=0; i<titleArray.count; i++) {
         NSDictionary* titleDic=titleArray[i];
         //内容的底板
         float y=15.44*(i+1)+57.37*i;
-        content=[[UIView alloc]init];
+        content=[[UIView alloc]initWithFrame:CGRectMake(0, y, contentView.frame.size.width-156, 57.37)];
         content.layer.backgroundColor=[UIColor whiteColor].CGColor;
         content.layer.cornerRadius=10;
         [contentDetailScrollView addSubview:content];
-        
-        [content mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->contentDetailScrollView).offset(y);
-            make.left.equalTo(self->contentDetailScrollView.mas_left);
-            make.right.equalTo(self->contentDetailScrollView.mas_right);
-            make.width.equalTo(self->contentDetailScrollView.mas_width);
-            make.height.equalTo(@58);
-        }];
         
         content.clipsToBounds = YES;
         
@@ -680,15 +682,6 @@
         content.tag=i;
         [contentArray addObject:content];
     }
-    contentDetailScrollView.contentSize=CGSizeMake(414, contentDetailHeight);
-    [contentView addSubview:contentDetailScrollView];
-    
-    [contentDetailScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->contentView);
-        make.left.equalTo(self->contentView).with.offset(136);
-        make.bottom.equalTo(self->contentView);
-        make.right.equalTo(self->contentView).with.offset(-20);
-    }];
 }
 //点击内容展示收缩
 -(void)clickContent:(UITapGestureRecognizer*)sender{
