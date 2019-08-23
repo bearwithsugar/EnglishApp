@@ -28,8 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 //获取选取书籍的出版社列表(根据书本分类type查询分类信息) 参数是分类的级别
 -(NSDictionary*)getLineByType:(NSString*)menuType UserKey:(NSString*)userkey;
 
-//单词信息查询
--(NSDictionary*)getTestWordMsg:(NSString*)articleId UserKey:(NSString*)userkey;
 @end
 
 NS_ASSUME_NONNULL_END
