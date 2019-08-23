@@ -340,6 +340,9 @@
 }
 // 添加错题信息
 +(NSDictionary*)addWrongMsg:(NSString*)userkey Id:(NSString*)wrongId  Type:(NSString*)type{
+    if (wrongId == nil) {
+        return nil;
+    }
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"tests/wrongs"];
     NSString* str=[NSString stringWithFormat:@"%@",url];
@@ -714,6 +717,7 @@
 }
 
 +(NSDictionary*)getRequestWithHead:(NSString*)userkey Path:(NSURL*)url{
+    NSLog(@"get-url:%@",url);
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     NSURLSession *session=[NSURLSession sharedSession];
     //添加请求头

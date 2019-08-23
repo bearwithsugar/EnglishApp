@@ -1128,6 +1128,9 @@
             
             for (NSObject *object in self->sentenceArray) {
                 NSString* playUrl=[object valueForKey:@"engUrl"];
+                if([playUrl isKindOfClass:[NSNull class]]){
+                    continue;
+                }
                 playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
                 [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
             }

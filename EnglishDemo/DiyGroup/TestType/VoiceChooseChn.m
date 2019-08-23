@@ -94,10 +94,9 @@
                 }else{
                     [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
                 }
-                
             }
         }
-
+        
         //随机数
         self->rightAnswer = arc4random_uniform(4);
     
@@ -122,8 +121,13 @@
                 
             }else{
                 NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
-                [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
-                [allAnswerArray removeObjectAtIndex:randomNum];
+                if(randomNum > 1000){
+                    [answerArray addObject:@"wrongAnswer"];
+                }else{
+                    [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
+                    [allAnswerArray removeObjectAtIndex:randomNum];
+                }
+
             }
         }
         

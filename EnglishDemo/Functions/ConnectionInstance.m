@@ -66,7 +66,4 @@
     NSDictionary* dataDic=[getReq getRequestWithHead:url Head:userkey];
     return dataDic;
 }
-
-
-
 @end

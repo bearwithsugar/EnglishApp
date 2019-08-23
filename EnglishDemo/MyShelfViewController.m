@@ -128,6 +128,10 @@
         float y=26 + (picHeight+26)*(i/3);
         float x=12 + (picWidth+12)*(i%3);
         UIButton* theBook=[[UIButton alloc]initWithFrame:CGRectMake(x,y, picWidth, picHeight)];
+        
+        theBook.layer.borderWidth=1.0;
+        
+        theBook.layer.borderColor=ssRGBHex(0x979797).CGColor;
 
         [theBook setBackgroundImage:
          [LocalDataOperation getImage:[[[bookArray objectAtIndex:i]

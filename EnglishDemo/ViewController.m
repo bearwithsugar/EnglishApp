@@ -648,8 +648,6 @@
         
         bookpic.layer.borderColor=ssRGBHex(0x979797).CGColor;
         
-        //临时图片
-        //bookpic.image=[UIImage imageNamed:@"group_book_1_unlogged"];
         bookpic.image=[LocalDataOperation getImage:[recentBook valueForKey:@"bookId"] httpUrl:[recentBook valueForKey:@"coverPicture"]];
 
         [bookPicView addSubview:bookpic];

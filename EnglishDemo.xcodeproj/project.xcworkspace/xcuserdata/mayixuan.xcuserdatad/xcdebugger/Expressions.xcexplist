@@ -115,6 +115,9 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "+[ConnectionFunction getTestWordMsg:UserKey:]:ConnectionFunction.m">
+      </ContextState>
+      <ContextState
          contextName = "-[MyShelfViewController clickBook:]:MyShelfViewController.m">
       </ContextState>
       <ContextState
@@ -124,7 +127,7 @@
          contextName = "__28-[VoiceChooseChn answerView]_block_invoke.74:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
-               value = "super.testArray">
+               value = "[super.testArray firstObject]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
