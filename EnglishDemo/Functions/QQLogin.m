@@ -72,7 +72,11 @@
              presentViewController:[WarningWindow MsgWithoutTrans:@"登录信息保存失败"] animated:YES completion:nil];
         }
     }else if([[qqLoginDic valueForKey:@"code"]intValue] == 400){
-        [WarningWindow  MsgWithoutTrans:[qqLoginDic valueForKey:@"message"]];
+         [[AgentFunction theTopviewControler]
+                presentViewController:[self forceLogin:[qqLoginDic valueForKey:@"message"]
+                                                Openid:[userMsg valueForKey:@"openid"]
+                                                  Type:@"other"
+                                               UserMsg:userMsg] animated:YES completion:nil];
     }else{
         [[AgentFunction theTopviewControler]
          presentViewController:[self forceLogin:[qqLoginDic valueForKey:@"message"]
