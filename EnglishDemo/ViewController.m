@@ -445,25 +445,20 @@
         }];
         
     }else if(btn.tag==2){
-        if (userInfo==nil) {
-            [self presentViewController: [WarningWindow transToLogin:@"你尚未登录！请登录后查看" Navigation:self.navigationController]
-                               animated:YES
-                             completion:nil];
-        }else{
-            [self cleanView];
-            if (publicationMsgDic == nil) {
-                [self chooseBookinit];
-            }
-            [self chooseBook];
-            [self.view addSubview:chooseBookView];
-            
-            [chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self.view).with.offset(137.93);
-                make.left.equalTo(self.view);
-                make.right.equalTo(self.view);
-                make.bottom.equalTo(self.view);
-            }];
+
+        [self cleanView];
+        if (publicationMsgDic == nil) {
+            [self chooseBookinit];
         }
+        [self chooseBook];
+        [self.view addSubview:chooseBookView];
+        
+        [chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(137.93);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
         
     }
     

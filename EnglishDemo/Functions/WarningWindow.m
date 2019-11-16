@@ -50,7 +50,12 @@
         
     }];
     
+    UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    
     [alert addAction:action1];
+    [alert addAction:action2];
     
     return alert;
 }

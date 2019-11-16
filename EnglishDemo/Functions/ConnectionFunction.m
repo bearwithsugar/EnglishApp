@@ -184,6 +184,12 @@
 
 //获取选择完年级、出版社后筛选出的书籍信息 参数是四级分类的id（年级id）
 +(NSDictionary*)getBookMsg:(NSString*)publictionId UserKey:(NSString*)userkey UserId:(NSString*)userId{
+    if (!userkey) {
+           userkey = @"none";
+    }
+    if (!userId) {
+              userId = @"none";
+    }
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"books"];
     url=[url URLByAppendingPathComponent:publictionId];
@@ -194,6 +200,9 @@
 
 //根据书本分类父Id查询分类信息(根据出版社获取年级列表) 参数是父级分类的id
 +(NSDictionary*)getLineByParent:(NSString*)parent_id UserKey:(NSString*)userkey{
+    if (!userkey) {
+        userkey = @"none";
+    }
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"category/parent"];
     url=[url URLByAppendingPathComponent:parent_id];
