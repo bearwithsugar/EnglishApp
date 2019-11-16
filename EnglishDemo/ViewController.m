@@ -1182,7 +1182,8 @@
         [book setUserInteractionEnabled:YES];
         [shelfView addSubview:book];
         
-        if ([[bookArray[i]valueForKey:@"boughtState"]intValue]==0) {
+        if ([[bookArray[i]valueForKey:@"boughtState"]intValue]==0&&
+            userInfo) {
             UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
             [loadBtn setBackgroundImage:[UIImage imageNamed:@"icon_weitianjiadaoshujia"] forState:UIControlStateNormal];
             [loadBtn addTarget:self action:@selector(addBook:) forControlEvents:UIControlEventTouchUpInside];

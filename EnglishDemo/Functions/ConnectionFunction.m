@@ -178,6 +178,9 @@
     str=[str2 stringByAppendingString:menuType];
     str=[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     url=[NSURL URLWithString:str];
+    if (!userkey) {
+           userkey = @"none";
+    }
     NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
     return dataDic;
 }
