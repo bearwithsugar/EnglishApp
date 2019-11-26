@@ -3,7 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>com.apple.developer.in-app-payments</key>
-	<array/>
+	<array>
+		<string>merchant.XueBenApp</string>
+	</array>
 	<key>keychain-access-groups</key>
 	<array>
 		<string>$(AppIdentifierPrefix)FF3W9T8H43.com.suuben.english</string>

@@ -12,6 +12,7 @@
 #import "../Common/HeadView.h"
 #import "Masonry.h"
 #import "../Functions/WarningWindow.h"
+#import <objc/runtime.h>
 
 @interface ForgetPassViewController (){
     ResetPassViewController* resetPass;
@@ -44,7 +45,10 @@
 //    phonenumber.textColor=ssRGBHex(0x9B9B9B);
 //    phonenumber.font=[UIFont systemFontOfSize:12];
     phonenumber.placeholder=@"请输入手机号";
-    [phonenumber setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    //[phonenumber setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    Ivar ivar =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
+    UILabel *placeholderLabel = object_getIvar(phonenumber, ivar);
+    placeholderLabel.font = [UIFont boldSystemFontOfSize:12];
     [self.view addSubview:phonenumber];
     
     UILabel* yanzhengLabel=[[UILabel alloc]init];
@@ -55,7 +59,10 @@
     
     yanzhengTextField=[[UITextField alloc]init];
     yanzhengTextField.placeholder=@"请输入验证码";
-    [yanzhengTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    //[yanzhengTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    Ivar ivar2 =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
+    UILabel *placeholderLabel2 = object_getIvar(yanzhengTextField, ivar2);
+    placeholderLabel2.font = [UIFont boldSystemFontOfSize:12];
     [self.view addSubview:yanzhengTextField];
     
     UIView* lineView=[[UIView alloc]init];

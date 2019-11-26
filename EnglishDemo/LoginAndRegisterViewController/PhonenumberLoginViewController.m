@@ -15,6 +15,7 @@
 #import "../Functions/DataFilter.h"
 #import "../ViewController.h"
 #import "Masonry.h"
+#import <objc/runtime.h>
 
 @interface PhonenumberLoginViewController (){
     UITextField* passwordTextField;
@@ -51,12 +52,22 @@
     
     usernameTextField=[[UITextField alloc]init];
     usernameTextField.placeholder=@"请输入手机号码";
-    [usernameTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    //[usernameTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    
+    Ivar ivar =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
+    UILabel *placeholderLabel = object_getIvar(usernameTextField, ivar);
+    placeholderLabel.font = [UIFont boldSystemFontOfSize:12];
+    
     [self.view addSubview:usernameTextField];
     
     passwordTextField=[[UITextField alloc]init];
     passwordTextField.placeholder=@"请输入验证码";
-    [passwordTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    //[passwordTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    
+    Ivar ivar2 =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
+    UILabel *placeholderLabel2 = object_getIvar(passwordTextField, ivar2);
+    placeholderLabel2.font = [UIFont boldSystemFontOfSize:12];
+    
     [self.view addSubview:passwordTextField];
     
     UIView* lineView=[[UIView alloc]init];

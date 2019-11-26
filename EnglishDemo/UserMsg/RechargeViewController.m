@@ -16,6 +16,7 @@
 #import "../Common/HeadView.h"
 #import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 #import "Masonry.h"
+#import <objc/runtime.h>
 
 @interface RechargeViewController (){
     NSDictionary* userInfo;
@@ -68,7 +69,12 @@
     inputMoneyField=[[UITextField alloc]init];
     inputMoneyField.backgroundColor=ssRGBHex(0xFCF8F7);
     inputMoneyField.placeholder=@"请输入金额";
-    [inputMoneyField setValue:[UIFont boldSystemFontOfSize:14] forKeyPath:@"_placeholderLabel.font"];
+    //[inputMoneyField setValue:[UIFont boldSystemFontOfSize:14] forKeyPath:@"_placeholderLabel.font"];
+    
+    Ivar ivar =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
+    UILabel *placeholderLabel = object_getIvar(inputMoneyField, ivar);
+    placeholderLabel.font = [UIFont boldSystemFontOfSize:12];
+    
     [inputMoneyField addTarget:self action:@selector(changedTextField:) forControlEvents:UIControlEventEditingChanged];
     [self.view addSubview:inputMoneyField];
     

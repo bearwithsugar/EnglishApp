@@ -11,6 +11,7 @@
 #import "../Common/HeadView.h"
 #import "../Functions/WarningWindow.h"
 #import "Masonry.h"
+#import <objc/runtime.h>
 
 @interface ResetPassViewController (){
     UITextField* passwordTextField;
@@ -49,13 +50,19 @@
     passwordTextField=[[UITextField alloc]init];
     passwordTextField.placeholder=@"请输入新密码";
     passwordTextField.secureTextEntry = YES;
-    [passwordTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+//    [passwordTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    Ivar ivar =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
+    UILabel *placeholderLabel = object_getIvar(passwordTextField, ivar);
+    placeholderLabel.font = [UIFont boldSystemFontOfSize:12];
     [self.view addSubview:passwordTextField];
     
     passwordDefineTextField=[[UITextField alloc]init];
     passwordDefineTextField.placeholder=@"请确认密码";
     passwordDefineTextField.secureTextEntry = YES;
-    [passwordDefineTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+//    [passwordDefineTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
+    Ivar ivar2 =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
+    UILabel *placeholderLabel2 = object_getIvar(passwordDefineTextField, ivar2);
+    placeholderLabel2.font = [UIFont boldSystemFontOfSize:12];
     [self.view addSubview:passwordDefineTextField];
     
     UIView* lineView=[[UIView alloc]init];
