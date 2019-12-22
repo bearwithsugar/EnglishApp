@@ -104,6 +104,7 @@
 		59A88A6C221BB36C00F16742 /* LoadGif.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A6B221BB36C00F16742 /* LoadGif.m */; };
 		59A88A76221E2C1C00F16742 /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A75221E2C1C00F16742 /* HeadView.m */; };
 		59B0929B224C47A000B571A0 /* RequestInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B0929A224C47A000B571A0 /* RequestInstance.m */; };
+		59BB10AB2394EF2400F2F668 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BB10AA2394EF2400F2F668 /* StoreKit.framework */; };
 		59D4616E21F6CB7E00CF29D8 /* FixValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4616D21F6CB7E00CF29D8 /* FixValues.m */; };
 		59D4617121F6CF1D00CF29D8 /* WarningWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4617021F6CF1D00CF29D8 /* WarningWindow.m */; };
 		59D4617421F6D20B00CF29D8 /* JumpToSomeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4617321F6D20B00CF29D8 /* JumpToSomeView.m */; };
@@ -320,6 +321,7 @@
 		59A88A75221E2C1C00F16742 /* HeadView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeadView.m; sourceTree = "<group>"; };
 		59B09299224C47A000B571A0 /* RequestInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestInstance.h; sourceTree = "<group>"; };
 		59B0929A224C47A000B571A0 /* RequestInstance.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestInstance.m; sourceTree = "<group>"; };
+		59BB10AA2394EF2400F2F668 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		59D4616C21F6CB7E00CF29D8 /* FixValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixValues.h; sourceTree = "<group>"; };
 		59D4616D21F6CB7E00CF29D8 /* FixValues.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FixValues.m; sourceTree = "<group>"; };
 		59D4616F21F6CF1D00CF29D8 /* WarningWindow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WarningWindow.h; sourceTree = "<group>"; };
@@ -379,6 +381,7 @@
 				593F6968230BB87000582A8B /* SDWebImage.framework in Frameworks */,
 				59840A4422FC12A100BF8754 /* libWeChatSDK.a in Frameworks */,
 				596721B421F3876A00409403 /* libsqlite3.0.tbd in Frameworks */,
+				59BB10AB2394EF2400F2F668 /* StoreKit.framework in Frameworks */,
 				596E4B8621F980760046F215 /* TencentOpenAPI.framework in Frameworks */,
 				5967214121F3101600409403 /* libc++.tbd in Frameworks */,
 				596721AC21F386B400409403 /* Security.framework in Frameworks */,
@@ -593,6 +596,7 @@
 		5967213F21F3101500409403 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59BB10AA2394EF2400F2F668 /* StoreKit.framework */,
 				593F6962230BB7A000582A8B /* SDWebImage.framework */,
 				59840A4322FC12A100BF8754 /* libWeChatSDK.a */,
 				596721B321F3876A00409403 /* libsqlite3.0.tbd */,

@@ -45,6 +45,17 @@
     self.description.adjustsFontSizeToFitWidth = YES;
     laba = image;
 }
+
+ 
+-(void)addPicForLaba:(UIImageView*)image{
+    [_labaView addSubview:image];
+    _labaView.backgroundColor = [UIColor clearColor];
+    [image mas_makeConstraints:^(MASConstraintMaker *make) {
+              make.edges.equalTo(image);
+    }];
+    laba = image;
+}
+
 - (void)awakeFromNib;{
     [super awakeFromNib];
 }

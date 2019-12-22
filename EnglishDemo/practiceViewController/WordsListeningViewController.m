@@ -383,7 +383,7 @@
         return NULL;
     }
     NSDictionary* cellDic=[wordsArray objectAtIndex:indexPath.row];
-    NSString* pic=@"icon_juzitingxia_laba";
+    NSString* pic=@"laba_practice2";
     NSString* name=[cellDic valueForKey:@"wordEng"];
     NSString* wordTag=[cellDic valueForKey:@"wordTag"];
     NSString* description=[cellDic valueForKey:@"wordChn"];
@@ -398,6 +398,11 @@
     return 52.96;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+ 
+    WordsListeningTableViewCell *cell = [wordsList cellForRowAtIndexPath:indexPath];
+    //把喇叭换成动图
+    [cell clearLaba];
+    [cell addPicForLaba:[LoadGif imageViewfForPracticePlaying]];
     
     JobBlock playBlock =^{
         
@@ -411,16 +416,21 @@
         
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
-        self->voiceplayer.myblock = ^{};
+        self->voiceplayer.myblock = ^{
+            [cell clearLaba];
+            [cell addPicForLaba:[[UIImageView alloc]initWithImage:[UIImage imageNamed: @"laba_practice2"]]];
+        };
         [self->voiceplayer playAudio:0];
 
     };
     
 
     
-    [MyThreadPool executeJob:playBlock Main:^{
-
-    }];
+    [MyThreadPool executeJob:playBlock Main:^{}];
+    
+    
+    
+        
 }
 
 -(void)popBack:(UITapGestureRecognizer*)sender{

@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 +(instancetype)createCellWithTableView:(UITableView*)tableView;
 -(void)loadData:(UIImageView*)image name:(NSString*)label1 description:(NSString*)label2;
 -(void)clearLaba;
+-(void)addPicForLaba:(UIImageView*)image;
 
 @property (weak, nonatomic) IBOutlet UIView *labaView;
 

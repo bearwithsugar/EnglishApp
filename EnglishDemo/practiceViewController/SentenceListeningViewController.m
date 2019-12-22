@@ -18,6 +18,7 @@
 #import "../Functions/DownloadAudioService.h"
 #import "../Functions/MyThreadPool.h"
 #import "../Common/HeadView.h"
+#import "../Common/LoadGif.h"
 #import "Masonry.h"
 
 
@@ -68,13 +69,16 @@
             [self presentViewController:[WarningWindow MsgWithoutTrans:@"你还没有学习课本，不能进行句子听写！"] animated:YES completion:nil];
             return;
         }
+        
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+        
         //初始化选课信息
         [self chooseLessonViewInit];
         //加载上一课下一课界面
         [self chooseLesson];
         //加载当前课程标签
         [self presentLessionView];
+        
     }
     else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
@@ -336,17 +340,17 @@
 }
 
 -(void)contentView{
-    UITableView* wordsList=[[UITableView alloc]init];
-    wordsList.dataSource=self;
-    wordsList.delegate=self;
-    [self.view addSubview:wordsList];
+    sentencesList=[[UITableView alloc]init];
+    sentencesList.dataSource=self;
+    sentencesList.delegate=self;
+    [self.view addSubview:sentencesList];
     
     //无内容时不显示下划线
     UIView *v = [[UIView alloc] initWithFrame:CGRectZero];
-    [wordsList setTableFooterView:v];
+    [sentencesList setTableFooterView:v];
     
     
-    [wordsList mas_makeConstraints:^(MASConstraintMaker *make) {
+    [sentencesList mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.view).with.offset(134.62);
         make.left.equalTo(self.view);
         make.right.equalTo(self.view);
@@ -354,6 +358,7 @@
     }];
     
 }
+
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -363,7 +368,7 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     WordsListeningTableViewCell* cell=[WordsListeningTableViewCell createCellWithTableView:tableView];
     NSDictionary* cellDic=[sentenceArray objectAtIndex:indexPath.row];
-    NSString* pic=@"icon_juzitingxia_laba";
+    NSString* pic=@"laba_practice2";
     NSString* name=[cellDic valueForKey:@"sentenceEng"];
     NSString* description=[cellDic valueForKey:@"sentenceChn"];
     [cell loadData:[[UIImageView alloc]initWithImage:[UIImage imageNamed:pic]]
@@ -374,9 +379,17 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 52.96;
 }
+
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     //播放声音
     //音频播放空间分配
+    
+    WordsListeningTableViewCell *cell = [sentencesList cellForRowAtIndexPath:indexPath];
+    //把喇叭换成动图
+
+    [cell clearLaba];
+    [cell addPicForLaba:[LoadGif imageViewfForPracticePlaying]];
+    
     JobBlock playBlock =^{
         NSString* playUrl=[DownloadAudioService getAudioPath:
                            [NSString stringWithFormat:@"%@",[[self->sentenceArray objectAtIndex:indexPath.row]valueForKey:@"sentenceId"]]];
@@ -387,7 +400,10 @@
         
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
-        self->voiceplayer.myblock = ^{};
+        self->voiceplayer.myblock = ^{
+            [cell clearLaba];
+            [cell addPicForLaba:[[UIImageView alloc]initWithImage:[UIImage imageNamed: @"laba_practice2"]]];
+        };
         [self->voiceplayer playAudio:0];
        
     };

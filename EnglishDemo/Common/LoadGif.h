@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 +(UIImageView*)imageViewfForPlaying;
 
++(UIImageView*)imageViewfForPracticePlaying;
+
 @end
 
 NS_ASSUME_NONNULL_END
