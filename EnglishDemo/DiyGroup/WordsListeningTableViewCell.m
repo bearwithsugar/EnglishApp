@@ -33,6 +33,7 @@
 }
 -(void)loadData:(UIImageView*)image name:(NSString*)label1 description:(NSString*)label2{
     [_labaView addSubview:image];
+    _labaView.backgroundColor = [UIColor clearColor];
     [image mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(image);
     }];
@@ -54,7 +55,6 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-    self.backgroundColor=[UIColor whiteColor];
 }
 
 @end
