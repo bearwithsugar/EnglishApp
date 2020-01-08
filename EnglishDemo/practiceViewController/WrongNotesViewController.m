@@ -449,6 +449,7 @@
 }
 
 -(void)playVoice{
+    
     //播放声音
     //音频播放空间分配
     NSString* playUrl=[[[testArray objectAtIndex:testFlag]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];

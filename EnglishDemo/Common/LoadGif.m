@@ -73,4 +73,22 @@
     [imageView startAnimating];
     return imageView;
 }
+
++(UIImageView*)imageViewfForPracticePlaying2{
+    UIImageView* imageView=[[UIImageView alloc]init];
+    NSMutableArray *imageArr = [[NSMutableArray alloc]init];
+    for (int i = 0; i<=1; i++) {
+        NSString *imageStr = [NSString stringWithFormat:@"icon_ceshi_laba%d",i + 1];
+        UIImage *image = [UIImage imageNamed:imageStr];
+        [imageArr addObject:image];
+    }
+    imageView.animationImages = imageArr;
+    
+    imageView.animationDuration = 1;
+    
+    imageView.animationRepeatCount = 0;
+    
+    [imageView startAnimating];
+    return imageView;
+}
 @end

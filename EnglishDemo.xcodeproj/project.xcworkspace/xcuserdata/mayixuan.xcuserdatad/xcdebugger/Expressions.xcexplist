@@ -14,6 +14,22 @@
          contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
       </ContextState>
       <ContextState
+         contextName = "-[EngChooseChi clearLaba]:EngChooseChi.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "normalLaba.Superview">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[EngChooseChi playVoice]:EngChooseChi.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "playBtn.subviews">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[VoiceChooseChn playVoice]:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
@@ -22,12 +38,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[ChooseLessonView tableView:didSelectRowAtIndexPath:]:ChooseLessonView.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "_dataArray">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "__46+[ConnectionFunction getRequestWithHead:Path:]_block_invoke:ConnectionFunction.m">
       </ContextState>
       <ContextState
          contextName = "-[MyShelfViewController viewDidLoad]:MyShelfViewController.m">
@@ -41,10 +52,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__66-[WordsListeningViewController tableView:didSelectRowAtIndexPath:]_block_invoke:WordsListeningViewController.m">
+         contextName = "-[ChooseLessonView tableView:didSelectRowAtIndexPath:]:ChooseLessonView.m">
          <PersistentStrings>
             <PersistentString
-               value = "wordsArray">
+               value = "_dataArray">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -70,6 +81,14 @@
          <PersistentStrings>
             <PersistentString
                value = "btn.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__66-[WordsListeningViewController tableView:didSelectRowAtIndexPath:]_block_invoke:WordsListeningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "wordsArray">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -107,15 +126,15 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "+[ConnectionFunction getTestWordMsg:UserKey:]:ConnectionFunction.m">
+      </ContextState>
+      <ContextState
          contextName = "__38-[LearningViewController learningBook]_block_invoke_4:LearningViewController.m">
          <PersistentStrings>
             <PersistentString
                value = "self.view.subviews">
             </PersistentString>
          </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "+[ConnectionFunction getTestWordMsg:UserKey:]:ConnectionFunction.m">
       </ContextState>
       <ContextState
          contextName = "-[MyShelfViewController clickBook:]:MyShelfViewController.m">

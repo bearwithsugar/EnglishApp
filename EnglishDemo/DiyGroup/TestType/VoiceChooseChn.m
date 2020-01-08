@@ -11,6 +11,7 @@
 #import "../../Functions/VoicePlayer.h"
 #import "../../Functions/MyThreadPool.h"
 #import "../../Functions/DownloadAudioService.h"
+#import "../../Common/LoadGif.h"
 #import "Masonry.h"
 
 @implementation VoiceChooseChn{
@@ -21,6 +22,8 @@
     UIButton* answer3;
     UIButton* answer4;
     UIView* questionPanel;
+    
+    UIImageView* playBtn;
     
     //播放音频所需
     VoicePlayer* voiceplayer;
@@ -38,9 +41,10 @@
         make.height.equalTo(self).multipliedBy(0.4);
     }];
 
-    UIButton* playBtn=[[UIButton alloc]init];
-    [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_ceshi_laba"] forState:UIControlStateNormal];
-    [playBtn addTarget:self action:@selector(playVoice) forControlEvents:UIControlEventTouchUpInside];
+    playBtn=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
+    UITapGestureRecognizer* playGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoice)];
+    playBtn.userInteractionEnabled = YES;
+    [playBtn addGestureRecognizer:playGesture];
     [questionPanel addSubview:playBtn];
     
     [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -272,6 +276,37 @@
 }
 
 -(void)playVoice{
+    
+    [playBtn removeFromSuperview];
+    playBtn = [LoadGif imageViewfForPracticePlaying2];
+    [questionPanel addSubview:playBtn];
+    
+    [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(self->questionPanel);
+        make.centerX.equalTo(self->questionPanel);
+        make.width.equalTo(self->questionPanel).multipliedBy(0.1);
+        make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+    }];
+    
+    //播放声音
+    //音频播放空间分配
+    
+    VoidBlock stopBlock = ^{
+        
+        self->playBtn=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
+        UITapGestureRecognizer* playGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoice)];
+        self->playBtn.userInteractionEnabled = YES;
+        [self->playBtn addGestureRecognizer:playGesture];
+        self->playBtn.userInteractionEnabled = YES;
+        [self->questionPanel addSubview:self->playBtn];
+                   [self->playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                       make.centerY.equalTo(self->questionPanel);
+                       make.centerX.equalTo(self->questionPanel);
+                       make.width.equalTo(self->questionPanel).multipliedBy(0.1);
+                       make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+                   }];
+        
+    };
     //播放声音
     //音频播放空间分配
     
@@ -305,7 +340,7 @@
         
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
-        self->voiceplayer.myblock = ^{};
+        self->voiceplayer.myblock = stopBlock;
         [self->voiceplayer playAudio:0];
         //        if (self->continuePlay) {
         //            self->voiceplayer.urlArray = self->voiceArray;

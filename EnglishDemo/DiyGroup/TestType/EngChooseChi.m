@@ -11,6 +11,7 @@
 #import "../../Functions/VoicePlayer.h"
 #import "../../Functions/MyThreadPool.h"
 #import "../../Functions/DownloadAudioService.h"
+#import "../../Common/LoadGif.h"
 #import "Masonry.h"
 
 @implementation EngChooseChi{
@@ -21,7 +22,11 @@
     UIButton* answer3;
     UIButton* answer4;
     
+    UIImageView* normalLaba;
+    UIImageView* testLaba;
+    
     UIView* questionPanel;
+    UIView* playBtn;
     
     //播放音频所需
     VoicePlayer* voiceplayer;
@@ -67,28 +72,37 @@
         make.height.equalTo(@74);
     }];
     
-    UILabel* questionVoice=[[UILabel alloc]init];
-    NSString* voiceHelp = [[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
-    if ([voiceHelp isEqualToString:@"无"]) {
-        questionVoice.text = @"";
-    }else{
-        questionVoice.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
-    }
-    questionVoice.textColor=ssRGBHex(0x4A4A4A);
-    questionVoice.font=[UIFont systemFontOfSize:20];
-    questionVoice.textAlignment=NSTextAlignmentCenter;
-    [questionPanel addSubview:questionVoice];
+//    UILabel* questionVoice=[[UILabel alloc]init];
+//    NSString* voiceHelp = [[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
+//    if ([voiceHelp isEqualToString:@"无"]) {
+//        questionVoice.text = @"";
+//    }else{
+//        questionVoice.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
+//    }
+//    questionVoice.textColor=ssRGBHex(0x4A4A4A);
+//    questionVoice.font=[UIFont systemFontOfSize:20];
+//    questionVoice.textAlignment=NSTextAlignmentCenter;
+//    [questionPanel addSubview:questionVoice];
+//
+//    [questionVoice mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(self->questionPanel).with.offset(87.17);
+//        make.centerX.equalTo(self->questionPanel);
+//        make.width.equalTo(@120);
+//        make.height.equalTo(@28);
+//    }];
     
-    [questionVoice mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->questionPanel).with.offset(87.17);
-        make.centerX.equalTo(self->questionPanel);
-        make.width.equalTo(@120);
-        make.height.equalTo(@28);
-    }];
+    playBtn=[[UIView alloc]init];
+    [self addPicForLaba:
+    [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]]
+    ] ;
     
-    UIButton* playBtn=[[UIButton alloc]init];
-    [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_ceshi_laba"] forState:UIControlStateNormal];
-    [playBtn addTarget:self action:@selector(playVoice) forControlEvents:UIControlEventTouchUpInside];
+//    testLaba = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
+//    [playBtn addSubview:testLaba];
+//    [testLaba setHidden:YES];
+    
+    UITapGestureRecognizer* playGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoice)];
+    playBtn.userInteractionEnabled = YES;
+    [playBtn addGestureRecognizer:playGesture];
     [questionPanel addSubview:playBtn];
     
     [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -313,6 +327,27 @@
 }
 
 -(void)playVoice{
+    
+    [self clearLaba];
+
+    [self addPicForLaba:[LoadGif imageViewfForPracticePlaying2]];
+
+//    [normalLaba setHidden:YES];
+//    [testLaba setHidden:NO];
+
+    
+    //播放声音
+    //音频播放空间分配
+    
+    VoidBlock stopBlock = ^{
+        [self clearLaba];
+        [self addPicForLaba:
+         [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]]
+         ] ;
+//        [self->normalLaba setHidden:NO];
+//        [self->testLaba setHidden:YES];
+    };
+    
     //播放声音
     //音频播放空间分配
     
@@ -346,12 +381,24 @@
         
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
-        self->voiceplayer.myblock = ^{};
+        self->voiceplayer.myblock = stopBlock;
         [self->voiceplayer playAudio:0];
 
     };
     
     [MyThreadPool executeJob:playBlock Main:^{}];
     
+}
+
+-(void)addPicForLaba:(UIImageView*)image{
+    [playBtn addSubview:image];
+    [image mas_makeConstraints:^(MASConstraintMaker *make) {
+              make.edges.equalTo(playBtn);
+    }];
+    normalLaba = image;
+}
+
+-(void)clearLaba{
+    [normalLaba removeFromSuperview];
 }
 @end
