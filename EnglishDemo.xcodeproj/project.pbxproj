@@ -104,6 +104,8 @@
 		59A88A6C221BB36C00F16742 /* LoadGif.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A6B221BB36C00F16742 /* LoadGif.m */; };
 		59A88A76221E2C1C00F16742 /* HeadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 59A88A75221E2C1C00F16742 /* HeadView.m */; };
 		59B0929B224C47A000B571A0 /* RequestInstance.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B0929A224C47A000B571A0 /* RequestInstance.m */; };
+		59B1C60423C7089D009943FB /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 59B1C60223C7089D009943FB /* SVProgressHUD.m */; };
+		59B1C60523C7089D009943FB /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 59B1C60323C7089D009943FB /* SVProgressHUD.bundle */; };
 		59BB10AB2394EF2400F2F668 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59BB10AA2394EF2400F2F668 /* StoreKit.framework */; };
 		59D4616E21F6CB7E00CF29D8 /* FixValues.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4616D21F6CB7E00CF29D8 /* FixValues.m */; };
 		59D4617121F6CF1D00CF29D8 /* WarningWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D4617021F6CF1D00CF29D8 /* WarningWindow.m */; };
@@ -321,6 +323,9 @@
 		59A88A75221E2C1C00F16742 /* HeadView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeadView.m; sourceTree = "<group>"; };
 		59B09299224C47A000B571A0 /* RequestInstance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestInstance.h; sourceTree = "<group>"; };
 		59B0929A224C47A000B571A0 /* RequestInstance.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RequestInstance.m; sourceTree = "<group>"; };
+		59B1C60123C7089D009943FB /* SVProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressHUD.h; sourceTree = "<group>"; };
+		59B1C60223C7089D009943FB /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
+		59B1C60323C7089D009943FB /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVProgressHUD.bundle; sourceTree = "<group>"; };
 		59BB10AA2394EF2400F2F668 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		59D4616C21F6CB7E00CF29D8 /* FixValues.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FixValues.h; sourceTree = "<group>"; };
 		59D4616D21F6CB7E00CF29D8 /* FixValues.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FixValues.m; sourceTree = "<group>"; };
@@ -521,6 +526,7 @@
 		59477BB0216F3FC5000205A5 /* EnglishDemo */ = {
 			isa = PBXGroup;
 			children = (
+				59B1C60023C7089D009943FB /* SVProgressHUD */,
 				593F6965230BB84000582A8B /* Vendor */,
 				59341B7F22FD54B100838941 /* Masonry */,
 				59840A3D22FC05A500BF8754 /* WeChatSDK */,
@@ -699,6 +705,16 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
+		59B1C60023C7089D009943FB /* SVProgressHUD */ = {
+			isa = PBXGroup;
+			children = (
+				59B1C60123C7089D009943FB /* SVProgressHUD.h */,
+				59B1C60223C7089D009943FB /* SVProgressHUD.m */,
+				59B1C60323C7089D009943FB /* SVProgressHUD.bundle */,
+			);
+			path = SVProgressHUD;
+			sourceTree = "<group>";
+		};
 		59DE421421775695008D65CC /* UserMsg */ = {
 			isa = PBXGroup;
 			children = (
@@ -869,6 +885,7 @@
 				59477BB9216F3FC5000205A5 /* Main.storyboard in Resources */,
 				5910AC47217DD93F0024768A /* UnitsListTableViewCell.xib in Resources */,
 				5910AC5D21805C520024768A /* XuefenTableViewCell.xib in Resources */,
+				59B1C60523C7089D009943FB /* SVProgressHUD.bundle in Resources */,
 				5910AC6721806A4E0024768A /* ChoosePublishTableViewCell.xib in Resources */,
 				59DE4232217C0FF1008D65CC /* WordsList.plist in Resources */,
 				5910AC58218050F40024768A /* UserMsgTableViewCell.xib in Resources */,
@@ -970,6 +987,7 @@
 				5910AC61218063F30024768A /* NewVersonTableViewCell.m in Sources */,
 				59DE41FB2172DF11008D65CC /* RegisterViewController.m in Sources */,
 				59341B9E22FD54B100838941 /* MASLayoutConstraint.m in Sources */,
+				59B1C60423C7089D009943FB /* SVProgressHUD.m in Sources */,
 				597392A621C63B2F0050CA1B /* FSAudioController.m in Sources */,
 				59DE4226217AB239008D65CC /* DeviceManagerViewController.m in Sources */,
 				59EFFB3021AA333300127FF6 /* ModifyUserMsgViewController.m in Sources */,
