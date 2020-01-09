@@ -22,7 +22,7 @@
 #import <PassKit/PKPaymentAuthorizationViewController.h>    //Apple pay的展示控件
 #import <AddressBook/AddressBook.h>                         //用户联系信息相关
 
-@interface RechargeViewController ()<PKPaymentAuthorizationViewControllerDelegate>
+@interface RechargeViewController ()
 {
     NSDictionary* userInfo;
     //策略视图
