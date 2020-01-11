@@ -20,7 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(NSDictionary*)postRequestWithHead:(NSURL*)url Head:(NSString*)headMsg;
 
-
 @end
 
 NS_ASSUME_NONNULL_END

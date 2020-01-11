@@ -203,6 +203,7 @@
 
             //最近学习情况
             recentLearnMsg=[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]];
+            NSLog(@"userKey:%@",[userInfo valueForKey:@"userKey"]);
 
             recentBook=[[recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
 

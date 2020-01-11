@@ -14,6 +14,14 @@
          contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
       </ContextState>
       <ContextState
+         contextName = "__63-[RequestInstance getRequestWithHeadForBlock:Head:Block:Score:]_block_invoke:RequestInstance.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "dictionary">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[EngChooseChi clearLaba]:EngChooseChi.m">
          <PersistentStrings>
             <PersistentString
@@ -93,6 +101,17 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__39-[RechargeViewController refreshXuefen]_block_invoke:RechargeViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "str">
+            </PersistentString>
+            <PersistentString
+               value = "dictionary valueForKey:@&quot;data&quot;">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
          <PersistentStrings>
             <PersistentString
@@ -133,6 +152,17 @@
          <PersistentStrings>
             <PersistentString
                value = "self.view.subviews">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[ConnectionInstance getScore:]:ConnectionInstance.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[RechargeViewController verifyPurchaseWithPaymentTransaction]:RechargeViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "strategy">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

@@ -9,7 +9,6 @@
 #import "ConnectionInstance.h"
 #import "AgentFunction.h"
 #import "FixValues.h"
-#import "RequestInstance.h"
 
 
 @implementation ConnectionInstance

@@ -320,7 +320,18 @@
     NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
     return dataDic;
 }
-
+//充值学分
++(void)increaseScore:(NSString*)userkey Money:(NSString*)money StrategyId:(NSString*)strategyId Block:(VoidBlock)myBlock{
+    NSURL* url=[FixValues getUrl];
+    url=[url URLByAppendingPathComponent:@"payments/apple"];
+    NSString* str=[NSString stringWithFormat:@"%@",url];
+    str=[str stringByAppendingString:@"?money="];
+    str=[str stringByAppendingString:money];
+    str=[str stringByAppendingString:@"&strategy_id="];
+    str=[str stringByAppendingString:strategyId];
+    url=[NSURL URLWithString:str];
+    [self postRequestWithHeadAndBlock:url Head:userkey Block:myBlock];
+}
 
 //获取用户第三方绑定信息
 
@@ -555,6 +566,7 @@
     NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
     return dataDic;
 }
+
 #pragma mark --微信第三方登录接口
 //微信获取access_token
 +(NSDictionary*)getWXaccess:(NSString*)code{
@@ -704,6 +716,32 @@
         CFRunLoopStop(CFRunLoopGetMain());
         [AgentFunction isTokenExpired:dataDic];
         
+    }];
+    
+    [dataTask resume];
+    //这里恢复RunLoop
+    CFRunLoopRun();
+    return dataDic;
+}
+
++(NSDictionary*)postRequestWithHeadAndBlock:(NSURL*)url Head:(NSString*)headMsg Block:(VoidBlock)myBlock{
+    NSURLSession *session=[NSURLSession sharedSession];
+    NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
+    
+    //添加请求头
+    NSDictionary *headers = @{ @"English-user": headMsg};
+    [request setAllHTTPHeaderFields:headers];
+    
+    request.HTTPMethod=@"POST";
+    [request setValue: @"application/json" forHTTPHeaderField:@"Content-Type"];
+    static NSDictionary *dataDic;
+    
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error){
+        dataDic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        //这里改变RunLoop模式
+        CFRunLoopStop(CFRunLoopGetMain());
+        [AgentFunction isTokenExpired:dataDic];
+        myBlock();
     }];
     
     [dataTask resume];

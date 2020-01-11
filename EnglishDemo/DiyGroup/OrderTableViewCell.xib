@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -15,17 +14,20 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="53"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="414" height="52.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="414" height="53"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3BL-Oq-fER">
-                        <rect key="frame" x="20" y="15" width="167" height="22.5"/>
+                        <rect key="frame" x="20" y="15" width="234" height="23"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LRb-0R-22V">
-                        <rect key="frame" x="207" y="15" width="167" height="22.5"/>
+                        <rect key="frame" x="274" y="15" width="120" height="23"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="120" id="x0g-ho-G9Y"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -34,13 +36,11 @@
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="LRb-0R-22V" secondAttribute="bottom" constant="15" id="2rZ-hs-oZ3"/>
                     <constraint firstItem="LRb-0R-22V" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="15" id="4fx-Qs-LXF"/>
-                    <constraint firstItem="LRb-0R-22V" firstAttribute="width" secondItem="3BL-Oq-fER" secondAttribute="width" id="GK2-tQ-dHn"/>
-                    <constraint firstItem="LRb-0R-22V" firstAttribute="height" secondItem="3BL-Oq-fER" secondAttribute="height" id="ILp-Bw-NbL"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="LRb-0R-22V" secondAttribute="trailing" constant="20" id="huR-Ae-BYC"/>
+                    <constraint firstItem="LRb-0R-22V" firstAttribute="leading" secondItem="3BL-Oq-fER" secondAttribute="trailing" constant="20" id="a1f-ji-0uC"/>
+                    <constraint firstAttribute="trailing" secondItem="LRb-0R-22V" secondAttribute="trailing" constant="20" id="huR-Ae-BYC"/>
                     <constraint firstAttribute="bottom" secondItem="3BL-Oq-fER" secondAttribute="bottom" constant="15" id="jas-uQ-auP"/>
                     <constraint firstItem="3BL-Oq-fER" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="muU-Je-apW"/>
                     <constraint firstItem="3BL-Oq-fER" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="15" id="nWH-4h-Urf"/>
-                    <constraint firstItem="LRb-0R-22V" firstAttribute="leading" secondItem="3BL-Oq-fER" secondAttribute="trailing" constant="20" id="vLm-pf-o97"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>

@@ -65,7 +65,10 @@
     rechargeMsg.dataSource=self;
     rechargeMsg.delegate=self;
     [self.view addSubview:rechargeMsg];
-    
+//无内容时不显示下划线
+    UIView *v = [[UIView alloc] initWithFrame:CGRectZero];
+    [rechargeMsg setTableFooterView:v];
+
     [rechargeMsg mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view);
         make.right.equalTo(self.view);
