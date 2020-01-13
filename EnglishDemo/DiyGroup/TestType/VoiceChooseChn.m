@@ -274,20 +274,40 @@
             NSLog(@"选择正确");
             btn.backgroundColor=ssRGBHex(0x00CC00);
             super.clickable=false;
+            if ([super.testType isEqualToString:@"wrong"]) {
+                 [MyThreadPool executeJob:^{
+                      NSDictionary* dic=[[NSDictionary alloc]init];
+                      [ConnectionFunction deleteWrongMsg:[super.userInfo valueForKey:@"userKey"]
+                                                   ContentId:[NSString stringWithFormat:@"%@",
+                                                              [[[super.testArray objectAtIndex:super.testFlag]
+                                                               valueForKey:@"bookWord"]valueForKey:@"wordId"]
+                                                              ]];
+                      [ConnectionFunction deleteWrongMsg:[super.userInfo valueForKey:@"userKey"]
+                                                   ContentId:[NSString stringWithFormat:@"%@",
+                                                              [[[super.testArray objectAtIndex:super.testFlag]
+                                                               valueForKey:@"bookWord"]valueForKey:@"sentenceId"]
+                                                              ]];
+                     super.testFlag-=1;
+                      NSLog(@"错题添加结果%@",dic);
+                  } Main:^{}];
+            }
         }else{
             NSLog(@"错误");
             btn.backgroundColor=ssRGBHex(0xFF7474);
-            NSString* subjectType;
-            NSDictionary* dic=[[NSDictionary alloc]init];
-            if ([super.testType isEqualToString:@"word"]) {
-                subjectType=@"2";
-                dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"wordId"]] Type:subjectType];
-            }else{
-                subjectType=@"1";
-                dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"sentenceId"]] Type:subjectType];
+            if (![super.testType isEqualToString:@"wrong"]) {
+                 [MyThreadPool executeJob:^{
+                       NSString* subjectType;
+                       NSDictionary* dic=[[NSDictionary alloc]init];
+                       if ([super.testType isEqualToString:@"word"]) {
+                          subjectType=@"2";
+                          dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"wordId"]] Type:subjectType];
+                      }else{
+                          subjectType=@"1";
+                          dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"sentenceId"]] Type:subjectType];
+                      }
+                      NSLog(@"错题添加结果%@",dic);
+                   } Main:^{}];
             }
-            NSLog(@"错题添加结果%@",dic);
-            //[self highlightAnswer];
         }
         btn.selected=true;
     }

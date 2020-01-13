@@ -20,6 +20,7 @@
 #import "../Functions/FixValues.h"
 #import "../Functions/MyThreadPool.h"
 #import "../Common/HeadView.h"
+#import "../SVProgressHUD/SVProgressHUD.h"
 #import "Masonry.h"
 #import <objc/runtime.h>
 
@@ -353,6 +354,7 @@
         [self presentViewController: [WarningWindow MsgWithoutTrans:@"用户名或密码为空！"] animated:YES completion:nil];
         return;
     }
+    [SVProgressHUD showWithStatus:@"登录中"];
     NSLog(@"设备x名称是%@",[[UIDevice currentDevice] name]);
     
     NSDictionary* loginDic=
@@ -367,12 +369,12 @@
         if ([DocuOperate writeIntoPlist:@"userInfo.plist"
                              dictionary:[DataFilter DictionaryFilter:[loginDic valueForKey:@"data"]]]
             ) {
+            [SVProgressHUD dismiss];
             [self popBack];
-            
+            NSDictionary* usernameDic = [[NSDictionary alloc]
+                                                   initWithObjectsAndKeys:self->usernameTextField.text,@"username",
+                                                        self->passwordTextField.text,@"password", nil];
             [MyThreadPool executeJob:^{
-                NSDictionary* usernameDic = [[NSDictionary alloc]
-                                        initWithObjectsAndKeys:self->usernameTextField.text,@"username",
-                                             self->passwordTextField.text,@"password", nil];
                 [DocuOperate writeIntoPlist:@"password.plist" dictionary:usernameDic];
             } Main:^{
                 NSLog(@"记住密码成功");

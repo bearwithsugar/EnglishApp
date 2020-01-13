@@ -3,8 +3,11 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "-[VoiceChooseChn answerView]:VoiceChooseChn.m">
+         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.77:VoiceChooseChn.m">
          <PersistentStrings>
+            <PersistentString
+               value = "rightAnswer">
+            </PersistentString>
             <PersistentString
                value = "super.testArray">
             </PersistentString>
@@ -14,11 +17,8 @@
          contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
       </ContextState>
       <ContextState
-         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.77:VoiceChooseChn.m">
+         contextName = "-[VoiceChooseChn answerView]:VoiceChooseChn.m">
          <PersistentStrings>
-            <PersistentString
-               value = "rightAnswer">
-            </PersistentString>
             <PersistentString
                value = "super.testArray">
             </PersistentString>
@@ -73,6 +73,9 @@
       <ContextState
          contextName = "-[ChooseLessonView tableView:didSelectRowAtIndexPath:]:ChooseLessonView.m">
          <PersistentStrings>
+            <PersistentString
+               value = "indexPath.row">
+            </PersistentString>
             <PersistentString
                value = "_dataArray">
             </PersistentString>
@@ -188,6 +191,17 @@
       </ContextState>
       <ContextState
          contextName = "-[WordsListeningViewController showContent:className:wordsArray:classId:]:WordsListeningViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__31-[VoiceChooseChn chooseAnswer:]_block_invoke:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testFlag">
+            </PersistentString>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "__28-[VoiceChooseChn answerView]_block_invoke.74:VoiceChooseChn.m">

@@ -377,6 +377,18 @@
     NSDictionary* dataDic=[self postRequestWithHead:url Head:userkey];
     return dataDic;
 }
+// 删除错题
++(NSDictionary*)deleteWrongMsg:(NSString*)userkey ContentId:(NSString*)content_id{
+    NSURL* url=[FixValues getUrl];
+    url=[url URLByAppendingPathComponent:@"tests/wrongs"];
+    NSString* str=[NSString stringWithFormat:@"%@",url];
+    str=[str stringByAppendingString:@"?content_id="];
+    str=[str stringByAppendingString:content_id];
+    url=[NSURL URLWithString:str];
+    NSDictionary* dataDic=[self deleteRequestWithHead:url Head:userkey];
+    return dataDic;
+}
+
 
 #pragma mark --版本信息
 

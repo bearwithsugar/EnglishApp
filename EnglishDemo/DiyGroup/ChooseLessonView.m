@@ -61,7 +61,6 @@
             make.height.equalTo(@397.24);
         }];
         
-//        [unitsList reloadData];
         NSIndexPath* _lastIndex = [NSIndexPath indexPathForRow:_defaultUnit inSection:0];
         [unitsList selectRowAtIndexPath:_lastIndex animated:YES scrollPosition:UITableViewScrollPositionNone];
         NSIndexPath *path = [NSIndexPath indexPathForItem:_defaultUnit inSection:0];
@@ -155,9 +154,10 @@
     UITableViewCell* celltwo=[tableView cellForRowAtIndexPath:indexPath];
     if (tableView.tag==1) {
         celltwo.textLabel.textColor=[UIColor blackColor];
-        NSDictionary* dataDic=[ConnectionFunction getClassMsg:[[unitArray objectAtIndex:celltwo.tag] valueForKey:@"unitId"] UserKey:[userInfo valueForKey:@"userKey"]];
-        _lessonArray=[dataDic valueForKey:@"data"];
-        _unitName=[[unitArray objectAtIndex:celltwo.tag] valueForKey:@"unitName"];
+        NSDictionary* dataDic=[ConnectionFunction getClassMsg:[[unitArray objectAtIndex:indexPath.row] valueForKey:@"unitId"] UserKey:[userInfo valueForKey:@"userKey"]];
+        //_lessonArray=[[dataDic valueForKey:@"data"]firstObject];
+        _lessonArray = [[NSArray alloc]initWithObjects:[[dataDic valueForKey:@"data"]firstObject], nil];
+        _unitName=[[unitArray objectAtIndex:indexPath.row] valueForKey:@"unitName"];
         [lessonList reloadData];
     }else{
         celltwo.textLabel.textColor=ssRGBHex(0xFF7474);

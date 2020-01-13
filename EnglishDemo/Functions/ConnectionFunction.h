@@ -80,6 +80,9 @@ typedef void (^VoidBlock) (void);
 // 获取错题信息
 +(NSDictionary*)getWrongMsg:(NSString*)userkey Id:(NSString*)articleId;
 
+// 删除错题
++(NSDictionary*)deleteWrongMsg:(NSString*)userkey ContentId:(NSString*)content_id;
+
 //待测试
 
 //获取用户句子学习信息记录
