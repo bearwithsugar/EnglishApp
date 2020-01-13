@@ -81,7 +81,6 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
-        
         [self initData];
         [self showContent];
        
@@ -419,19 +418,19 @@
     if ([testFunc isEqualToString:@"0"]) {
         questionAndAnswerView=[VoiceChooseChn alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
     }else if([testFunc isEqualToString:@"1"]){
         questionAndAnswerView=[EngChooseChi alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
     }else if([testFunc isEqualToString:@"2"]){
         questionAndAnswerView=[ChnChooseEng alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
     }else if([testFunc isEqualToString:@"3"]){
         questionAndAnswerView=[ChinSpellEnglish alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
     }else{
         
     }

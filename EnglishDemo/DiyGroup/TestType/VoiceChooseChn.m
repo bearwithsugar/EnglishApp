@@ -11,6 +11,7 @@
 #import "../../Functions/VoicePlayer.h"
 #import "../../Functions/MyThreadPool.h"
 #import "../../Functions/DownloadAudioService.h"
+#import "../../Functions/WordsListFunction.h"
 #import "../../Common/LoadGif.h"
 #import "Masonry.h"
 
@@ -86,54 +87,88 @@
     NSMutableArray* allAnswerArray = [[NSMutableArray alloc]init];
     
     JobBlock myBlock = ^{
-        for (NSDictionary* dic in super.testArray) {
-            if ([super.testType isEqualToString:@"word"]){
-                [allAnswerArray addObject:[dic valueForKey:@"wordChn"]];
-            }else if([super.testType isEqualToString:@"sentence"]){
-                [allAnswerArray addObject:[dic valueForKey:@"sentenceChn"]];
-            }else{
-                //因为这里是遍历，所以不能用wordflag来判断当前是不是单词或者句子
-                if([[dic valueForKey:@"bookWord"]valueForKey:@"wordChn"] == nil){
-                    [allAnswerArray addObject:[[dic valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
-                }else{
-                    [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
-                }
-            }
-        }
-        
-        //随机数
-        self->rightAnswer = arc4random_uniform(4);
-    
-        for (int i=0; i<4; i++) {
-            if (i==self->rightAnswer) {
-                if ([super.testType isEqualToString:@"word"]){
-                    [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
-                    [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
-                }else if([super.testType isEqualToString:@"sentence"]){
-                    [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
-                    [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
-                }else{
-                    if (super.testFlag<super.wordNum) {
-                        [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
-                        [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
-                    }else{
-                        [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
-                        [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
-                    }
-                    
+        if ([self.testType isEqualToString:@"wrong"]) {
+            for (NSString* answer in [[super.testArray valueForKey:@"chnErrorChoice"]firstObject]) {
+                    [allAnswerArray addObject:answer];
                 }
                 
-            }else{
-                NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
-                if(randomNum > 1000){
-                    [answerArray addObject:@"wrongAnswer"];
-                }else{
-                    [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
-                    [allAnswerArray removeObjectAtIndex:randomNum];
+                //随机数
+                self->rightAnswer = arc4random_uniform(4);
+            
+                for (int i=0; i<4; i++) {
+                    if (i==self->rightAnswer) {
+                        if ([super.testType isEqualToString:@"word"]){
+                            [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                        }else if([super.testType isEqualToString:@"sentence"]){
+                            [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                        }else{
+                            if (super.testFlag<super.wordNum) {
+                                [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                            }else{
+                                [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                            }
+                            
+                        }
+                        
+                    }else{
+                        NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
+                        if(randomNum > 1000){
+                            [answerArray addObject:@"wrongAnswer"];
+                        }else{
+                            [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
+                            [allAnswerArray removeObjectAtIndex:randomNum];
+                        }
+                    }
                 }
-
-            }
+        }else{
+            for (NSDictionary* dic in super.testArray) {
+                       if ([super.testType isEqualToString:@"word"]){
+                           [allAnswerArray addObject:[dic valueForKey:@"wordEng"]];
+                       }else if([super.testType isEqualToString:@"sentence"]){
+                           [allAnswerArray addObject:[dic valueForKey:@"sentenceEng"]];
+                       }else{
+                           if (super.testFlag<super.wordNum) {
+                               [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
+                           }else{
+                               [allAnswerArray addObject:[[dic valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
+                           }
+                           
+                       }
+                   }
+                   
+                   //随机数
+                   self->rightAnswer = arc4random_uniform(4);
+                   
+                   for (int i=0; i<4; i++) {
+                       if (i==self->rightAnswer) {
+                           if ([super.testType isEqualToString:@"word"]){
+                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"]];
+                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"]];
+                           }else if([super.testType isEqualToString:@"sentence"]){
+                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"]];
+                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"]];
+                           }else{
+                               if (super.testFlag<super.wordNum) {
+                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
+                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
+                               }else{
+                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
+                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
+                               }
+                               
+                           }
+                           
+                       }else{
+                           NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
+                           [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
+                           [allAnswerArray removeObjectAtIndex:randomNum];
+                       }
+                   }
         }
+            
+            
+        
+        
         
     };
     

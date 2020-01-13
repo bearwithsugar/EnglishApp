@@ -14,6 +14,17 @@
          contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
       </ContextState>
       <ContextState
+         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.77:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "rightAnswer">
+            </PersistentString>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__63-[RequestInstance getRequestWithHeadForBlock:Head:Block:Score:]_block_invoke:RequestInstance.m">
          <PersistentStrings>
             <PersistentString
@@ -168,6 +179,12 @@
       </ContextState>
       <ContextState
          contextName = "-[MyShelfViewController clickBook:]:MyShelfViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[WrongNotesViewController addQAview]:WrongNotesViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "+[WordsListFunction getWordsList:UserKey:]:WordsListFunction.m">
       </ContextState>
       <ContextState
          contextName = "-[WordsListeningViewController showContent:className:wordsArray:classId:]:WordsListeningViewController.m">

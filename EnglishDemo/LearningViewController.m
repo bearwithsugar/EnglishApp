@@ -689,7 +689,6 @@
     //获取句子id
     NSInteger id=sender.view.tag;
 
-    
     //因为下面为了标记扩大了tag值，在这里判断一下并修改回来
     if (id>=100) {
         id-=100;
@@ -1151,6 +1150,7 @@
     
 }
 -(void)popBack{
+    [self->voiceplayer stopPlay];
     [self.navigationController popViewControllerAnimated:true];
 }
 

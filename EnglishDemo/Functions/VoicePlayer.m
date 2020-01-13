@@ -72,6 +72,10 @@
     [_movePlayer play];
 }
 
+-(void)stopPlay{
+    [_movePlayer stop];
+}
+
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     _myblock();
     [self continuePlay];

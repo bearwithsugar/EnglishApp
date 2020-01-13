@@ -74,6 +74,7 @@
 		596721B921F40FEE00409403 /* OrderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 596721B721F40FEE00409403 /* OrderTableViewCell.m */; };
 		596721BA21F40FEE00409403 /* OrderTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 596721B821F40FEE00409403 /* OrderTableViewCell.xib */; };
 		596721BD21F4927E00409403 /* LocalDataOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 596721BC21F4927E00409403 /* LocalDataOperation.m */; };
+		596B2A5723CB247F00A31D3E /* WordsListFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 596B2A5623CB247F00A31D3E /* WordsListFunction.m */; };
 		596D7F402193D2D2000AA637 /* DataFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 596D7F3F2193D2D2000AA637 /* DataFilter.m */; };
 		596E4B8121F8C5AD0046F215 /* AgentFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 596E4B8021F8C5AD0046F215 /* AgentFunction.m */; };
 		596E4B8621F980760046F215 /* TencentOpenAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596E4B8521F980750046F215 /* TencentOpenAPI.framework */; };
@@ -262,6 +263,8 @@
 		596721B821F40FEE00409403 /* OrderTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = OrderTableViewCell.xib; sourceTree = "<group>"; };
 		596721BB21F4927E00409403 /* LocalDataOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalDataOperation.h; sourceTree = "<group>"; };
 		596721BC21F4927E00409403 /* LocalDataOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LocalDataOperation.m; sourceTree = "<group>"; };
+		596B2A5523CB247F00A31D3E /* WordsListFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WordsListFunction.h; sourceTree = "<group>"; };
+		596B2A5623CB247F00A31D3E /* WordsListFunction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WordsListFunction.m; sourceTree = "<group>"; };
 		596D7F3E2193D2D2000AA637 /* DataFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataFilter.h; sourceTree = "<group>"; };
 		596D7F3F2193D2D2000AA637 /* DataFilter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataFilter.m; sourceTree = "<group>"; };
 		596E4B7F21F8C5AD0046F215 /* AgentFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AgentFunction.h; sourceTree = "<group>"; };
@@ -444,6 +447,8 @@
 				593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */,
 				5927B1CB22E95A8800742182 /* MyThreadPool.h */,
 				5927B1CC22E95A8800742182 /* MyThreadPool.m */,
+				596B2A5523CB247F00A31D3E /* WordsListFunction.h */,
+				596B2A5623CB247F00A31D3E /* WordsListFunction.m */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -975,6 +980,7 @@
 				597392A721C63B2F0050CA1B /* input_stream.cpp in Sources */,
 				59DE42012172E77F008D65CC /* ForgetPassViewController.m in Sources */,
 				59DE421D217871D0008D65CC /* AboutSoftwareViewController.m in Sources */,
+				596B2A5723CB247F00A31D3E /* WordsListFunction.m in Sources */,
 				5967212321F2E88300409403 /* BackgroundImageWithColor.m in Sources */,
 				597392AD21C63B2F0050CA1B /* http_stream.cpp in Sources */,
 				593D8EF422D2205A0064FBD1 /* DownloadAudioService.m in Sources */,

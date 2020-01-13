@@ -658,13 +658,13 @@
     NSString* testFunc=[testDetails valueForKey:@"testFunc"];
     NSLog(@"testArray%@",testArray);
     if ([testFunc isEqualToString:@"0"]) {
-        questionAndAnswerView=[[VoiceChooseChn alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[[VoiceChooseChn alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId ];
     }else if([testFunc isEqualToString:@"1"]){
-        questionAndAnswerView=[[EngChooseChi alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[[EngChooseChi alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
     }else if([testFunc isEqualToString:@"2"]){
-        questionAndAnswerView=[[ChnChooseEng alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[[ChnChooseEng alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
     }else{
-        questionAndAnswerView=[[ChinSpellEnglish alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo];
+        questionAndAnswerView=[[ChinSpellEnglish alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
     }
     
     [processTip removeFromSuperview];

@@ -117,21 +117,9 @@
     NSMutableArray* allAnswerArray = [[NSMutableArray alloc]init];
     
     JobBlock myBlock = ^{
-        for (NSDictionary* dic in super.testArray) {
-            if ([super.testType isEqualToString:@"word"]){
-                [allAnswerArray addObject:[dic valueForKey:@"wordEng"]];
-            }else if([super.testType isEqualToString:@"sentence"]){
-                [allAnswerArray addObject:[dic valueForKey:@"sentenceEng"]];
-            }else{
-                if (super.testFlag<super.wordNum) {
-                    [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
-                }else{
-                    [allAnswerArray addObject:[[dic valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
-                }
-                
-            }
+        for (NSString* answer in [[super.testArray valueForKey:@"engErrorChoice"]firstObject]) {
+            [allAnswerArray addObject:answer];
         }
-        
         //随机数
         self->rightAnswer = arc4random_uniform(4);
         
@@ -139,17 +127,13 @@
             if (i==self->rightAnswer) {
                 if ([super.testType isEqualToString:@"word"]){
                     [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"]];
-                    [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"]];
                 }else if([super.testType isEqualToString:@"sentence"]){
                     [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"]];
-                    [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"]];
                 }else{
                     if (super.testFlag<super.wordNum) {
                         [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
-                        [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
                     }else{
                         [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
-                        [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
                     }
                     
                 }

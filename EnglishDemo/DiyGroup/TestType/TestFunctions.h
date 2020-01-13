@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property int testFlag;
 @property BOOL clickable;
 @property(nonatomic,copy)NSDictionary* userInfo;
+@property(nonatomic,copy)NSString* bookId;
 
 //对于错题本
 @property int wordNum;
@@ -26,7 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(id)initWithFlag:(int)testFlag
          TestArray:(NSArray*)testArray
           TestType:(NSString*)testType
-          UserInfo:(NSDictionary*)userInfo;
+          UserInfo:(NSDictionary*)userInfo
+            BookId:(NSString*)bookId;
 @end
 
 NS_ASSUME_NONNULL_END

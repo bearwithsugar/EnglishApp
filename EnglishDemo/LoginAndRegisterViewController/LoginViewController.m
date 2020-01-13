@@ -18,6 +18,7 @@
 #import "../Functions/QQLogin.h"
 #import "../Functions/WarningWindow.h"
 #import "../Functions/FixValues.h"
+#import "../Functions/MyThreadPool.h"
 #import "../Common/HeadView.h"
 #import "Masonry.h"
 #import <objc/runtime.h>
@@ -35,6 +36,8 @@
     UILabel* weixinlabel;
     UIButton* qqBtn;
     UILabel* qqlabel;
+    
+    NSDictionary* userDic;
 }
 
 @end
@@ -71,8 +74,6 @@
     usernameTextField=[[UITextField alloc]init];
     usernameTextField.placeholder=@"请输入手机号码";
     usernameTextField.text=@"";
-    //@"13417512970";
-    //[usernameTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     Ivar ivar =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
     UILabel *placeholderLabel = object_getIvar(usernameTextField, ivar);
     placeholderLabel.font = [UIFont boldSystemFontOfSize:12];
@@ -183,6 +184,17 @@
         make.right.equalTo(self.view).with.offset(-35.32);
         make.width.equalTo(@50);
         make.height.equalTo(@19);
+    }];
+    
+    [MyThreadPool executeJob:^{
+        if ([DocuOperate fileExistInPath:@"password.plist"]) {
+            self->userDic = [DocuOperate readFromPlist:@"password.plist"];
+        }
+    } Main:^{
+        if (self->userDic!=nil) {
+            self->usernameTextField.text = [self->userDic valueForKey:@"username"];
+            self->passwordTextField.text = [self->userDic valueForKey:@"password"];
+        }
     }];
 }
 
@@ -356,6 +368,16 @@
                              dictionary:[DataFilter DictionaryFilter:[loginDic valueForKey:@"data"]]]
             ) {
             [self popBack];
+            
+            [MyThreadPool executeJob:^{
+                NSDictionary* usernameDic = [[NSDictionary alloc]
+                                        initWithObjectsAndKeys:self->usernameTextField.text,@"username",
+                                             self->passwordTextField.text,@"password", nil];
+                [DocuOperate writeIntoPlist:@"password.plist" dictionary:usernameDic];
+            } Main:^{
+                NSLog(@"记住密码成功");
+            }];
+            
         }else{
             [self warnMsg:@"写入用户信息失败，稍后再试"];
         }

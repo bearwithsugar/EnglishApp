@@ -20,6 +20,7 @@
          TestArray:(NSArray*)testArray
           TestType:(NSString*)testType
           UserInfo:(NSDictionary*)userInfo
+           BookId:(NSString*)bookId
 {
     if (self=[super init]) {
         _testFlag=testFlag;
@@ -27,6 +28,7 @@
         _testType=testType;
         _userInfo=userInfo;
         _clickable=true;
+        _bookId = bookId;
         [self questionView];
         [self answerView];
         [self wrongFrom];
