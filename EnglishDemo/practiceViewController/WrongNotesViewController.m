@@ -19,6 +19,7 @@
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Functions/WarningWindow.h"
 #import "../Functions/MyThreadPool.h"
+#import "../SVProgressHUD/SVProgressHUD.h"
 #import "Masonry.h"
 
 @interface WrongNotesViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -81,7 +82,6 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
-        [self initData];
         [self showContent];
        
     }
@@ -112,6 +112,7 @@
     
 }
 -(void)initData{
+    
     userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
     //为bool型设个值
     lastclickable=true;
@@ -123,22 +124,46 @@
     _testFunction=[testDetails valueForKey:@"testFunc"];
     testFlag=[[testDetails valueForKey:@"testFlag"]intValue];
     
-    NSDictionary* resultDic=[[ConnectionFunction getWrongMsg:[userInfo valueForKey:@"userKey"] Id:_recentBookId]valueForKey:@"data"];
-    
-    wordArray=[resultDic valueForKey:@"bookWordInfos"];
-    sentenceArray=[resultDic valueForKey:@"bookSentenceInfos"];
-    
-    
-    for (NSDictionary* dic in wordArray) {
-        [testArray addObject:dic];
-    }
-    for (NSDictionary* dic in sentenceArray) {
-        [testArray addObject:dic];
-    }
+    __block NSDictionary* resultDic;
+    ConBlock myBlock = ^(NSDictionary* dic){
+        resultDic = [dic valueForKey:@"data"];
+        self->wordArray=[resultDic valueForKey:@"bookWordInfos"];
+        self->sentenceArray=[resultDic valueForKey:@"bookSentenceInfos"];
+           
+           
+        for (NSDictionary* dic in self->wordArray) {
+            [self->testArray addObject:dic];
+           }
+        for (NSDictionary* dic in self->sentenceArray) {
+            [self->testArray addObject:dic];
+           }
 
-    NSLog(@"错题信息是%@",testArray);
-    
-
+        //主线程更新UI。不能放到下面的exevcute的q原因是此代码块未执行的时候main中就可能会执行
+        dispatch_async(dispatch_get_main_queue(), ^{
+              NSString* total=[NSString stringWithFormat:@"%lu",(unsigned long)self->testArray.count];
+              NSString* present=[NSString stringWithFormat:@"%d",(self->testFlag+1)];
+                 present=[present stringByAppendingString:@"/"];
+              self->processTip.text=[present stringByAppendingString:total];
+        });
+        
+        NSLog(@"错题信息是%@",self->testArray);
+        
+        if ([self->testArray isKindOfClass:[NSNull class]]||self->testArray.count==0) {
+            [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
+        }else{
+            //加载内容
+            dispatch_async(dispatch_get_main_queue(), ^{
+                  [self addQAview];
+                  [SVProgressHUD dismiss];
+           });
+           
+        }
+           
+    };
+    [SVProgressHUD show];
+    [MyThreadPool executeJob:^{
+        [ConnectionFunction getWrongMsgWithBlock:[self->userInfo valueForKey:@"userKey"] Id:self->_recentBookId Block:myBlock];
+    } Main:^{}];
 }
 
 //标题栏显示
@@ -235,7 +260,7 @@
         make.height.equalTo(@22.06);
     }];
     
-    [self processTip];
+   // [self processTip];
     
     nextSubBtn=[[UIButton alloc]init];
     if (testFlag==testArray.count-1) {
@@ -261,10 +286,6 @@
 //显示当前是第几题了
 -(void)processTip{
     processTip=[[UILabel alloc]init];
-    NSString* total=[NSString stringWithFormat:@"%lu",(unsigned long)testArray.count];
-    NSString* present=[NSString stringWithFormat:@"%d",(testFlag+1)];
-    present=[present stringByAppendingString:@"/"];
-    processTip.text=[present stringByAppendingString:total];
     processTip.textColor=ssRGBHex(0x9B9B9B);
     processTip.font=[UIFont systemFontOfSize:12];
     processTip.textAlignment=NSTextAlignmentCenter;
@@ -401,14 +422,14 @@
 //加载数据，显示页面内容
 -(void)showContent{
     
-    if ([testArray isKindOfClass:[NSNull class]]||testArray.count==0) {
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
-    }else{
+//    if ([testArray isKindOfClass:[NSNull class]]||testArray.count==0) {
+//        [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
+//    }else{
         //加载内容
-        [self lastAndNext];
-        
-        [self addQAview];
-    }
+    [self lastAndNext];
+    [self processTip];
+    [self initData];
+
     
 }
 
@@ -434,8 +455,11 @@
     }else{
         
     }
-    [processTip removeFromSuperview];
-    [self processTip];
+     NSString* total=[NSString stringWithFormat:@"%lu",(unsigned long)self->testArray.count];
+     NSString* present=[NSString stringWithFormat:@"%d",(self->testFlag+1)];
+        present=[present stringByAppendingString:@"/"];
+     self->processTip.text=[present stringByAppendingString:total];
+    
     [self.view addSubview:questionAndAnswerView];
     
     [questionAndAnswerView mas_makeConstraints:^(MASConstraintMaker *make) {

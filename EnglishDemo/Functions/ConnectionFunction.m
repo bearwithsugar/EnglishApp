@@ -389,6 +389,23 @@
     return dataDic;
 }
 
+// 获取错题信息
++(NSDictionary*)getWrongMsg:(NSString*)userkey Id:(NSString*)articleId{
+    NSURL* url=[FixValues getUrl];
+    url=[url URLByAppendingPathComponent:@"tests/wrongs"];
+    url=[url URLByAppendingPathComponent:articleId];
+    NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
+    return dataDic;
+}
+
+// 使用block获取错题信息
++(void)getWrongMsgWithBlock:(NSString*)userkey Id:(NSString*)articleId Block:(ConBlock)conBlock{
+    NSURL* url=[FixValues getUrl];
+    url=[url URLByAppendingPathComponent:@"tests/wrongs"];
+    url=[url URLByAppendingPathComponent:articleId];
+    [self getRequestWithHeadWithBlock:userkey Path:url Block:conBlock];
+}
+
 
 #pragma mark --版本信息
 
@@ -409,17 +426,6 @@
     return dataDic;
 }
 
-
-//下面的接口还没有验证👇
-
-// 获取错题信息
-+(NSDictionary*)getWrongMsg:(NSString*)userkey Id:(NSString*)articleId{
-    NSURL* url=[FixValues getUrl];
-    url=[url URLByAppendingPathComponent:@"tests/wrongs"];
-    url=[url URLByAppendingPathComponent:articleId];
-    NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
-    return dataDic;
-}
 
 //用户书本学习信息
 +(NSDictionary*)getBookLearnMsg:(NSString*)userkey Id:(NSString*)bookId{
@@ -800,6 +806,31 @@
     CFRunLoopRun();
     return dictionary;
 }
+
++(NSDictionary*)getRequestWithHeadWithBlock:(NSString*)userkey Path:(NSURL*)url Block:(ConBlock)conBlock{
+    NSLog(@"get-url:%@",url);
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    NSURLSession *session=[NSURLSession sharedSession];
+    //添加请求头
+    NSDictionary *headers = @{@"English-user": userkey};
+    [request setHTTPMethod:@"GET"];
+    [request setAllHTTPHeaderFields:headers];
+                               
+    static NSDictionary* dictionary;
+    NSURLSessionDataTask *dataTask=[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        //这里改变RunLoop模式
+        CFRunLoopStop(CFRunLoopGetMain());
+        [AgentFunction isTokenExpired:dictionary];
+        conBlock(dictionary);
+
+    }];
+    [dataTask resume];
+    //这里恢复RunLoop
+    CFRunLoopRun();
+    return dictionary;
+}
+
 
 //避免线程冲突所设立的请求方式，专为多线程冲突时调用
 +(NSDictionary*)threadGetRequestWithHead:(NSString*)userkey Path:(NSURL*)url{

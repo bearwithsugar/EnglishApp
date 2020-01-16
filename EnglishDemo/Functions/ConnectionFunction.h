@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ConnectionFunction : NSObject
 typedef void (^VoidBlock) (void);
+
+typedef void (^ConBlock) (NSDictionary*);
 //登录
 +(NSDictionary*)getYzmForReg:(long)phoneNumber;
 //获取验证码用于修改密码
@@ -79,6 +81,9 @@ typedef void (^VoidBlock) (void);
 
 // 获取错题信息
 +(NSDictionary*)getWrongMsg:(NSString*)userkey Id:(NSString*)articleId;
+
+// 使用block获取错题信息
++(void)getWrongMsgWithBlock:(NSString*)userkey Id:(NSString*)articleId Block:(ConBlock)conBlock;
 
 // 删除错题
 +(NSDictionary*)deleteWrongMsg:(NSString*)userkey ContentId:(NSString*)content_id;
