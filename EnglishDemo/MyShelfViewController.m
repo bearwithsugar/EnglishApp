@@ -44,20 +44,6 @@
     [super viewDidLoad];
     self.view.backgroundColor=[UIColor whiteColor];
     [self titleShow];
-    userInfo=[[NSDictionary alloc]initWithDictionary:[DocuOperate readFromPlist:@"userInfo.plist"]];
-    NSLog(@"这个书架共有%lu本书",(unsigned long)bookArray.count);
-    
-    if (!userInfo) {
-        UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
-        [self.view addSubview:unloginView];
-        [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.view).with.offset(88.27);
-            make.left.equalTo(self.view);
-            make.right.equalTo(self.view);
-            make.bottom.equalTo(self.view);
-        }];
-        return;
-    }
     
     //加载gif动画
     loadGif=[LoadGif imageViewStartAnimating];
@@ -81,18 +67,35 @@
     }
 }
 -(void)viewWillAppear:(BOOL)animated{
-    JobBlock initBookBlock = ^{
-        self->shelfDic=[ConnectionFunction getBookShelf:[self->userInfo valueForKey:@"userKey"]];
-        self->bookArray=[self->shelfDic valueForKey:@"data"];
-    };
-    
-    [MyThreadPool executeJob:initBookBlock Main:^{
-        [self->shelfView removeFromSuperview];
-        [self bookView];
-        //k加载完成，取消动画
-        [self->loadGif removeFromSuperview];
+  
+    [MyThreadPool executeJob:^{
+        self->userInfo=[[NSDictionary alloc]initWithDictionary:[DocuOperate readFromPlist:@"userInfo.plist"]];
+    } Main:^{
+        if (!self->userInfo || self->userInfo.count == 0) {
+              [self->shelfView removeFromSuperview];
+              UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
+              [self.view addSubview:unloginView];
+              [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+                  make.top.equalTo(self.view).with.offset(88.27);
+                  make.left.equalTo(self.view);
+                  make.right.equalTo(self.view);
+                  make.bottom.equalTo(self.view);
+              }];
+              return;
+           }else{
+               JobBlock initBookBlock = ^{
+                      self->shelfDic=[ConnectionFunction getBookShelf:[self->userInfo valueForKey:@"userKey"]];
+                      self->bookArray=[self->shelfDic valueForKey:@"data"];
+                  };
+                  
+                  [MyThreadPool executeJob:initBookBlock Main:^{
+                      [self->shelfView removeFromSuperview];
+                      [self bookView];
+                      //k加载完成，取消动画
+                      [self->loadGif removeFromSuperview];
+                  }];
+           }
     }];
-
     
 }
 -(void)titleShow{

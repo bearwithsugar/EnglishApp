@@ -70,6 +70,8 @@
     UILabel* noRecordLabel;
     //听课文读句子等标签
     UILabel* tingkewen;
+    //联系模块显示当前的图书是
+    UILabel* tipView;
     
     NSString* selectedPublication;
     //用户信息字典
@@ -189,15 +191,6 @@
 
             [loadGifForProcess removeFromSuperview];
             [loadGifForRecentBook removeFromSuperview];
-            
-            //警告窗
-//            [self presentViewController:
-//             [WarningWindow transToLogin:@"您的账号在别处登录请重新登录！"
-//                              Navigation:self.navigationController]
-//                               animated:YES
-//                             completion:nil];
-            
-           // [self presentViewController:[WarningWindow MsgWithoutTrans:@"您的账号在别处登录"] animated:YES completion:nil];
 
         }else{
             //如果没有其他设备登录则进行数据加载---------------------------------------------------------------
@@ -217,8 +210,6 @@
                 [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有学习记录，快去选择课本学习吧！"]
                                    animated:YES completion:nil];
                 
-                
-
             }else{
 
                 [self myProgressUnfixed];
@@ -804,7 +795,9 @@
     
 }
 -(void)myProgressUnfixed{
-   
+    
+    tipView.text = [@"当前书本为："stringByAppendingString:[recentBook valueForKey:@"bookName"]];
+    
     [bookScanView removeFromSuperview];
     
     bookScanView=[[UIView alloc]init];
@@ -961,6 +954,12 @@
 -(void)synchronousPracticeShow{
     synchronousPractice.backgroundColor=ssRGBHex(0xFCF8F7);
     
+    tipView = [[UILabel alloc]init];
+    tipView.textAlignment = NSTextAlignmentCenter;
+    tipView.textColor=ssRGBHex(0x4A4A4A);
+    tipView.font=[UIFont systemFontOfSize:14];
+    [synchronousPractice addSubview:tipView];
+    
     UIView* functionView=[[UIView alloc]init];
     functionView.backgroundColor=[UIColor whiteColor];
     [synchronousPractice addSubview:functionView];
@@ -998,6 +997,13 @@
     [questionNote setBackgroundImage:[UIImage imageNamed: @"btn_cuotiben_logged"] forState:UIControlStateNormal];
     [questionNote addTarget:self action:@selector(pushToWrong) forControlEvents:UIControlEventTouchUpInside];
     [functionView addSubview:questionNote];
+    
+    [tipView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->synchronousPractice).with.offset(10);
+        make.right.equalTo(self->synchronousPractice);
+        make.width.equalTo(self->synchronousPractice);
+        make.height.equalTo(@30);
+    }];
     
     [wordListen mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(functionView).with.offset(11);

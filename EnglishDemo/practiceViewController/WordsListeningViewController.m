@@ -399,6 +399,7 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
  
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     WordsListeningTableViewCell *cell = [wordsList cellForRowAtIndexPath:indexPath];
     //把喇叭换成动图
     [cell clearLaba];

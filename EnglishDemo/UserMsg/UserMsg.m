@@ -332,6 +332,7 @@
     return 10;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section==0) {
         if(indexPath.row==0){
             [self pushToRechargeView];
@@ -353,10 +354,7 @@
             [self pushToOpinion];
         }
     }
-    
 }
-
-
 
 -(void)shareView{
     // 1. 创建UIAlertControl变量，但并不穿GIAn
