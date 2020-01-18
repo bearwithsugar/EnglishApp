@@ -55,6 +55,8 @@
     NSDictionary* userInfo;
     //测试信息
     NSDictionary* testDetails;
+    //存档进度的字典
+    NSMutableDictionary* testFlagDic;
     
     //记录当前测试坐标
     int testFlag;
@@ -119,14 +121,6 @@
     nextclickable=true;
     testDetails=[[NSDictionary alloc]init];
     
-    if (![DocuOperate fileExistInPath:@"testDetails.plist"]) {
-        NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",@"0",@"testFlag", nil];
-        [DocuOperate writeIntoPlist:@"testDetails.plist" dictionary:dic];
-    }
-        testDetails=[DocuOperate readFromPlist:@"testDetails.plist"];
-    
-    NSLog(@"teatdetail：%@",testDetails);
-    testFlag=[[testDetails valueForKey:@"testFlag"]intValue];
 }
 
 //标题栏显示
@@ -468,7 +462,9 @@
         lastclickable=true;
         
         //修改测试进程信息
-        [testDetails setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:@"testFlag"];
+        [testFlagDic setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:classId];
+        [self storeProcess];
+        //[testDetails setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:@"testFlag"];
     }
     
 
@@ -491,7 +487,9 @@
         nextclickable=true;
         
         //修改测试进程信息
-        [testDetails setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:@"testFlag"];
+        [testFlagDic setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:classId];
+        [self storeProcess];
+        //[testDetails setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:@"testFlag"];
     }
 }
 
@@ -541,6 +539,7 @@
     if (indexPath.row!=[[testDetails valueForKey:@"testFunc"]integerValue]) {
         [questionAndAnswerView removeFromSuperview];
         [testDetails setValue:[NSString stringWithFormat:@"%ld",(long)indexPath.row] forKey:@"testFunc"];
+        [self storeProcess];
         NSLog(@"字典的值是%@",testDetails);
         [self addQAview];
     }
@@ -606,7 +605,6 @@
 }
 //加载数据，显示页面内容
 -(void)showContent:(NSString*)unitname className:(NSString*)classname testArray:(NSArray*)testarray classId:(NSString*)classid{
-    
     JobBlock myblock = ^{
         for (NSDictionary* dic in testarray) {
             NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
@@ -619,14 +617,14 @@
             [self->voiceArray addObject:dictionary];
         }
         
-        for (NSDictionary* dic in self->voiceArray) {
-            NSString* playUrl=[dic valueForKey:@"url"];
+        [self->voiceArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString* playUrl=[obj valueForKey:@"url"];
             if ([playUrl isKindOfClass:[NSNull class]]) {
-                continue;
+                return ;
             }
             playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-            [DownloadAudioService toLoadAudio:playUrl FileName:[dic valueForKey:@"id"]];
-        }
+            [DownloadAudioService toLoadAudio:playUrl FileName:[obj valueForKey:@"id"]];
+        }];
     };
     
     [MyThreadPool executeJob:myblock Main:^{}];
@@ -644,6 +642,22 @@
     testArray=testarray;
 
     classId=classid;
+    
+    if (![DocuOperate fileExistInPath:@"testDetails.plist"]) {
+        testFlagDic = [[NSMutableDictionary alloc]init];
+        [testFlagDic setObject:@"0" forKey:classId];
+        NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",testFlagDic,@"testFlag", nil];
+        [DocuOperate writeIntoPlist:@"testDetails.plist" dictionary:dic];
+    }
+    
+    testDetails=[DocuOperate readFromPlist:@"testDetails.plist"];
+    testFlagDic = [testDetails valueForKey:@"testFlag"];
+    NSLog(@"teatdetail：%@",testDetails);
+    
+    if (![[testDetails valueForKey:@"testFlag"]valueForKey:classId]) {
+        [testFlagDic setObject:@"0" forKey:classId];
+    }
+    testFlag=[[testFlagDic valueForKey:classId]intValue];
     
     [lessontitle removeFromSuperview];
     [self presentLessionView];
@@ -679,9 +693,18 @@
     }];
 }
 
+-(void)storeProcess{
+    if (testFlagDic!=nil) {
+        [MyThreadPool executeJob:^{
+            [self->testDetails setValue:self->testFlagDic forKey:@"testFlag"];
+            [DocuOperate replacePlist:@"testDetails.plist" dictionary:self->testDetails];
+        } Main:^{}];
+    }
+}
+
 -(void)popBack:(UITapGestureRecognizer*)sender{
-    [DocuOperate writeIntoPlist:@"testDetails.plist" dictionary:testDetails];
     [self.navigationController popViewControllerAnimated:true];
+    [self->voiceplayer stopPlay];
 }
 
 

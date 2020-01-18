@@ -414,6 +414,7 @@
 
 -(void)popBack:(UITapGestureRecognizer*)sender{
     [self.navigationController popViewControllerAnimated:true];
+    [self->voiceplayer stopPlay];
 }
 
 @end

@@ -26,14 +26,18 @@
     UIImageView* testLaba;
     
     UIView* questionPanel;
-    UIView* playBtn;
-    
+    UIView* playView;
+    UIImageView* dynamicPlay;
+    UIImageView* staticPlay;
     //播放音频所需
     VoicePlayer* voiceplayer;
 }
 
 //问题界面
 -(void)questionView{
+    staticPlay = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
+       dynamicPlay = [LoadGif imageViewfForPracticePlaying2];
+       
     questionPanel=[[UIView alloc]init];
     questionPanel.backgroundColor=[UIColor whiteColor];
     [self addSubview:questionPanel];
@@ -72,44 +76,22 @@
         make.height.equalTo(@74);
     }];
     
-//    UILabel* questionVoice=[[UILabel alloc]init];
-//    NSString* voiceHelp = [[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
-//    if ([voiceHelp isEqualToString:@"无"]) {
-//        questionVoice.text = @"";
-//    }else{
-//        questionVoice.text=[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordTag"];
-//    }
-//    questionVoice.textColor=ssRGBHex(0x4A4A4A);
-//    questionVoice.font=[UIFont systemFontOfSize:20];
-//    questionVoice.textAlignment=NSTextAlignmentCenter;
-//    [questionPanel addSubview:questionVoice];
-//
-//    [questionVoice mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(self->questionPanel).with.offset(87.17);
-//        make.centerX.equalTo(self->questionPanel);
-//        make.width.equalTo(@120);
-//        make.height.equalTo(@28);
-//    }];
-    
-    playBtn=[[UIView alloc]init];
-    [self addPicForLaba:
-    [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]]
-    ] ;
-    
-//    testLaba = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
-//    [playBtn addSubview:testLaba];
-//    [testLaba setHidden:YES];
-    
+    playView = [[UIView alloc]init];
+    [questionPanel addSubview:playView];
+    [playView mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.centerY.equalTo(self->questionPanel);
+       make.centerX.equalTo(self->questionPanel);
+       make.width.equalTo(self->questionPanel).multipliedBy(0.1);
+       make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+    }];
+
     UITapGestureRecognizer* playGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoice)];
-    playBtn.userInteractionEnabled = YES;
-    [playBtn addGestureRecognizer:playGesture];
-    [questionPanel addSubview:playBtn];
-    
-    [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(self->questionPanel);
-        make.centerX.equalTo(self->questionPanel);
-        make.width.equalTo(self->questionPanel).multipliedBy(0.1);
-        make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+    playView.userInteractionEnabled = YES;
+    [playView addGestureRecognizer:playGesture];
+
+    [playView addSubview:staticPlay];
+    [staticPlay mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.edges.equalTo(playView);
     }];
 }
 //答案界面
@@ -144,35 +126,85 @@
     NSMutableArray* allAnswerArray = [[NSMutableArray alloc]init];
     
     JobBlock myBlock = ^{
-        for (NSString* answer in [[super.testArray valueForKey:@"chnErrorChoice"]firstObject]) {
-            [allAnswerArray addObject:answer];
-        }
-        
-        //随机数
-        self->rightAnswer = arc4random_uniform(4);
-        
-        for (int i=0; i<4; i++) {
-            if (i==self->rightAnswer) {
-                if ([super.testType isEqualToString:@"word"]){
-                    [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
-                }else if([super.testType isEqualToString:@"sentence"]){
-                    [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
-                }else{
-                    if (super.testFlag<super.wordNum) {
-                        [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
-                    }else{
-                        [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
-                    }
-                    
+        if ([self.testType isEqualToString:@"wrong"]) {
+            for (NSString* answer in [[super.testArray valueForKey:@"chnErrorChoice"]firstObject]) {
+                    [allAnswerArray addObject:answer];
                 }
                 
-            }else{
-                NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
-                [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
-                [allAnswerArray removeObjectAtIndex:randomNum];
-            }
+                //随机数
+                self->rightAnswer = arc4random_uniform(4);
+            
+                for (int i=0; i<4; i++) {
+                    if (i==self->rightAnswer) {
+                        if ([super.testType isEqualToString:@"word"]){
+                            [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                        }else if([super.testType isEqualToString:@"sentence"]){
+                            [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                        }else{
+                            if (super.testFlag<super.wordNum) {
+                                [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                            }else{
+                                [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                            }
+                            
+                        }
+                        
+                    }else{
+                        NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
+                        if(randomNum > 1000){
+                            [answerArray addObject:@"wrongAnswer"];
+                        }else{
+                            [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
+                            [allAnswerArray removeObjectAtIndex:randomNum];
+                        }
+                    }
+                }
+        }else{
+            for (NSDictionary* dic in super.testArray) {
+                       if ([super.testType isEqualToString:@"word"]){
+                           [allAnswerArray addObject:[dic valueForKey:@"wordChn"]];
+                       }else if([super.testType isEqualToString:@"sentence"]){
+                           [allAnswerArray addObject:[dic valueForKey:@"sentenceChn"]];
+                       }else{
+                           if (super.testFlag<super.wordNum) {
+                               [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                           }else{
+                               [allAnswerArray addObject:[[dic valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                           }
+                           
+                       }
+                   }
+                   
+                   //随机数
+                   self->rightAnswer = arc4random_uniform(4);
+                   
+                   for (int i=0; i<4; i++) {
+                       if (i==self->rightAnswer) {
+                           if ([super.testType isEqualToString:@"word"]){
+                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                           }else if([super.testType isEqualToString:@"sentence"]){
+                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                           }else{
+                               if (super.testFlag<super.wordNum) {
+                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                               }else{
+                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                               }
+                               
+                           }
+                           
+                       }else{
+                           NSUInteger randomNum = arc4random_uniform((int)allAnswerArray.count-1);
+                           [answerArray addObject:[allAnswerArray objectAtIndex:randomNum]];
+                           [allAnswerArray removeObjectAtIndex:randomNum];
+                       }
+                   }
         }
-        
+            
     };
     
     JobBlock setAnswer =^{
@@ -335,27 +367,26 @@
 }
 
 -(void)playVoice{
+    [staticPlay removeFromSuperview];
     
-    [self clearLaba];
-
-    [self addPicForLaba:[LoadGif imageViewfForPracticePlaying2]];
-
-//    [normalLaba setHidden:YES];
-//    [testLaba setHidden:NO];
-
+    [playView addSubview:dynamicPlay];
+    
+    [dynamicPlay mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(playView);
+    }];
     
     //播放声音
     //音频播放空间分配
     
     VoidBlock stopBlock = ^{
-        [self clearLaba];
-        [self addPicForLaba:
-         [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]]
-         ] ;
-//        [self->normalLaba setHidden:NO];
-//        [self->testLaba setHidden:YES];
+        
+        [self->dynamicPlay removeFromSuperview];
+        [self->playView addSubview:self->staticPlay];
+        [self->staticPlay mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self->playView);
+        }];
+        
     };
-    
     //播放声音
     //音频播放空间分配
     
@@ -382,11 +413,6 @@
                      [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
         }
         
-        if (self->voiceplayer!=NULL) {
-            [self->voiceplayer interruptPlay];
-            self->voiceplayer = NULL;
-        }
-        
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
         self->voiceplayer.myblock = stopBlock;
@@ -398,15 +424,5 @@
     
 }
 
--(void)addPicForLaba:(UIImageView*)image{
-    [playBtn addSubview:image];
-    [image mas_makeConstraints:^(MASConstraintMaker *make) {
-              make.edges.equalTo(playBtn);
-    }];
-    normalLaba = image;
-}
 
--(void)clearLaba{
-    [normalLaba removeFromSuperview];
-}
 @end

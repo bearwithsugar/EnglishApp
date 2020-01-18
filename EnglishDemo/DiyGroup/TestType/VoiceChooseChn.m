@@ -23,14 +23,20 @@
     UIButton* answer3;
     UIButton* answer4;
     UIView* questionPanel;
-    
-    UIImageView* playBtn;
+  
+    UIView* playView;
+    UIImageView* dynamicPlay;
+    UIImageView* staticPlay;
     
     //播放音频所需
     VoicePlayer* voiceplayer;
 }
 //问题界面
 -(void)questionView{
+    
+    staticPlay = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
+    dynamicPlay = [LoadGif imageViewfForPracticePlaying2];
+    
     questionPanel=[[UIView alloc]init];
     questionPanel.backgroundColor=[UIColor whiteColor];
     [self addSubview:questionPanel];
@@ -42,17 +48,22 @@
         make.height.equalTo(self).multipliedBy(0.4);
     }];
 
-    playBtn=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
-    UITapGestureRecognizer* playGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoice)];
-    playBtn.userInteractionEnabled = YES;
-    [playBtn addGestureRecognizer:playGesture];
-    [questionPanel addSubview:playBtn];
-    
-    [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+    playView = [[UIView alloc]init];
+    [questionPanel addSubview:playView];
+    [playView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self->questionPanel);
         make.centerX.equalTo(self->questionPanel);
         make.width.equalTo(self->questionPanel).multipliedBy(0.1);
         make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+    }];
+    
+    UITapGestureRecognizer* playGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoice)];
+    playView.userInteractionEnabled = YES;
+    [playView addGestureRecognizer:playGesture];
+    
+    [playView addSubview:staticPlay];
+    [staticPlay mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(playView);
     }];
 }
 //答案界面
@@ -123,14 +134,14 @@
         }else{
             for (NSDictionary* dic in super.testArray) {
                        if ([super.testType isEqualToString:@"word"]){
-                           [allAnswerArray addObject:[dic valueForKey:@"wordEng"]];
+                           [allAnswerArray addObject:[dic valueForKey:@"wordChn"]];
                        }else if([super.testType isEqualToString:@"sentence"]){
-                           [allAnswerArray addObject:[dic valueForKey:@"sentenceEng"]];
+                           [allAnswerArray addObject:[dic valueForKey:@"sentenceChn"]];
                        }else{
                            if (super.testFlag<super.wordNum) {
-                               [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
+                               [allAnswerArray addObject:[[dic valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
                            }else{
-                               [allAnswerArray addObject:[[dic valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
+                               [allAnswerArray addObject:[[dic valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
                            }
                            
                        }
@@ -142,18 +153,18 @@
                    for (int i=0; i<4; i++) {
                        if (i==self->rightAnswer) {
                            if ([super.testType isEqualToString:@"word"]){
-                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"]];
-                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordEng"]];
+                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
+                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordChn"]];
                            }else if([super.testType isEqualToString:@"sentence"]){
-                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"]];
-                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceEng"]];
+                               [answerArray addObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
+                               [allAnswerArray removeObject:[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceChn"]];
                            }else{
                                if (super.testFlag<super.wordNum) {
-                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
-                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordEng"]];
+                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
+                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookWord"]valueForKey:@"wordChn"]];
                                }else{
-                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
-                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceEng"]];
+                                   [answerArray addObject:[[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
+                                   [allAnswerArray removeObject:[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceChn"]];
                                }
                                
                            }
@@ -166,10 +177,6 @@
                    }
         }
             
-            
-        
-        
-        
     };
     
     JobBlock setAnswer =^{
@@ -332,15 +339,12 @@
 
 -(void)playVoice{
     
-    [playBtn removeFromSuperview];
-    playBtn = [LoadGif imageViewfForPracticePlaying2];
-    [questionPanel addSubview:playBtn];
+    [staticPlay removeFromSuperview];
     
-    [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(self->questionPanel);
-        make.centerX.equalTo(self->questionPanel);
-        make.width.equalTo(self->questionPanel).multipliedBy(0.1);
-        make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
+    [playView addSubview:dynamicPlay];
+    
+    [dynamicPlay mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(playView);
     }];
     
     //播放声音
@@ -348,18 +352,11 @@
     
     VoidBlock stopBlock = ^{
         
-        self->playBtn=[[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_ceshi_laba1"]];
-        UITapGestureRecognizer* playGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(playVoice)];
-        self->playBtn.userInteractionEnabled = YES;
-        [self->playBtn addGestureRecognizer:playGesture];
-        self->playBtn.userInteractionEnabled = YES;
-        [self->questionPanel addSubview:self->playBtn];
-                   [self->playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-                       make.centerY.equalTo(self->questionPanel);
-                       make.centerX.equalTo(self->questionPanel);
-                       make.width.equalTo(self->questionPanel).multipliedBy(0.1);
-                       make.height.equalTo(self->questionPanel.mas_width).multipliedBy(0.1);
-                   }];
+        [self->dynamicPlay removeFromSuperview];
+        [self->playView addSubview:self->staticPlay];
+        [self->staticPlay mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self->playView);
+        }];
         
     };
     //播放声音
@@ -387,20 +384,12 @@
             playUrl=[DownloadAudioService getAudioPath:
                      [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
         }
-        
-        if (self->voiceplayer!=NULL) {
-            [self->voiceplayer interruptPlay];
-            self->voiceplayer = NULL;
-        }
+    
         
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
         self->voiceplayer.myblock = stopBlock;
         [self->voiceplayer playAudio:0];
-        //        if (self->continuePlay) {
-        //            self->voiceplayer.urlArray = self->voiceArray;
-        //            self->voiceplayer.startIndex = id+1;
-        //        }
     };
     
     [MyThreadPool executeJob:playBlock Main:^{}];

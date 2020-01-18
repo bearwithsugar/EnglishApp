@@ -3,10 +3,46 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.77:VoiceChooseChn.m">
+         contextName = "-[ViewController viewWillAppear:]:ViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__26-[EngChooseChi answerView]_block_invoke.108:EngChooseChi.m">
          <PersistentStrings>
             <PersistentString
-               value = "rightAnswer">
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[LearningViewController actionOfShowTranslation:]:LearningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "btn.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[ChooseLessonView tableView:didSelectRowAtIndexPath:]:ChooseLessonView.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "indexPath.row">
+            </PersistentString>
+            <PersistentString
+               value = "_dataArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[ConnectionInstance getScore:]:ConnectionInstance.m">
+      </ContextState>
+      <ContextState
+         contextName = "__28-[VoiceChooseChn answerView]_block_invoke:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testFlag">
+            </PersistentString>
+            <PersistentString
+               value = "super.wordNum">
             </PersistentString>
             <PersistentString
                value = "super.testArray">
@@ -14,7 +50,20 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
+         contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "button.tag">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[EngChooseChi questionView]:EngChooseChi.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "-[VoiceChooseChn answerView]:VoiceChooseChn.m">
@@ -41,99 +90,6 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[EngChooseChi playVoice]:EngChooseChi.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "playBtn.subviews">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[VoiceChooseChn playVoice]:VoiceChooseChn.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "super.testArray">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__46+[ConnectionFunction getRequestWithHead:Path:]_block_invoke:ConnectionFunction.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[MyShelfViewController viewDidLoad]:MyShelfViewController.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[VoicePlayer continuePlay]:VoicePlayer.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "[_urlArray objectAtIndex:_startIndex++]valueForKey:@&quot;id&quot;">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[ChooseLessonView tableView:didSelectRowAtIndexPath:]:ChooseLessonView.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "indexPath.row">
-            </PersistentString>
-            <PersistentString
-               value = "_dataArray">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__28-[VoiceChooseChn answerView]_block_invoke:VoiceChooseChn.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "super.testFlag">
-            </PersistentString>
-            <PersistentString
-               value = "super.wordNum">
-            </PersistentString>
-            <PersistentString
-               value = "super.testArray">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__38-[LearningViewController loadAudioMsg]_block_invoke:LearningViewController.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[LearningViewController actionOfShowTranslation:]:LearningViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "btn.tag">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__66-[WordsListeningViewController tableView:didSelectRowAtIndexPath:]_block_invoke:WordsListeningViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "wordsArray">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "__39-[RechargeViewController refreshXuefen]_block_invoke:RechargeViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "str">
-            </PersistentString>
-            <PersistentString
-               value = "dictionary valueForKey:@&quot;data&quot;">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "button.tag">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "__27-[VoiceChooseChn playVoice]_block_invoke:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
@@ -151,32 +107,13 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__32+[AgentFunction isTokenExpired:]_block_invoke:AgentFunction.m">
+         contextName = "__39-[RechargeViewController refreshXuefen]_block_invoke:RechargeViewController.m">
          <PersistentStrings>
             <PersistentString
-               value = "[UIApplication sharedApplication].delegate window].rootViewController.navigationController">
+               value = "str">
             </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "+[ConnectionFunction getTestWordMsg:UserKey:]:ConnectionFunction.m">
-      </ContextState>
-      <ContextState
-         contextName = "__38-[LearningViewController learningBook]_block_invoke_4:LearningViewController.m">
-         <PersistentStrings>
             <PersistentString
-               value = "self.view.subviews">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[ConnectionInstance getScore:]:ConnectionInstance.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[RechargeViewController verifyPurchaseWithPaymentTransaction]:RechargeViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "strategy">
+               value = "dictionary valueForKey:@&quot;data&quot;">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -187,10 +124,50 @@
          contextName = "-[WrongNotesViewController addQAview]:WrongNotesViewController.m">
       </ContextState>
       <ContextState
+         contextName = "__32+[AgentFunction isTokenExpired:]_block_invoke:AgentFunction.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[UIApplication sharedApplication].delegate window].rootViewController.navigationController">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "+[WordsListFunction getWordsList:UserKey:]:WordsListFunction.m">
       </ContextState>
       <ContextState
-         contextName = "-[WordsListeningViewController showContent:className:wordsArray:classId:]:WordsListeningViewController.m">
+         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.74:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[super.testArray firstObject]">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[MyShelfViewController pushToUnit:Name:]:MyShelfViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__66-[WordsListeningViewController tableView:didSelectRowAtIndexPath:]_block_invoke:WordsListeningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "wordsArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__38-[LearningViewController learningBook]_block_invoke_4:LearningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.view.subviews">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[VoicePlayer continuePlay]:VoicePlayer.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "[_urlArray objectAtIndex:_startIndex++]valueForKey:@&quot;id&quot;">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "__31-[VoiceChooseChn chooseAnswer:]_block_invoke:VoiceChooseChn.m">
@@ -204,15 +181,55 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.74:VoiceChooseChn.m">
+         contextName = "-[TestFunctions wrongFrom]:TestFunctions.m">
+      </ContextState>
+      <ContextState
+         contextName = "__40-[MyShelfViewController viewWillAppear:]_block_invoke_3:MyShelfViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[WordsTestViewController initData]:WordsTestViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[MyShelfViewController viewDidLoad]:MyShelfViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "-[RechargeViewController verifyPurchaseWithPaymentTransaction]:RechargeViewController.m">
          <PersistentStrings>
             <PersistentString
-               value = "[super.testArray firstObject]">
+               value = "strategy">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[EngChooseChi questionView]:EngChooseChi.m">
+         contextName = "-[WordsListeningViewController showContent:className:wordsArray:classId:]:WordsListeningViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__38-[LearningViewController loadAudioMsg]_block_invoke:LearningViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__28-[VoiceChooseChn answerView]_block_invoke.77:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "rightAnswer">
+            </PersistentString>
+            <PersistentString
+               value = "super.testFlag">
+            </PersistentString>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[EngChooseChi playVoice]:EngChooseChi.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "playBtn.subviews">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[VoiceChooseChn playVoice]:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
                value = "super.testArray">
@@ -220,10 +237,13 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[MyShelfViewController pushToUnit:Name:]:MyShelfViewController.m">
+         contextName = "+[ConnectionFunction getTestWordMsg:UserKey:]:ConnectionFunction.m">
       </ContextState>
       <ContextState
-         contextName = "-[WordsTestViewController initData]:WordsTestViewController.m">
+         contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__46+[ConnectionFunction getRequestWithHead:Path:]_block_invoke:ConnectionFunction.m">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

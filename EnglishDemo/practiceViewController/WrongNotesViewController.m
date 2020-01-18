@@ -471,20 +471,11 @@
     
 }
 
--(void)playVoice{
-    
-    //播放声音
-    //音频播放空间分配
-    NSString* playUrl=[[[testArray objectAtIndex:testFlag]valueForKey:@"engUrl"] stringByReplacingOccurrencesOfString:@" " withString:@"%20"];
-    voiceplayer=[[VoicePlayer alloc]init];
-    voiceplayer.url=playUrl;
-    [voiceplayer.audioStream play];
-}
-
 -(void)popBack:(UITapGestureRecognizer*)sender{
     [settingView removeFromSuperview];
     [DocuOperate writeIntoPlist:@"wrongsDetails.plist" dictionary:testDetails];
     [self.navigationController popViewControllerAnimated:true];
+    [self->voiceplayer stopPlay];
 }
 
 
