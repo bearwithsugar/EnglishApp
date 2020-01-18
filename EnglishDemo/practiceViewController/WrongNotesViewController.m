@@ -122,7 +122,6 @@
     
     testDetails=[DocuOperate readFromPlist:@"wrongsDetails.plist"];
     _testFunction=[testDetails valueForKey:@"testFunc"];
-    testFlag=0;
     
     __block NSDictionary* resultDic;
     ConBlock myBlock = ^(NSDictionary* dic){
@@ -140,25 +139,26 @@
 
         //主线程更新UI。不能放到下面的exevcute的q原因是此代码块未执行的时候main中就可能会执行
         dispatch_async(dispatch_get_main_queue(), ^{
-              NSString* total=[NSString stringWithFormat:@"%lu",(unsigned long)self->testArray.count];
-              NSString* present=[NSString stringWithFormat:@"%d",(self->testFlag+1)];
-                 present=[present stringByAppendingString:@"/"];
-              self->processTip.text=[present stringByAppendingString:total];
+            NSString* total=[NSString stringWithFormat:@"%lu",(unsigned long)self->testArray.count];
+            NSString* present=[NSString stringWithFormat:@"%d",(self->testFlag+1)];
+            present=[present stringByAppendingString:@"/"];
+            self->processTip.text=[present stringByAppendingString:total];
+
+            if ([self->testArray isKindOfClass:[NSNull class]]||self->testArray.count==0) {
+                [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
+                [SVProgressHUD dismiss];
+            }else{
+               //加载内容
+                dispatch_async(dispatch_get_main_queue(), ^{
+                     [self addQAview];
+                     [SVProgressHUD dismiss];
+                });
+              
+            }
         });
         
         NSLog(@"错题信息是%@",self->testArray);
         
-        if ([self->testArray isKindOfClass:[NSNull class]]||self->testArray.count==0) {
-            [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
-        }else{
-            //加载内容
-            dispatch_async(dispatch_get_main_queue(), ^{
-                  [self addQAview];
-                  [SVProgressHUD dismiss];
-           });
-           
-        }
-           
     };
     [SVProgressHUD show];
     [MyThreadPool executeJob:^{
@@ -260,10 +260,8 @@
         make.height.equalTo(@22.06);
     }];
     
-   // [self processTip];
-    
     nextSubBtn=[[UIButton alloc]init];
-    if (testFlag==testArray.count-1) {
+    if (testFlag==testArray.count-1 && testArray.count!=0) {
         [nextSubBtn setBackgroundColor:ssRGBHex(0x9B9B9B)];
     }else{
         [nextSubBtn setBackgroundColor:ssRGBHex(0xF5A623)];
@@ -421,6 +419,7 @@
 //加载数据，显示页面内容
 -(void)showContent{
 
+    testFlag=0;
     [self lastAndNext];
     [self processTip];
     [self initData];
