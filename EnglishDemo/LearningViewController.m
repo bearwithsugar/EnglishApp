@@ -19,6 +19,7 @@
 #import "Functions/MyThreadPool.h"
 #import "Masonry.h"
 #import <SDWebImage/SDWebImage.h>
+#import "SVProgressHUD.h"
 
 //使控制台打印完整信息
 //#ifdef DEBUG
@@ -463,7 +464,8 @@
                     UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPicGesture:)];
                     [showBigPic addGestureRecognizer:clickBigPic];
                     if (theBook.tag==(size-1)) {
-                        [self->loadPic removeFromSuperview];
+                        //[self->loadPic removeFromSuperview];
+                        [SVProgressHUD dismiss];
                     }
                 });
 
@@ -1089,35 +1091,29 @@
     classId=classid;
     unitName=unitname;
     className=classname;
-    //NSDictionary * dataDic=
-//    NSDictionary* buyState=[ConnectionFunction articleBuyState:chooseLessonView.articleId UserKey:[userInfo valueForKey:@"userKey"]];
-//    //判断字典内容为空
-//    if ([[buyState valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
-//        NSLog(@"您还未购买该课程");
-//        [self presentViewController:[self warnWindow:@"您还未购买该课程，购买该课程需要100学分！"] animated:YES completion:nil];
-//    }else{
-        //添加学习进度信息
-        //加载gif动画
-        loadPic=[LoadGif imageViewStartAnimating];
-        [self.view addSubview:loadPic];
-        
-        [loadPic mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerY.equalTo(self.view);
-            make.centerX.equalTo(self.view);
-            make.width.equalTo(@60);
-            make.height.equalTo(@60);
-        }];
+
+    //添加学习进度信息
+    //加载gif动画
+//    loadPic=[LoadGif imageViewStartAnimating];
+//    [self.view addSubview:loadPic];
+    [SVProgressHUD show];
     
-        [MyThreadPool executeJob:^{
-            [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
-        } Main:^{}];
+//    [loadPic mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.centerY.equalTo(self.view);
+//        make.centerX.equalTo(self.view);
+//        make.width.equalTo(@60);
+//        make.height.equalTo(@60);
+//    }];
+
+    [MyThreadPool executeJob:^{
+        [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
+    } Main:^{}];
+
+    [lessontitle removeFromSuperview];
     
-        [lessontitle removeFromSuperview];
-        
-        [self presentLessionView];
-        [self learningBook];
- //   }
-    
+    [self presentLessionView];
+    [self learningBook];
+
     [self loadAudioMsg];
 }
 

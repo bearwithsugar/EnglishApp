@@ -13,6 +13,7 @@
 #import "../../Functions/DownloadAudioService.h"
 #import "../../Functions/WordsListFunction.h"
 #import "../../Common/LoadGif.h"
+#import "SVProgressHUD.h"
 #import "Masonry.h"
 
 @implementation VoiceChooseChn{
@@ -313,7 +314,9 @@
                           dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"sentenceId"]] Type:subjectType];
                       }
                       NSLog(@"错题添加结果%@",dic);
-                   } Main:^{}];
+                   } Main:^{
+                       [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
+                   }];
             }
         }
         btn.selected=true;

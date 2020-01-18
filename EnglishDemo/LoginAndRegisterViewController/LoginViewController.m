@@ -386,8 +386,10 @@
         
         
     }else if([[loginDic valueForKey:@"message"]isEqualToString:@"该账号已在其他设备登录，是否确认登录？"]){
+        [SVProgressHUD dismiss];
         [self warnMsgWithOpe:[loginDic valueForKey:@"message"]];
     }else if([[loginDic valueForKey:@"message"]isEqualToString:@"账号或密码错误"]){
+        [SVProgressHUD dismiss];
         [self presentViewController:[WarningWindow MsgWithoutTrans:@"账号或密码错误"] animated:YES completion:nil];
     }else
     {
@@ -423,6 +425,7 @@
 -(void)warnMsgWithOpe:(NSString*)msg{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:msg preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"强制登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [SVProgressHUD showWithStatus:@"登录中"];
         [ConnectionFunction userOccupation:self->usernameTextField.text Type:@"phone" Other_type:@"xxx"];
         [self toLogin];
         

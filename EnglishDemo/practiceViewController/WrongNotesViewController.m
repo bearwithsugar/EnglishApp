@@ -105,7 +105,7 @@
     wordArray=[[NSArray alloc]init];
     sentenceArray=[[NSArray alloc]init];
     if (![DocuOperate fileExistInPath:@"wrongsDetails.plist"]) {
-        NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",@"0",@"testFlag", nil];
+        NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc", nil];
         [DocuOperate writeIntoPlist:@"wrongsDetails.plist" dictionary:dic];
     }
     testDetails=[DocuOperate readFromPlist:@"wrongsDetails.plist"];
@@ -122,7 +122,7 @@
     
     testDetails=[DocuOperate readFromPlist:@"wrongsDetails.plist"];
     _testFunction=[testDetails valueForKey:@"testFunc"];
-    testFlag=[[testDetails valueForKey:@"testFlag"]intValue];
+    testFlag=0;
     
     __block NSDictionary* resultDic;
     ConBlock myBlock = ^(NSDictionary* dic){
@@ -317,8 +317,6 @@
         lastSubBtn.backgroundColor=ssRGBHex(0xF5A623);
         lastclickable=true;
         
-        //修改测试进程信息
-        [testDetails setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:@"testFlag"];
     }
     
     
@@ -339,9 +337,7 @@
         }
         nextSubBtn.backgroundColor=ssRGBHex(0xF5A623);
         nextclickable=true;
-        
-        //修改测试进程信息
-        [testDetails setValue:[NSString stringWithFormat:@"%d",testFlag] forKey:@"testFlag"];
+     
     }
 }
 
@@ -392,7 +388,10 @@
     [settingView removeFromSuperview];
     if (indexPath.row!=[[testDetails valueForKey:@"testFunc"]integerValue]) {
         [questionAndAnswerView removeFromSuperview];
-        [testDetails setValue:[NSString stringWithFormat:@"%ld",(long)indexPath.row] forKey:@"testFunc"];
+        [MyThreadPool executeJob:^{
+            [self->testDetails setValue:[NSString stringWithFormat:@"%ld",(long)indexPath.row] forKey:@"testFunc"];
+            [DocuOperate writeIntoPlist:@"wrongsDetails.plist" dictionary:self->testDetails];
+        } Main:^{}];
         [self addQAview];
     }
     
@@ -421,11 +420,7 @@
 #pragma mark --加载页面
 //加载数据，显示页面内容
 -(void)showContent{
-    
-//    if ([testArray isKindOfClass:[NSNull class]]||testArray.count==0) {
-//        [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
-//    }else{
-        //加载内容
+
     [self lastAndNext];
     [self processTip];
     [self initData];
@@ -473,7 +468,6 @@
 
 -(void)popBack:(UITapGestureRecognizer*)sender{
     [settingView removeFromSuperview];
-    [DocuOperate writeIntoPlist:@"wrongsDetails.plist" dictionary:testDetails];
     [self.navigationController popViewControllerAnimated:true];
     [self->voiceplayer stopPlay];
 }

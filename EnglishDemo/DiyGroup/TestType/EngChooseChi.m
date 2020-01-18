@@ -12,6 +12,7 @@
 #import "../../Functions/MyThreadPool.h"
 #import "../../Functions/DownloadAudioService.h"
 #import "../../Common/LoadGif.h"
+#import "SVProgressHUD.h"
 #import "Masonry.h"
 
 @implementation EngChooseChi{
@@ -340,6 +341,7 @@
                               dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"sentenceId"]] Type:subjectType];
                           }
                           NSLog(@"错题添加结果%@",dic);
+                         [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
                        } Main:^{}];
                 }
         }

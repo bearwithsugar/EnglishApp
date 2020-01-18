@@ -1328,21 +1328,16 @@
 }
 
 -(void)pushToWordsListen{
-    if (wordsListening==nil) {
-        wordsListening = [[WordsListeningViewController alloc]init];
-    }
     if(![self.navigationController.topViewController isKindOfClass:[wordsListening class]]) {
+        wordsListening = [[WordsListeningViewController alloc]init];
         wordsListening.bookId=[recentBook valueForKey:@"bookId"];
-        
         [self.navigationController pushViewController:wordsListening animated:true];
     }
 }
 
 -(void)pushToSentenceListen{
-    if (sentenceListening==nil) {
-        sentenceListening = [[SentenceListeningViewController alloc]init];
-    }
     if(![self.navigationController.topViewController isKindOfClass:[sentenceListening class]]) {
+        sentenceListening = [[SentenceListeningViewController alloc]init];
         sentenceListening.bookId=[recentBook valueForKey:@"bookId"];;
         [self.navigationController pushViewController:sentenceListening animated:true];
     }
@@ -1350,16 +1345,14 @@
 }
 
 -(void)pushToWordsTest:(UIButton*)btn{
-    if (wordsTest==nil) {
-        wordsTest = [[WordsTestViewController alloc]init];
-        wordsTest.recentBookId=[recentBook valueForKey:@"bookId"];
-    }
     if(![self.navigationController.topViewController isKindOfClass:[wordsTest class]]) {
+        wordsTest = [[WordsTestViewController alloc]init];
         if (btn.tag==1) {
             wordsTest.testType=@"word";
         }else{
             wordsTest.testType=@"sentence";
         }
+        wordsTest.recentBookId=[recentBook valueForKey:@"bookId"];
         [self.navigationController pushViewController:wordsTest animated:true];
     }
     
@@ -1367,10 +1360,10 @@
 -(void)pushToWrong{
     if (wrongNoteView==nil) {
         wrongNoteView = [[WrongNotesViewController alloc]init];
-        wrongNoteView.recentBookId=[recentBook valueForKey:@"bookId"];
     }
     if(![self.navigationController.topViewController isKindOfClass:[wrongNoteView class]]) {
         wrongNoteView.testType=@"wrong";
+        wrongNoteView.recentBookId=[recentBook valueForKey:@"bookId"];
         [self.navigationController pushViewController:wrongNoteView animated:true];
     }
     
