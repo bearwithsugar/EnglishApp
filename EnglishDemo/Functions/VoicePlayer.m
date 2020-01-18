@@ -76,6 +76,10 @@
     [_movePlayer stop];
 }
 
+-(BOOL)isPlaying{
+    return [_movePlayer isPlaying];
+}
+
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
     _myblock();
     [self continuePlay];
@@ -113,9 +117,8 @@
  
  */
 -(void)interruptPlay{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        self->_myblock();
-    });
+    
+    NSLog(@"播放过程被打断");
 }
 
 

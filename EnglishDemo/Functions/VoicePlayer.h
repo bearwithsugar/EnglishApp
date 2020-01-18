@@ -24,6 +24,7 @@ typedef void (^VoidBlock) (void);
 -(void)playAudio:(NSInteger)times;
 -(void)interruptPlay;
 -(void)stopPlay;
+-(BOOL)isPlaying;
 
 @end
 

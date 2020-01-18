@@ -102,6 +102,9 @@
     
     UIImageView* loadPic;
     
+    //选中内容
+    NSInteger selectedContent;
+    
 }
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
 
@@ -121,6 +124,7 @@
     contentArray=[[NSMutableArray alloc]init];
     sentenceArray=[[NSArray alloc]init];
     bookPicArray=[[NSArray alloc]init];
+    selectedContent = -1;
 
     
     //为字符串分配空间
@@ -687,7 +691,7 @@
 }
 //点击内容展示收缩
 -(void)clickContent:(UITapGestureRecognizer*)sender{
-
+    
     //获取句子id
     NSInteger id=sender.view.tag;
 
@@ -716,8 +720,6 @@
 
     [MyThreadPool executeJob:addLearnMsg Main:^{}];
     
-    VoidBlock playBlock;
-    
     BOOL flag=YES;
     //遍历缩小其他控件
     for (UIView* label in contentArray) {
@@ -739,18 +741,31 @@
         //获取label中n/n的标签，一会用于变颜色
         UILabel* progressLabel=label.subviews[0];
         
-        //获取喇叭图标
         UIView* labaView ;
-        
+        //获取喇叭图标
+
         for (UIView* childView in label.subviews) {
-            if ([childView isKindOfClass: [UIImageView class]]) {
-                //获取喇叭图标
-                labaView = childView;
-            }
+           if ([childView isKindOfClass: [UIImageView class]]) {
+               //获取喇叭图标
+               [childView removeFromSuperview];
+               UIImageView* pic=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 32, 17.66, 16.55)];
+               pic.image=[UIImage imageNamed:@"icon_laba2"];
+               [label addSubview:pic];
+            
+           }
         }
         
         //找到点击的label
         if (sender.self.view.tag==label.tag) {
+            //获取喇叭图标
+
+            for (UIView* childView in label.subviews) {
+               if ([childView isKindOfClass: [UIImageView class]]) {
+                   //获取喇叭图标
+                   labaView = childView;
+               }
+            }
+            
             //2.修改高
             //if语句防止多次点击时高度变化
             if (originFrame.size.height <=100) {
@@ -772,12 +787,13 @@
                 make.width.equalTo(@17.66);
                 make.height.equalTo(@16.55);
             }];
-            
+
             myblock = ^{
                 NSLog(@"播放完成");
                 [labaWithLoop removeFromSuperview];
                 [label addSubview:labaView];
             };
+            
         }
         else{
             progressLabel.layer.backgroundColor=ssRGBHex(0x9B9B9B).CGColor;
@@ -785,8 +801,6 @@
             if (originFrame.size.height>=167.71) {
                 originFrame.size.height -= 110.34;
                 label.frame = originFrame;
-                //使得他不可以再被点击
-//                label.userInteractionEnabled=NO;
             }
             //label.userInteractionEnabled=YES;
             //恢复y坐标位置
@@ -799,6 +813,8 @@
     
     }
     
+    VoidBlock playBlock;
+    
     //播放声音
     //音频播放空间分配
     
@@ -806,7 +822,6 @@
         NSString* playUrl=[DownloadAudioService getAudioPath:
                            [NSString stringWithFormat:@"%@",[[self->voiceArray objectAtIndex:id]valueForKey:@"id"]]];
         if (self->voiceplayer!=NULL) {
-            [self->voiceplayer interruptPlay];
             self->voiceplayer = NULL;
         }
         
@@ -823,7 +838,7 @@
     [MyThreadPool executeJob:playBlock Main:^{}];
     
     flag=true;
-    
+    selectedContent = id;
 }
 
 #pragma mark --setting
