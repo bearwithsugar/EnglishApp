@@ -25,8 +25,8 @@
             filePath = "EnglishDemo/LearningViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "541"
-            endingLineNumber = "541"
+            startingLineNumber = "539"
+            endingLineNumber = "539"
             landmarkName = "-learningContent:PicTag:"
             landmarkType = "7">
             <Locations>
@@ -73,26 +73,10 @@
             filePath = "EnglishDemo/LearningViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "548"
-            endingLineNumber = "548"
+            startingLineNumber = "546"
+            endingLineNumber = "546"
             landmarkName = "-learningContent:PicTag:"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "664F5742-490E-4517-84C7-589878B2124A"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "EnglishDemo/LearningViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1212"
-            endingLineNumber = "1212"
-            landmarkName = "LearningViewController"
-            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -105,9 +89,25 @@
             filePath = "EnglishDemo/LearningViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1198"
-            endingLineNumber = "1198"
-            landmarkName = "-startRecordBtnAction:"
+            startingLineNumber = "1200"
+            endingLineNumber = "1200"
+            landmarkName = "-playRecordBtnAction"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2D5E6CA2-B110-4B29-B57C-2FDC689EF196"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EnglishDemo/LearningViewController.m"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1157"
+            endingLineNumber = "1157"
+            landmarkName = "-startRecordBtnAction"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

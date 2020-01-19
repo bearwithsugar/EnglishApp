@@ -117,7 +117,7 @@
  
  */
 -(void)interruptPlay{
-    
+    _myblock();
     NSLog(@"播放过程被打断");
 }
 

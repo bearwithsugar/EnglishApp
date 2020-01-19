@@ -91,8 +91,9 @@
 +(UIImageView*)imageViewfForPlayRecordVoice{
     UIImageView* imageView=[[UIImageView alloc]init];
     NSMutableArray *imageArr = [[NSMutableArray alloc]init];
-    [imageArr addObject:[UIImage imageNamed:@"icon_play"]];
-    [imageArr addObject:[[UIImage alloc]init]];
+    [imageArr addObject:[UIImage imageNamed:@"icon_play1"]];
+    [imageArr addObject:[UIImage imageNamed:@"icon_play2"]];
+    
     imageView.animationImages = imageArr;
     
     imageView.animationDuration = 1;

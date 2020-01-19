@@ -75,11 +75,10 @@
     UITapGestureRecognizer* stopRecordTap;
     //跟读按钮
     UIButton* followReadBtn;
-    //当前的跟读按钮
-    UIButton* currentReadBtn;
     //跟读播放图标
     UIImageView* playRecordPic;
-    UIButton* playRecordBtn;
+    UIImageView* playRecordActivePic;
+    UIView* playRecordBtn;
     //当前录音的句子编号
     NSString* recordingSentenceId;
     //播放音频所需
@@ -104,10 +103,7 @@
     BOOL continuePlay;
     
     UIImageView* loadPic;
-    
-    //选中内容
-    NSInteger selectedContent;
-    
+
 }
 //@property (nonatomic,strong) IBOutlet UIProgressView *progressView;
 
@@ -127,7 +123,6 @@
     contentArray=[[NSMutableArray alloc]init];
     sentenceArray=[[NSArray alloc]init];
     bookPicArray=[[NSArray alloc]init];
-    selectedContent = -1;
 
     settingArray=@[@"1",@"1",@"0",@"1",@"1"];
     chooseLessonShow=settingShow=true;
@@ -569,6 +564,23 @@
     
     [contentDetailScrollView setContentSize:CGSizeMake(contentView.frame.size.width-156, contentDetailHeight)];
     
+    //先加载但是不添加，点击之后添加
+    playRecordBtn=[[UIView alloc]init];
+    playRecordPic = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_play1"]];
+    playRecordActivePic = [LoadGif imageViewfForPlayRecordVoice];
+
+    followReadBtn=[[UIButton alloc]init];
+    followReadBtn.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
+    followReadBtn.layer.cornerRadius=5;
+    [followReadBtn setTitle:@"我来跟读" forState:UIControlStateNormal];
+    [followReadBtn setTitle:@"正在录音" forState:UIControlStateSelected];
+    [followReadBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [followReadBtn setImage:[UIImage imageNamed:@"voice_light"] forState:UIControlStateNormal];
+    [followReadBtn setImageEdgeInsets:UIEdgeInsetsMake(0.0, -10, 0.0, 0.0)];
+    [followReadBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
+    //录音按钮
+    [followReadBtn addTarget:self action:@selector(startRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
+
     for (int i=0; i<titleArray.count; i++) {
         NSDictionary* titleDic=titleArray[i];
         //内容的底板
@@ -632,57 +644,7 @@
                 make.right.equalTo(self->content);
             }];
         }
-        
-//        UIButton* playBtn=[[UIButton alloc]init];
-//        [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_play"] forState:UIControlStateNormal];
-//        [playBtn addTarget:self action:@selector(playRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
-//        [content addSubview:playBtn];
-//
-//        [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.top.equalTo(self->content).with.offset(120);
-//            make.left.equalTo(self->content).with.offset(40.51);
-//            make.height.equalTo(@33);
-//            make.width.equalTo(@33);
-//        }];
-        playRecordBtn=[[UIButton alloc]init];
-        playRecordPic = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_play"]];
-        [playRecordBtn addTarget:self action:@selector(playRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
-        [playRecordBtn addSubview:playRecordPic];
-        [playRecordPic mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(playRecordBtn);
-        }];
-        [content addSubview:playRecordBtn];
 
-        [playRecordBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-           make.top.equalTo(self->content).with.offset(120);
-           make.left.equalTo(self->content).with.offset(40.51);
-           make.height.equalTo(@33);
-           make.width.equalTo(@33);
-        }];
-        
-        
-        
-        followReadBtn=[[UIButton alloc]init];
-        followReadBtn.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
-        followReadBtn.layer.cornerRadius=5;
-        [followReadBtn setTitle:@"我来跟读" forState:UIControlStateNormal];
-        [followReadBtn setTitle:@"正在录音" forState:UIControlStateSelected];
-        [followReadBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [followReadBtn setImage:[UIImage imageNamed:@"voice_light"] forState:UIControlStateNormal];
-        [followReadBtn setImageEdgeInsets:UIEdgeInsetsMake(0.0, -10, 0.0, 0.0)];
-        [followReadBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
-        //录音按钮
-        [followReadBtn addTarget:self action:@selector(startRecordBtnAction:) forControlEvents:UIControlEventTouchUpInside];
-        followReadBtn.tag=i;
-        [content addSubview:followReadBtn];
-        
-        [followReadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->content).with.offset(112.5);
-            make.left.equalTo(self->content).with.offset(90);
-            make.height.equalTo(@46);
-            make.width.equalTo(@140);
-        }];
-        
         //添加点击事件
         clickRecognize=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickContent:)];
 //        //r重写手势代理
@@ -726,9 +688,9 @@
     [MyThreadPool executeJob:addLearnMsg Main:^{}];
     
     BOOL flag=YES;
-    //遍历缩小其他控件
+    VoidBlock myblock;
+    
     for (UIView* label in contentArray) {
-        
         if (label.tag>=100) {
             //1.获取原始的frame
             CGRect originFrame = label.frame;
@@ -736,11 +698,6 @@
             label.frame = originFrame;
             label.tag=label.tag-100;
         }
-    }
-
-    VoidBlock myblock;
-    
-    for (UIView* label in contentArray) {
         //1.获取原始的frame
         CGRect originFrame = label.frame;
         //获取label中n/n的标签，一会用于变颜色
@@ -762,6 +719,30 @@
         
         //找到点击的label
         if (sender.self.view.tag==label.tag) {
+            //添加图标
+           
+            [label addSubview:playRecordBtn];
+            
+            [playRecordBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+              make.top.equalTo(label).with.offset(120);
+              make.left.equalTo(label).with.offset(40.51);
+              make.height.equalTo(@33);
+              make.width.equalTo(@33);
+            }];
+            [playRecordBtn addSubview:playRecordPic];
+            [playRecordPic mas_makeConstraints:^(MASConstraintMaker *make) {
+              make.edges.equalTo(playRecordBtn);
+            }];
+
+            [label addSubview:followReadBtn];
+            
+            [followReadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.top.equalTo(label).with.offset(112.5);
+               make.left.equalTo(label).with.offset(90);
+               make.height.equalTo(@46);
+               make.width.equalTo(@140);
+            }];
+            
             //获取喇叭图标
 
             for (UIView* childView in label.subviews) {
@@ -843,7 +824,6 @@
     [MyThreadPool executeJob:playBlock Main:^{}];
     
     flag=true;
-    selectedContent = id;
 }
 
 #pragma mark --setting
@@ -1114,16 +1094,8 @@
 
     //添加学习进度信息
     //加载gif动画
-//    loadPic=[LoadGif imageViewStartAnimating];
-//    [self.view addSubview:loadPic];
+
     [SVProgressHUD show];
-    
-//    [loadPic mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.centerY.equalTo(self.view);
-//        make.centerX.equalTo(self.view);
-//        make.width.equalTo(@60);
-//        make.height.equalTo(@60);
-//    }];
 
     [MyThreadPool executeJob:^{
         [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
@@ -1179,10 +1151,13 @@
     return filePath;
 }
 //开始录音和停止录音
--(void)startRecordBtnAction:(UIButton*)btn{
-    currentReadBtn = btn;
-//    [followReadBtn setTitle:@"正在录音" forState:UIControlStateNormal];
-    currentReadBtn.selected = YES;
+-(void)startRecordBtnAction{
+    followReadBtn.selected = YES;
+    
+    if (self->voiceplayer!=NULL) {
+        [self->voiceplayer interruptPlay];
+        self->voiceplayer = NULL;
+    }
 
     //下面是根据网络给的，使得录音声音大一点
     NSError *audioError = nil;
@@ -1194,10 +1169,7 @@
     //==================
     
     NSLog(@"开始录音");
-    [currentReadBtn setUserInteractionEnabled:NO];
-    recordingSentenceId=[[sentenceArray objectAtIndex:currentReadBtn.tag]valueForKey:@"sentenceId"];
-    recordingSentenceId=[recordingSentenceId stringByAppendingString:@".caf"];
-
+    [followReadBtn setUserInteractionEnabled:NO];
     if ([DocuOperate fileExistInPath:recordingSentenceId]) {
         [DocuOperate deleteFileInDocuments:recordingSentenceId];
         NSLog(@"删除声音文件%@",recordingSentenceId);
@@ -1212,35 +1184,38 @@
 //停止录音
 -(void)stopRecord{
     NSLog(@"结束录音了");
-    currentReadBtn.selected = NO;
+    followReadBtn.selected = NO;
     [[AudioRecorder shareInstance] stopRecord];
-    [currentReadBtn setUserInteractionEnabled:YES];
+    [followReadBtn setUserInteractionEnabled:YES];
+    [self playRecordBtnAction];
+    
 }
 //播放录音声音
 -(void)playRecordBtnAction{
-    
-    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-    //默认情况下扬声器播放
-    [audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
-    [audioSession setActive:YES error:nil];
-    
-    NSURL *url = [[NSURL alloc] initFileURLWithPath:[self getFilePathWithFileName:recordingSentenceId]];
-    
-    /* 初始化音频文件 */
-    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
-    
-    /* 加载缓冲 */
-    [self.player prepareToPlay];
-    //设置声音的大小
-    self.player.volume = 0.7;
-    NSLog(@"当前播放的音量是：%f",self.player.volume);//范围为（0到1）；
-    if (self.player.volume < 0.001) {
-        [SVProgressHUD showErrorWithStatus:@"当前句子没有录音！"];
-    }
-    
-    //震动
-    AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-    [self.player play];
+    [playRecordPic removeFromSuperview];
+    [playRecordBtn addSubview:playRecordActivePic];
+    [playRecordActivePic mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(playRecordBtn);
+    }];
+    VoidBlock stopblock = ^{
+        [self->playRecordActivePic removeFromSuperview];
+        [self->playRecordBtn addSubview:self->playRecordPic];
+        [self->playRecordPic mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self->playRecordBtn);
+        }];
+    };
+    VoidBlock  playBlock =^{
+        if (self->voiceplayer!=NULL) {
+           self->voiceplayer = NULL;
+        }
+
+        self->voiceplayer=[[VoicePlayer alloc]init];
+        self->voiceplayer.url = [self getFilePathWithFileName:self->recordingSentenceId];
+        self->voiceplayer.myblock = stopblock;
+        [self->voiceplayer playAudio:0];
+    };
+       
+    [MyThreadPool executeJob:playBlock Main:^{}];
 }
 
 #pragma mark - UIGestureRecognizerDelegate
