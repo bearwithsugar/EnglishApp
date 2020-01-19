@@ -69,14 +69,17 @@
     UIView* contentView;
     //右侧具体学习内容界面
     UIScrollView* contentDetailScrollView;
-    //是否正在录音
-    BOOL isRecord;
     
     UITapGestureRecognizer* clickRecognize;
     //设置手势点击任何一点结束录音
     UITapGestureRecognizer* stopRecordTap;
     //跟读按钮
     UIButton* followReadBtn;
+    //当前的跟读按钮
+    UIButton* currentReadBtn;
+    //跟读播放图标
+    UIImageView* playRecordPic;
+    UIButton* playRecordBtn;
     //当前录音的句子编号
     NSString* recordingSentenceId;
     //播放音频所需
@@ -126,32 +129,21 @@
     bookPicArray=[[NSArray alloc]init];
     selectedContent = -1;
 
-    
-    //为字符串分配空间
-//    unitName=[[NSString alloc]init];
-//    className=[[NSString alloc]init];
     settingArray=@[@"1",@"1",@"0",@"1",@"1"];
     chooseLessonShow=settingShow=true;
     angleBtn.selected=false;
-    isRecord=false;
     
     userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
     [self titleShow];
     [self chooseLesson];
     [self presentLessionView];
     
-    //????
-   // [self learningBook];
-
     //固定的
     [self initSettingView];
     [self defaultSettings];
     [self defaultSettingsShow];
     
     [self chooseLessonViewInit];
-    
-//    contentDetailScrollView=[[UIScrollView alloc]init];
-//    [contentView addSubview:contentDetailScrollView];
     
     [self showChooseLessonView];
     
@@ -562,7 +554,6 @@
         contentDetailHeight=titleArray.count*73+130;
         NSLog(@"页面长度是%lu",(unsigned long)contentDetailHeight);
         if (contentDetailHeight==130) {
-            //[self presentViewController:[WarningWindow MsgWithoutTrans:@"当前页面还没有句子！" ] animated:YES completion:nil];
             //如果没有句子显示大图
             [self showBigPic:picTag];
         }
@@ -612,8 +603,6 @@
         laba.image=[UIImage imageNamed:@"icon_laba2"];
         [content addSubview:laba];
         
-
-        
         //学习内容
         UILabel* title=[[UILabel alloc]init];
         title.text=[titleDic valueForKey:@"sentenceEng"];
@@ -644,17 +633,33 @@
             }];
         }
         
-        UIButton* playBtn=[[UIButton alloc]init];
-        [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_play"] forState:UIControlStateNormal];
-        [playBtn addTarget:self action:@selector(playRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
-        [content addSubview:playBtn];
-        
-        [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->content).with.offset(120);
-            make.left.equalTo(self->content).with.offset(40.51);
-            make.height.equalTo(@33);
-            make.width.equalTo(@33);
+//        UIButton* playBtn=[[UIButton alloc]init];
+//        [playBtn setBackgroundImage:[UIImage imageNamed:@"icon_play"] forState:UIControlStateNormal];
+//        [playBtn addTarget:self action:@selector(playRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
+//        [content addSubview:playBtn];
+//
+//        [playBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.top.equalTo(self->content).with.offset(120);
+//            make.left.equalTo(self->content).with.offset(40.51);
+//            make.height.equalTo(@33);
+//            make.width.equalTo(@33);
+//        }];
+        playRecordBtn=[[UIButton alloc]init];
+        playRecordPic = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon_play"]];
+        [playRecordBtn addTarget:self action:@selector(playRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
+        [playRecordBtn addSubview:playRecordPic];
+        [playRecordPic mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(playRecordBtn);
         }];
+        [content addSubview:playRecordBtn];
+
+        [playRecordBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.top.equalTo(self->content).with.offset(120);
+           make.left.equalTo(self->content).with.offset(40.51);
+           make.height.equalTo(@33);
+           make.width.equalTo(@33);
+        }];
+        
         
         
         followReadBtn=[[UIButton alloc]init];
@@ -1175,6 +1180,9 @@
 }
 //开始录音和停止录音
 -(void)startRecordBtnAction:(UIButton*)btn{
+    currentReadBtn = btn;
+//    [followReadBtn setTitle:@"正在录音" forState:UIControlStateNormal];
+    currentReadBtn.selected = YES;
 
     //下面是根据网络给的，使得录音声音大一点
     NSError *audioError = nil;
@@ -1186,8 +1194,8 @@
     //==================
     
     NSLog(@"开始录音");
-    [followReadBtn setUserInteractionEnabled:NO];
-    recordingSentenceId=[[sentenceArray objectAtIndex:btn.tag]valueForKey:@"sentenceId"];
+    [currentReadBtn setUserInteractionEnabled:NO];
+    recordingSentenceId=[[sentenceArray objectAtIndex:currentReadBtn.tag]valueForKey:@"sentenceId"];
     recordingSentenceId=[recordingSentenceId stringByAppendingString:@".caf"];
 
     if ([DocuOperate fileExistInPath:recordingSentenceId]) {
@@ -1198,29 +1206,15 @@
     [[AudioRecorder shareInstance] setRecorderDelegate:self];
     
     //自动停止录音
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Wunused-variable"
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:4.0 target:self selector:@selector(stopRecord) userInfo:nil repeats:NO];
-    #pragma clang diagnostic pop
+    [NSTimer scheduledTimerWithTimeInterval:4.0 target:self selector:@selector(stopRecord) userInfo:nil repeats:NO];
 }
 
 //停止录音
--(void)stopRecord:(UITapGestureRecognizer*)tap{
-    NSLog(@"结束录音");
-    //self.progressView.progress = 0;
-    [[AudioRecorder shareInstance] stopRecord];
-    [self.view removeGestureRecognizer:stopRecordTap];
-    [self.view endEditing:YES];
-    isRecord=false;
-    [followReadBtn setUserInteractionEnabled:YES];
-}
-//停止录音
 -(void)stopRecord{
     NSLog(@"结束录音了");
-    //self.progressView.progress = 0;
+    currentReadBtn.selected = NO;
     [[AudioRecorder shareInstance] stopRecord];
-    isRecord=false;
-    [followReadBtn setEnabled:YES];
+    [currentReadBtn setUserInteractionEnabled:YES];
 }
 //播放录音声音
 -(void)playRecordBtnAction{
@@ -1240,8 +1234,9 @@
     //设置声音的大小
     self.player.volume = 0.7;
     NSLog(@"当前播放的音量是：%f",self.player.volume);//范围为（0到1）；
-    
-    
+    if (self.player.volume < 0.001) {
+        [SVProgressHUD showErrorWithStatus:@"当前句子没有录音！"];
+    }
     
     //震动
     AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);

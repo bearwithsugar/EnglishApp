@@ -394,6 +394,7 @@
     }else
     {
         [self warnMsg:[loginDic valueForKey:@"message"]];
+        [SVProgressHUD dismiss];
     }
 
 }

@@ -77,11 +77,22 @@
 +(UIImageView*)imageViewfForPracticePlaying2{
     UIImageView* imageView=[[UIImageView alloc]init];
     NSMutableArray *imageArr = [[NSMutableArray alloc]init];
-    for (int i = 0; i<=1; i++) {
-        NSString *imageStr = [NSString stringWithFormat:@"icon_ceshi_laba%d",i + 1];
-        UIImage *image = [UIImage imageNamed:imageStr];
-        [imageArr addObject:image];
-    }
+    [imageArr addObject:[UIImage imageNamed:@"icon_ceshi_laba1"]];
+    [imageArr addObject:[UIImage imageNamed:@"icon_ceshi_laba2"]];
+    imageView.animationImages = imageArr;
+    
+    imageView.animationDuration = 1;
+    
+    imageView.animationRepeatCount = 0;
+    
+    [imageView startAnimating];
+    return imageView;
+}
++(UIImageView*)imageViewfForPlayRecordVoice{
+    UIImageView* imageView=[[UIImageView alloc]init];
+    NSMutableArray *imageArr = [[NSMutableArray alloc]init];
+    [imageArr addObject:[UIImage imageNamed:@"icon_play"]];
+    [imageArr addObject:[[UIImage alloc]init]];
     imageView.animationImages = imageArr;
     
     imageView.animationDuration = 1;

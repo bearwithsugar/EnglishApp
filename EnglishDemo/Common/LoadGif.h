@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 +(UIImageView*)imageViewfForPracticePlaying2;
 
++(UIImageView*)imageViewfForPlayRecordVoice;
+
 
 @end
 
