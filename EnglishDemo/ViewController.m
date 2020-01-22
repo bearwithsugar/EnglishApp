@@ -779,7 +779,6 @@
         }
     }
     
-    
 }
 
 -(void)action{
@@ -973,8 +972,10 @@
    
 }
 -(void)chooseBook{
+    if (chooseBookView!=nil) {
+        return;
+    }
     chooseBookView=[[UIView alloc]init];
-    chooseBookView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     
     UITableView* choosePublishTable=[[UITableView alloc]init];
     choosePublishTable.dataSource=self;
@@ -1001,6 +1002,24 @@
         make.width.equalTo(self->chooseBookView).multipliedBy(0.45);
         make.height.equalTo(@370.75);
     }];
+    
+    //下部分灰色背景
+    UIView* chooseGray=[[UIView alloc]init];
+    chooseGray.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    UITapGestureRecognizer* cancelGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(cancelChooseing)];
+    [chooseGray addGestureRecognizer:cancelGesture];
+    [chooseBookView addSubview:chooseGray];
+
+    [chooseGray mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.top.equalTo(chooseGradeTable.mas_bottom);
+       make.left.equalTo(chooseBookView);
+       make.right.equalTo(chooseBookView);
+       make.height.equalTo(chooseBookView);
+    }];
+}
+
+-(void)cancelChooseing{
+    [chooseBookView removeFromSuperview];
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -1112,6 +1131,8 @@
         [book setUserInteractionEnabled:YES];
         [shelfView addSubview:book];
         
+        UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(haveAdd)];
+        
         if ([[bookArray[i]valueForKey:@"boughtState"]intValue]==0&&
             userInfo) {
             UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
@@ -1119,6 +1140,8 @@
             [loadBtn addTarget:self action:@selector(addBook:) forControlEvents:UIControlEventTouchUpInside];
             loadBtn.tag=i;
             [book addSubview:loadBtn];
+        }else{
+            [book addGestureRecognizer:gesture];
         }
     }
 
@@ -1141,6 +1164,10 @@
         [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];
         
     }
+}
+
+-(void)haveAdd{
+    [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
 }
 
 #pragma mark --otherFunction

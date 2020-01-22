@@ -20,15 +20,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property BOOL clickable;
 @property(nonatomic,copy)NSDictionary* userInfo;
 @property(nonatomic,copy)NSString* bookId;
+@property(nonatomic,copy)UIViewController<UITextFieldDelegate>* controller;
 
 //对于错题本
 @property int wordNum;
 
 -(id)initWithFlag:(int)testFlag
-         TestArray:(NSArray*)testArray
-          TestType:(NSString*)testType
-          UserInfo:(NSDictionary*)userInfo
-            BookId:(NSString*)bookId;
+TestArray:(NSArray*)testArray
+ TestType:(NSString*)testType
+ UserInfo:(NSDictionary*)userInfo
+  BookId:(NSString*)bookId
+    View:(UIViewController*)controller;
 @end
 
 NS_ASSUME_NONNULL_END

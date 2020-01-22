@@ -22,7 +22,7 @@
 #import "../SVProgressHUD/SVProgressHUD.h"
 #import "Masonry.h"
 
-@interface WrongNotesViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface WrongNotesViewController ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 {
     //设置界面
     UIView* settingView;
@@ -35,7 +35,6 @@
     TestFunctions* questionAndAnswerView;
     
     BOOL showSetting;
-    BOOL chooseLessonShow;
     //答案是否可选
     BOOL clickable;
     //上下题是否可点击是否可选
@@ -67,7 +66,7 @@
     VoicePlayer* voiceplayer;
     
 }
-
+@property(nonatomic ,strong) UITextField * firstResponderTextF;//记录将要编辑的输入框
 @end
 
 @implementation WrongNotesViewController
@@ -75,9 +74,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor=ssRGBHex(0xFCF8F7);
+    showSetting = NO;
     [self titleShow];
     [self settingView];
     [self initDataOnlyOnce];
+    //监听键盘展示和隐藏的通知
+   [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+   [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -222,9 +225,9 @@
     
     [setBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(title).with.offset(22);
-        make.width.equalTo(@22);
+        make.width.equalTo(@25);
         make.right.equalTo(title).with.offset(-15);
-        make.height.equalTo(@22);
+        make.height.equalTo(@25);
     }];
 }
 
@@ -345,8 +348,6 @@
 -(void)settingView{
     //整体灰色背景
     settingView=[[UIView alloc]init];
-    settingView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
-    
     settingContent=@[@"根据英语发音选择中文意思",@"根据英文单词或句子选择中文意思",@"根据中文意思选择英文单词或句子",@"根据中文意思拼写英文单词或句子"];
     
     UITableView* settingList=[[UITableView alloc]init];
@@ -361,6 +362,24 @@
         make.height.equalTo(@213);
     }];
     
+    //下部分灰色背景
+    UIView* settingGray=[[UIView alloc]init];
+    settingGray.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    UITapGestureRecognizer* cancelGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(cancelSetting)];
+    [settingGray addGestureRecognizer:cancelGesture];
+    [settingView addSubview:settingGray];
+
+    [settingGray mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.top.equalTo(settingList.mas_bottom);
+       make.left.equalTo(self->settingView);
+       make.right.equalTo(self->settingView);
+       make.height.equalTo(self->settingView);
+    }];
+    
+}
+-(void)cancelSetting{
+    [settingView removeFromSuperview];
+    showSetting = NO;
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
@@ -386,8 +405,8 @@
     [settingView removeFromSuperview];
     if (indexPath.row!=[[testDetails valueForKey:@"testFunc"]integerValue]) {
         [questionAndAnswerView removeFromSuperview];
+        [self->testDetails setValue:[NSString stringWithFormat:@"%ld",(long)indexPath.row] forKey:@"testFunc"];
         [MyThreadPool executeJob:^{
-            [self->testDetails setValue:[NSString stringWithFormat:@"%ld",(long)indexPath.row] forKey:@"testFunc"];
             [DocuOperate writeIntoPlist:@"wrongsDetails.plist" dictionary:self->testDetails];
         } Main:^{}];
         [self addQAview];
@@ -399,7 +418,7 @@
 }
 
 -(void)showSettingView{
-    if (showSetting) {
+    if (!showSetting) {
         [self.view addSubview:settingView];
         
         [settingView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -433,19 +452,19 @@
     if ([testFunc isEqualToString:@"0"]) {
         questionAndAnswerView=[VoiceChooseChn alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self];
     }else if([testFunc isEqualToString:@"1"]){
         questionAndAnswerView=[EngChooseChi alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self];
     }else if([testFunc isEqualToString:@"2"]){
         questionAndAnswerView=[ChnChooseEng alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self];
     }else if([testFunc isEqualToString:@"3"]){
         questionAndAnswerView=[ChinSpellEnglish alloc];
         questionAndAnswerView.wordNum=[[NSString stringWithFormat:@"%lu",(unsigned long)wordArray.count]intValue];
-        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
+        questionAndAnswerView=[questionAndAnswerView initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self];
     }else{
         
     }
@@ -470,6 +489,53 @@
     [self.navigationController popViewControllerAnimated:true];
     [self->voiceplayer stopPlay];
 }
+
+#pragma mark UITextFieldDelegate
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    self.firstResponderTextF = textField;//当将要开始编辑的时候，获取当前的textField
+    return YES;
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+#pragma mark : UIKeyboardWillShowNotification/UIKeyboardWillHideNotification
+
+- (void)keyboardWillShow:(NSNotification *)notification{
+    CGRect rect = [self.firstResponderTextF.superview convertRect:self.firstResponderTextF.frame toView:self.view];//获取相对于self.view的位置
+    NSDictionary *userInfo = [notification userInfo];
+    NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];//获取弹出键盘的fame的value值
+    CGRect keyboardRect = [aValue CGRectValue];
+    keyboardRect = [self.view convertRect:keyboardRect fromView:self.view.window];//获取键盘相对于self.view的frame ，传window和传nil是一样的
+    CGFloat keyboardTop = keyboardRect.origin.y;
+    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘弹出动画时间值
+    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
+    if (keyboardTop < CGRectGetMaxY(rect)) {//如果键盘盖住了输入框
+        CGFloat gap = keyboardTop - CGRectGetMaxY(rect) - 10;//计算需要网上移动的偏移量（输入框底部离键盘顶部为10的间距）
+        __weak typeof(self)weakSelf = self;
+        [UIView animateWithDuration:animationDuration animations:^{
+            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, gap, weakSelf.view.frame.size.width, weakSelf.view.frame.size.height);
+        }];
+    }
+}
+- (void)keyboardWillHide:(NSNotification *)notification{
+    NSDictionary *userInfo = [notification userInfo];
+    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘隐藏动画时间值
+    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
+    if (self.view.frame.origin.y < 0) {//如果有偏移，当影藏键盘的时候就复原
+        __weak typeof(self)weakSelf = self;
+        [UIView animateWithDuration:animationDuration animations:^{
+            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, 0, weakSelf.view.frame.size.width, weakSelf.view.frame.size.height);
+        }];
+    }
+}
+- (void)dealloc{
+    //移除键盘通知监听者
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+}
+
 
 
 @end

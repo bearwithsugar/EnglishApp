@@ -667,7 +667,7 @@
     
     ConBlock jobBlock = ^(NSDictionary* dic){
        self->learnedArray = [dic valueForKey:@"data"];//可能为nsnull
-        if (self->learnedArray.count) {
+        if (self->learnedArray.count && ![self->learnedArray isKindOfClass:[NSNull class]]) {
              [self->learnedArray enumerateObjectsUsingBlock:^(id  _Nonnull obj1, NSUInteger idx, BOOL * _Nonnull stop) {
                [self->titleArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                    if ([[obj1 valueForKey:@"sentenceId"]isEqualToString:[obj valueForKey:@"sentenceId"]]) {
@@ -1009,6 +1009,7 @@
 }
 -(void)cancelSetting{
     [settingView removeFromSuperview];
+    settingShow = !settingShow;
 }
 
 //点击各种设置的处理函数

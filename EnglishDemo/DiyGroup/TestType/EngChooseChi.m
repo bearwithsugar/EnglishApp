@@ -310,7 +310,6 @@
             
             if ([super.testType isEqualToString:@"wrong"]) {
                    [MyThreadPool executeJob:^{
-                        NSDictionary* dic=[[NSDictionary alloc]init];
                         [ConnectionFunction deleteWrongMsg:[super.userInfo valueForKey:@"userKey"]
                                                      ContentId:[NSString stringWithFormat:@"%@",
                                                                 [[[super.testArray objectAtIndex:super.testFlag]
@@ -322,7 +321,7 @@
                                                                  valueForKey:@"bookWord"]valueForKey:@"sentenceId"]
                                                                 ]];
                        super.testFlag-=1;
-                        NSLog(@"错题添加结果%@",dic);
+                    
                     } Main:^{}];
               }
             
@@ -341,8 +340,9 @@
                               dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"sentenceId"]] Type:subjectType];
                           }
                           NSLog(@"错题添加结果%@",dic);
-                         [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
-                       } Main:^{}];
+                       } Main:^{
+                           [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
+                       }];
                 }
         }
         btn.selected=true;

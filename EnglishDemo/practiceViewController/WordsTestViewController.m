@@ -22,7 +22,7 @@
 #import "../Functions/MyThreadPool.h"
 #import "Masonry.h"
 
-@interface WordsTestViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface WordsTestViewController ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 {
     UIView* settingView;
     //显示当前课程的容器
@@ -63,6 +63,7 @@
     //上一题下一题按钮
     UIButton* nextSubBtn;
     UIButton* lastSubBtn;
+    UIButton* setBtn;
     
     //当前课程id
     NSString* classId;
@@ -79,7 +80,7 @@
     VoicePlayer* voiceplayer;
     
 }
-
+@property(nonatomic ,strong) UITextField * firstResponderTextF;//记录将要编辑的输入框
 @end
 
 @implementation WordsTestViewController
@@ -90,7 +91,10 @@
     voiceArray = [[NSMutableArray alloc]init];
     [self titleShow];
     [self settingView];
-    
+    //监听键盘展示和隐藏的通知
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
@@ -118,7 +122,6 @@
     lastclickable=true;
     nextclickable=true;
     testDetails=[[NSDictionary alloc]init];
-    
 }
 
 //标题栏显示
@@ -171,7 +174,7 @@
     UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
     [touchField addGestureRecognizer:touchFunc];
     
-    UIButton* setBtn=[[UIButton alloc]init];
+    setBtn=[[UIButton alloc]init];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateNormal];
     [setBtn setBackgroundImage:[UIImage imageNamed:@"icon_setting"] forState:UIControlStateHighlighted];
     [setBtn addTarget:self action:@selector(showSettingView) forControlEvents:UIControlEventTouchUpInside];
@@ -180,9 +183,10 @@
     [setBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(title).with.offset(22);
         make.right.equalTo(title).with.offset(-15);
-        make.width.equalTo(@22);
-        make.height.equalTo(@22);
+        make.width.equalTo(@25);
+        make.height.equalTo(@25);
     }];
+    setBtn.hidden = YES;
 }
 //选择菜单的初始化
 -(void)chooseLessonViewInit{
@@ -496,8 +500,6 @@
 -(void)settingView{
     //整体灰色背景
     settingView=[[UIView alloc]init];
-    settingView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
-    
     settingContent=@[@"根据英语发音选择中文意思",@"根据英文单词或句子选择中文意思",@"根据中文意思选择英文单词或句子",@"根据中文意思拼写英文单词或句子"];
     
     UITableView* settingList=[[UITableView alloc]init];
@@ -529,6 +531,7 @@
 
 -(void)cancelSetting{
     [settingView removeFromSuperview];
+    showSetting = !showSetting;
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -622,6 +625,7 @@
 }
 //加载数据，显示页面内容
 -(void)showContent:(NSString*)unitname className:(NSString*)classname testArray:(NSArray*)testarray classId:(NSString*)classid{
+    setBtn.hidden = NO;
     JobBlock myblock = ^{
         for (NSDictionary* dic in testarray) {
             NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
@@ -666,7 +670,7 @@
         NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",testFlagDic,@"testFlag", nil];
         [DocuOperate writeIntoPlist:@"testDetails.plist" dictionary:dic];
     }
-    
+
     testDetails=[DocuOperate readFromPlist:@"testDetails.plist"];
     testFlagDic = [testDetails valueForKey:@"testFlag"];
     NSLog(@"teatdetail：%@",testDetails);
@@ -689,13 +693,13 @@
     NSString* testFunc=[testDetails valueForKey:@"testFunc"];
     NSLog(@"testArray%@",testArray);
     if ([testFunc isEqualToString:@"0"]) {
-        questionAndAnswerView=[[VoiceChooseChn alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId ];
+        questionAndAnswerView=[[VoiceChooseChn alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self ];
     }else if([testFunc isEqualToString:@"1"]){
-        questionAndAnswerView=[[EngChooseChi alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
+        questionAndAnswerView=[[EngChooseChi alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self];
     }else if([testFunc isEqualToString:@"2"]){
-        questionAndAnswerView=[[ChnChooseEng alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
+        questionAndAnswerView=[[ChnChooseEng alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self];
     }else{
-        questionAndAnswerView=[[ChinSpellEnglish alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId];
+        questionAndAnswerView=[[ChinSpellEnglish alloc]initWithFlag:testFlag TestArray:testArray TestType:_testType UserInfo:userInfo BookId:_recentBookId View:self];
     }
     
     [processTip removeFromSuperview];
@@ -722,6 +726,56 @@
 -(void)popBack:(UITapGestureRecognizer*)sender{
     [self.navigationController popViewControllerAnimated:true];
     [self->voiceplayer stopPlay];
+}
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    if ([self.firstResponderTextF isFirstResponder])[self.firstResponderTextF resignFirstResponder];
+}
+
+#pragma mark UITextFieldDelegate
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    self.firstResponderTextF = textField;//当将要开始编辑的时候，获取当前的textField
+    return YES;
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+#pragma mark : UIKeyboardWillShowNotification/UIKeyboardWillHideNotification
+
+- (void)keyboardWillShow:(NSNotification *)notification{
+    CGRect rect = [self.firstResponderTextF.superview convertRect:self.firstResponderTextF.frame toView:self.view];//获取相对于self.view的位置
+    NSDictionary *userInfo = [notification userInfo];
+    NSValue* aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];//获取弹出键盘的fame的value值
+    CGRect keyboardRect = [aValue CGRectValue];
+    keyboardRect = [self.view convertRect:keyboardRect fromView:self.view.window];//获取键盘相对于self.view的frame ，传window和传nil是一样的
+    CGFloat keyboardTop = keyboardRect.origin.y;
+    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘弹出动画时间值
+    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
+    if (keyboardTop < CGRectGetMaxY(rect)) {//如果键盘盖住了输入框
+        CGFloat gap = keyboardTop - CGRectGetMaxY(rect) - 10;//计算需要网上移动的偏移量（输入框底部离键盘顶部为10的间距）
+        __weak typeof(self)weakSelf = self;
+        [UIView animateWithDuration:animationDuration animations:^{
+            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, gap, weakSelf.view.frame.size.width, weakSelf.view.frame.size.height);
+        }];
+    }
+}
+- (void)keyboardWillHide:(NSNotification *)notification{
+    NSDictionary *userInfo = [notification userInfo];
+    NSNumber * animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];//获取键盘隐藏动画时间值
+    NSTimeInterval animationDuration = [animationDurationValue doubleValue];
+    if (self.view.frame.origin.y < 0) {//如果有偏移，当影藏键盘的时候就复原
+        __weak typeof(self)weakSelf = self;
+        [UIView animateWithDuration:animationDuration animations:^{
+            weakSelf.view.frame = CGRectMake(weakSelf.view.frame.origin.x, 0, weakSelf.view.frame.size.width, weakSelf.view.frame.size.height);
+        }];
+    }
+}
+- (void)dealloc{
+    //移除键盘通知监听者
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 

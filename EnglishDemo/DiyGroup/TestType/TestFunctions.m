@@ -21,6 +21,7 @@
           TestType:(NSString*)testType
           UserInfo:(NSDictionary*)userInfo
            BookId:(NSString*)bookId
+             View:(UIViewController*)controller
 {
     if (self=[super init]) {
         _testFlag=testFlag;
@@ -29,6 +30,7 @@
         _userInfo=userInfo;
         _clickable=true;
         _bookId = bookId;
+        _controller = controller;
         [self questionView];
         [self answerView];
         [self wrongFrom];

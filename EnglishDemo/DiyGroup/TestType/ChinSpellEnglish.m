@@ -15,9 +15,7 @@
 #import "SVProgressHUD.h"
 #import "Masonry.h"
 
-
 @implementation ChinSpellEnglish{
-    
     //正确答案所在的位置
     NSUInteger rightAnswer;
     //答案是否可选
@@ -39,8 +37,6 @@
     UIImageView* staticPlay;
 
 }
-
-
 
 //问题界面
 -(void)questionView{
@@ -122,6 +118,7 @@
     }];
     
     spellField=[[UITextField alloc]init];
+    spellField.delegate = self.controller;
     [self addSubview:spellField];
     
     [spellField mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -297,8 +294,9 @@
                         dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"sentenceId"]] Type:subjectType];
                     }
                     NSLog(@"错题添加结果%@",dic);
-                   [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
-                 } Main:^{}];
+                 } Main:^{
+                     [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
+                 }];
           }
     }
     spellField.enabled=NO;
@@ -308,4 +306,5 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的
 }
+
 @end

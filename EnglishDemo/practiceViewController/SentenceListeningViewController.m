@@ -331,6 +331,11 @@
     sentenceArray=sentencearray;
     NSLog(@"句子数组的信息是%@",sentenceArray);
     classId=classid;
+    
+    [MyThreadPool executeJob:^{
+        [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
+    } Main:^{}];
+    
     //重新加载当前单元课程标签
     [lessontitle removeFromSuperview];
     [self presentLessionView];
@@ -402,8 +407,10 @@
         self->voiceplayer=[[VoicePlayer alloc]init];
         self->voiceplayer.url = playUrl;
         self->voiceplayer.myblock = ^{
-            [cell clearLaba];
-            [cell addPicForLaba:[[UIImageView alloc]initWithImage:[UIImage imageNamed: @"laba_practice2"]]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [cell clearLaba];
+                [cell addPicForLaba:[[UIImageView alloc]initWithImage:[UIImage imageNamed: @"laba_practice2"]]];
+            });
         };
         [self->voiceplayer playAudio:0];
        
