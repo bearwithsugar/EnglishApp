@@ -48,6 +48,7 @@
     UIView* refreshPanelProcess;
     //当前书籍界面
     UIView* bookPicView;
+    UIImageView* bookpicImageView;
     //听课文等固定标签的图层
     UIView* processFixView;
     //书架概览图层
@@ -98,9 +99,6 @@
     NSDictionary* recentBook;
     //学习进度！
     NSDictionary* learnProcess;
-    //加载圈
-    UIImageView* loadGifForRecentBook;
-    UIImageView* loadGifForProcess;
     
     BOOL timerFlag;
 }
@@ -125,7 +123,6 @@
     
     if ([self updateInterfaceWithReachability:self.conn]) {
         //初始化、分配空间
-        userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
         myShelfView=[[UIView alloc]init];
         synchronousPractice=[[UIView alloc]init];
         selectedPublication=[[NSString alloc]init];
@@ -136,11 +133,9 @@
         titleBtnArray = [[NSMutableArray alloc]init];
         processDic=[[NSMutableDictionary alloc]init];
         timerFlag=true;
-        //加载加载图
-        loadGifForRecentBook=[LoadGif imageViewStartAnimating];
-        loadGifForProcess=[LoadGif imageViewStartAnimating];
-
+    
         //开始加载界面
+        //无网络
         [self synchronousPracticeShow];
         [self.view addSubview:myShelfView];
         
@@ -152,81 +147,43 @@
         }];
         
         [self.navigationController setNavigationBarHidden:true];
+        //无网络
         [self titleShow];
         [self titleMenu];
 
         [self myGradeFixed];
         [self myProgressFixed];
-        
-        if ([userInfo valueForKey:@"userKey"]!=nil) {
-            [self chooseBookinit];
-            [self chooseBook];
-        }
 
-        //其他信息初始化方法
         [self initForFirstLogin];
     }
     
 }
 -(void)viewWillAppear:(BOOL)animated{
-//每当页面出现时，
-//        1.判断是否存在用户信息，不存在要求登录，存在进行下一步
-//        2.判断第一个接口请求信息返回code是否是401，如果是提示账号在其他设备登录，如果不是进行下一步
-//        3.加载最近学习信息和最近学习书本，
-
     if (![self updateInterfaceWithReachability:self.conn]) {
         return;
     }
     //用户是否登陆过
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
-
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-
         ConnectionInstance* recentInstance=[[ConnectionInstance alloc]init];
 
         //判断账号是否其他设备登录
-        if ([[[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]]valueForKey:@"code"]intValue]==401) {
-
+        if ([[[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]]valueForKey:@"code"]intValue]==401){
             NSLog(@"账号在别处登录");
-
-            [loadGifForProcess removeFromSuperview];
-            [loadGifForRecentBook removeFromSuperview];
-
         }else{
-            //如果没有其他设备登录则进行数据加载---------------------------------------------------------------
-
-            //最近学习情况
             recentLearnMsg=[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]];
             NSLog(@"userKey:%@",[userInfo valueForKey:@"userKey"]);
 
             recentBook=[[recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
 
-            if ([recentBook isKindOfClass:[NSNull class]]||![recentBook count]) {
-                NSLog(@"最近学习信息为空");
-                
-                [loadGifForProcess removeFromSuperview];
-                [loadGifForRecentBook removeFromSuperview];
-
-                [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有学习记录，快去选择课本学习吧！"]
-                                   animated:YES completion:nil];
-                
-            }else{
-
-                [self myProgressUnfixed];
+            [self myProgressUnfixed];
+            
+            if (![recentBook isKindOfClass:[NSNull class]]&&[recentBook count]) {
 
                 [self myGradeUnfixed];
 
-                dispatch_async(dispatch_get_global_queue(0, 0), ^{
-
-                    [self getReq];
-
-                });
-
-
+                [self refreshMsg];
             }
-
-            //----------------------------------------------------------------------------------------
-
         }
 
     }else{
@@ -247,25 +204,6 @@
     NSLog(@"%@",NSStringFromCGSize([UIScreen mainScreen].bounds.size));
     //打印沙盒路径
     NSLog(@"沙盒路径：%@",[DocuOperate homeDirectory]);
-    
-    //加载gif动画
-    [self->bookPicView addSubview:loadGifForRecentBook];
-    
-    [processDetails addSubview:loadGifForProcess];
-    
-    [loadGifForProcess mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self->processDetails);
-        make.centerY.equalTo(self->processDetails);
-        make.width.equalTo(@30);
-        make.height.equalTo(@30);
-    }];
-
-    [loadGifForRecentBook mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self->bookPicView);
-        make.centerY.equalTo(self->bookPicView);
-        make.width.equalTo(@30);
-        make.height.equalTo(@30);
-    }];
     
     //写入进度文件，方便绕开接口相应时间达到实时刷新
     if([DocuOperate fileExistInPath:@"process.plist"]){
@@ -288,50 +226,25 @@
 }
 
 //刷新最近学习的书本信息和学习进度
--(void)getReq{
-    NSURL* url=[FixValues getUrl];
-    url=[url URLByAppendingPathComponent:@"user_bookinfo"];
-    url=[url URLByAppendingPathComponent:[recentBook valueForKey:@"bookId"]];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    NSURLSession* session =[NSURLSession sharedSession];
-    NSLog(@"get方法中url是：%@",url);
-    //添加请求头
-    NSDictionary *headers = @{@"English-user": [userInfo valueForKey:@"userKey"]};
-    [request setHTTPMethod:@"GET"];
-    [request setAllHTTPHeaderFields:headers];
-
-    static NSDictionary* dictionary;
-    NSURLSessionDataTask *dataTask=[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-
-        NSLog(@"错误：%@",error);
-        NSString *html = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"数据为：%@",html);
-
-        self->learnProcess=[dictionary valueForKey:@"data"];
-
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-
-            [self->processDic setValue:[self->learnProcess valueForKey:@"grade"] forKey:@"zhunquelv"];
-
-            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningRate"] forKey:@"tingkewen"];
-            [self->processDic setValue:[self->learnProcess valueForKey:@"rank_rate"] forKey:@"percentage"];
-            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
-            [self->processDic setValue:[self->learnProcess valueForKey:@"sentenceRate"] forKey:@"dujuzi"];
-            [self->processDic setValue:[self->learnProcess valueForKey:@"rank"] forKey:@"zongpaiming"];
-            [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningTime"] forKey:@"zongshichang"];
-
-            dispatch_async(dispatch_get_main_queue(), ^{
-
-                [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
-
-                [self loadGrade];
-
-            });
-        });
-    }];
-    [dataTask resume];
+-(void)refreshMsg{
     
+    ConBlock myBlock = ^(NSDictionary* dictionary){
+        self->learnProcess=[dictionary valueForKey:@"data"];
+        [self->processDic setValue:[self->learnProcess valueForKey:@"grade"] forKey:@"zhunquelv"];
+        [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningRate"] forKey:@"tingkewen"];
+        [self->processDic setValue:[self->learnProcess valueForKey:@"rank_rate"] forKey:@"percentage"];
+        [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"bookId"] forKey:@"picture"];
+        [self->processDic setValue:[self->learnProcess valueForKey:@"sentenceRate"] forKey:@"dujuzi"];
+        [self->processDic setValue:[self->learnProcess valueForKey:@"rank"] forKey:@"zongpaiming"];
+        [self->processDic setValue:[[self->learnProcess valueForKey:@"userBook"]valueForKey:@"learningTime"] forKey:@"zongshichang"];
+
+        [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
+    };
+    [MyThreadPool executeJob:^{
+        [ConnectionFunction getBookLearnMsg:[self->userInfo valueForKey:@"userKey"] Id:[self->recentBook valueForKey:@"bookId"] Block:myBlock];
+    } Main:^{
+        [self loadGrade];
+    }];
 }
 
 -(void)titleShow{
@@ -567,56 +480,20 @@
         tingkewen.textAlignment=NSTextAlignmentCenter;
         
         [processFixView addSubview:tingkewen];
-    
-    //中部横线
-    UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(11.04, 164.41, 149.04, 2)];
-        
-    lineView.layer.borderColor=ssRGBHex(0x979797).CGColor;
-        
-    lineView.layer.borderWidth=1;
-        
-    [processDetails addSubview:lineView];
         
     }
     
-    if (userInfo==nil) {
-        
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            
-            UIImageView* bookpic=[[UIImageView alloc]init];
-            
-            bookpic.layer.borderWidth=1.0;
-            
-            bookpic.layer.borderColor=ssRGBHex(0x979797).CGColor;
-            
-            bookpic.image=[UIImage imageNamed:@"group_book_1_unlogged"];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                [self->bookPicView addSubview:bookpic];
-                
-                [bookpic mas_makeConstraints:^(MASConstraintMaker *make) {
-                    make.centerX.equalTo(self->bookPicView);
-                    make.width.equalTo(@176.63);
-                    make.top.equalTo(self->bookPicView);
-                    make.height.equalTo(@247.18);
-                }];
-                
-            });
-        });
-        
-    }else{
-        if (bookPicView == nil) {
-            bookPicView = [UIView new];
-        }
-        [myProgress addSubview:bookPicView];
-        
-        [bookPicView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self->myProgress);
-            make.width.equalTo(self->myProgress).multipliedBy(0.5);
-            make.top.equalTo(self->myProgress).with.offset(14.34);
-            make.bottom.equalTo(self->myProgress);
-        }];
+    //中部横线
+    UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(11.04, 164.41, 149.04, 2)];
+       
+    lineView.layer.borderColor=ssRGBHex(0x979797).CGColor;
+       
+    lineView.layer.borderWidth=1;
+       
+    [processFixView addSubview:lineView];
+    
+    if (userInfo!=nil) {
+       
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
             //登录状态下才添加手势
@@ -630,25 +507,12 @@
             
         });
         
-        UIImageView* bookpic=[[UIImageView alloc]init];
-        
-        bookpic.layer.borderWidth=1.0;
-        
-        bookpic.layer.borderColor=ssRGBHex(0x979797).CGColor;
-        
-        bookpic.image=[LocalDataOperation getImage:[recentBook valueForKey:@"bookId"] httpUrl:[recentBook valueForKey:@"coverPicture"]];
 
-        [bookPicView addSubview:bookpic];
-        
-        [bookpic mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self->bookPicView);
-            make.width.equalTo(@176.63);
-            make.top.equalTo(self->bookPicView);
-            make.height.equalTo(@247.18);
-        }];
-    }
+        if (recentBook!=nil) {
+             bookpicImageView.image=[LocalDataOperation getImage:[recentBook valueForKey:@"bookId"] httpUrl:[recentBook valueForKey:@"coverPicture"]];
+        }
     
-    [self loadGrade];
+    }
     
 }
 
@@ -699,25 +563,31 @@
     rankTip.numberOfLines=0;
     rankTip.font=[UIFont systemFontOfSize:12];
     [refreshPanelProcess addSubview:rankTip];
-    
-    
-    //加载完成，取消加载圈
-    [loadGifForRecentBook removeFromSuperview];
-    [loadGifForProcess removeFromSuperview];
 }
 
 -(void)myProgressFixed{
     
     //书籍图片
     bookPicView=[[UIView alloc]init];
-    
     [myProgress addSubview:bookPicView];
-    
     [bookPicView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self->myProgress);
         make.width.equalTo(self->myProgress).multipliedBy(0.5);
         make.top.equalTo(self->myProgress).with.offset(14.34);
         make.bottom.equalTo(self->myProgress);
+    }];
+    
+    bookpicImageView=[[UIImageView alloc]init];
+    bookpicImageView.layer.borderWidth=1.0;
+    bookpicImageView.layer.borderColor=ssRGBHex(0x979797).CGColor;
+    bookpicImageView.image=[UIImage imageNamed:@"group_book_learning_unlogged"];
+    [bookPicView addSubview:bookpicImageView];
+
+    [bookpicImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.centerX.equalTo(self->bookPicView);
+       make.width.equalTo(@176.63);
+       make.top.equalTo(self->bookPicView);
+       make.height.equalTo(@247.18);
     }];
     
     myShelfThree=[[UIView alloc]init];
@@ -793,17 +663,35 @@
         make.height.equalTo(@22);
     }];
     
+    [self loadBookShelfResume:NO];
 }
 -(void)myProgressUnfixed{
     
-    tipView.text = [@"当前书本为："stringByAppendingString:[recentBook valueForKey:@"bookName"]];
+    if (recentBook!=nil && ![recentBook isKindOfClass:[NSNull class]]) {
+        tipView.text = [@"当前书本为："stringByAppendingString:[recentBook valueForKey:@"bookName"]];
+    }else{
+        bookpicImageView.image=[UIImage imageNamed:@"group_book_learning_unlogged"];
+        [processDetails addSubview:noRecordLabel];
+        [noRecordLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.centerY.equalTo(self->processDetails);
+           make.centerX.equalTo(self->processDetails);
+           make.width.equalTo(@77.27);
+           make.height.equalTo(@18.75);
+        }];
+        [processFixView removeFromSuperview];
+        [refreshPanelProcess removeFromSuperview];
+    }
     
-    [bookScanView removeFromSuperview];
+    bookshelfArray=[[ConnectionFunction getBookShelf:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
     
-    bookScanView=[[UIView alloc]init];
+    [self loadBookShelfResume:bookshelfArray.count];
+    
+}
 
+-(void)loadBookShelfResume:(BOOL)flag{
+    [bookScanView removeFromSuperview];
+    bookScanView=[[UIView alloc]init];
     [myShelfThree addSubview:bookScanView];
-    
     [bookScanView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self->myShelfThree).with.offset(57.36);
         make.left.equalTo(self->myShelfThree);
@@ -811,53 +699,87 @@
         make.height.equalTo(@154.49);
     }];
     
-    bookshelfArray=[[ConnectionFunction getBookShelf:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
-    
-    NSInteger size=bookshelfArray.count;
-    
-    float width=105.98*size+17.66*(size-1)+61.8;
-    
-    UIScrollView* shelfView=[[UIScrollView alloc]init];
-    
-    shelfView.contentSize=CGSizeMake(width, 154.49);
+    if (flag == NO) {
+        NSInteger size=3;
         
-    [self->bookScanView addSubview:shelfView];
-    
-    [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self->bookScanView);
-    }];
+        float width=105.98*size+17.66*(size-1)+61.8;
         
-    for (int i=0; i<size; i++) {
+        UIScrollView* shelfView=[[UIScrollView alloc]init];
         
-        double x=i*105.98+(i+1)*17.66+13.24;
-        
-        UIButton* bookShelfScanView=[[UIButton alloc]initWithFrame:CGRectMake(x, 0, 105.98, 154.49)];
-        
-        bookShelfScanView.backgroundColor=[UIColor whiteColor];
-        
-        bookShelfScanView.layer.borderWidth=1.0;
-        
-        bookShelfScanView.layer.borderColor=ssRGBHex(0x979797).CGColor;
-        
-        NSDictionary* msgForImage=[self->bookshelfArray objectAtIndex:i];
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-
-            UIImage* backImage=[LocalDataOperation getImage:[[msgForImage valueForKey:@"userBook"]
-                                                             valueForKey:@"bookId"]
-                                                    httpUrl:[msgForImage valueForKey:@"coverPicture"]];
+        shelfView.contentSize=CGSizeMake(width, 154.49);
             
-            dispatch_async(dispatch_get_main_queue(), ^{
+        [bookScanView addSubview:shelfView];
+        
+        [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(bookScanView);
+        }];
+            
+        for (int i=0; i<size; i++) {
+            
+            double x=i*105.98+(i+1)*17.66+13.24;
+            
+            UIImageView* bookShelfScanView=[[UIImageView alloc]initWithFrame:CGRectMake(x, 0, 105.98, 154.49)];
+            
+            bookShelfScanView.backgroundColor=[UIColor whiteColor];
+            
+            bookShelfScanView.layer.borderWidth=1.0;
+            
+            bookShelfScanView.layer.borderColor=ssRGBHex(0x979797).CGColor;
+
+            bookShelfScanView.image = [UIImage imageNamed:@"group_book_unlogged"];
+            
+            [shelfView addSubview:bookShelfScanView];
+           
+        }
+    }else{
+        NSInteger size=bookshelfArray.count;
+        
+        float width=105.98*size+17.66*(size-1)+61.8;
+        
+        UIScrollView* shelfView=[[UIScrollView alloc]init];
+        
+        shelfView.contentSize=CGSizeMake(width, 154.49);
+            
+        [self->bookScanView addSubview:shelfView];
+        
+        [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self->bookScanView);
+        }];
+            
+        for (int i=0; i<size; i++) {
+            
+            double x=i*105.98+(i+1)*17.66+13.24;
+            
+            UIButton* bookShelfScanView=[[UIButton alloc]initWithFrame:CGRectMake(x, 0, 105.98, 154.49)];
+            
+            bookShelfScanView.backgroundColor=[UIColor whiteColor];
+            
+            bookShelfScanView.layer.borderWidth=1.0;
+            
+            bookShelfScanView.layer.borderColor=ssRGBHex(0x979797).CGColor;
+            
+            NSDictionary* msgForImage=[self->bookshelfArray objectAtIndex:i];
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+
+                UIImage* backImage=[LocalDataOperation getImage:[[msgForImage valueForKey:@"userBook"]
+                                                                 valueForKey:@"bookId"]
+                                                        httpUrl:[msgForImage valueForKey:@"coverPicture"]];
                 
-                [bookShelfScanView setBackgroundImage:backImage forState:UIControlStateNormal];
-                
-                bookShelfScanView.tag=i;
-                
-                [bookShelfScanView addTarget:self action:@selector(pushToUnit:) forControlEvents:UIControlEventTouchUpInside];
-                
-                [shelfView addSubview:bookShelfScanView];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    
+                    [bookShelfScanView setBackgroundImage:backImage forState:UIControlStateNormal];
+                    
+                    bookShelfScanView.tag=i;
+                    
+                    [bookShelfScanView addTarget:self action:@selector(pushToUnit:) forControlEvents:UIControlEventTouchUpInside];
+                    
+                    [shelfView addSubview:bookShelfScanView];
+                });
             });
-        });
+        }
     }
+    
+    
 }
 
 -(void)action{
@@ -1223,8 +1145,9 @@
 
 #pragma mark --otherFunction
 -(void)cleanMsg{
-   
-    [bookPicView removeFromSuperview];
+    bookpicImageView.image=[UIImage imageNamed:@"group_book_learning_unlogged"];
+    [self loadBookShelfResume:NO];
+     
     [processDetails addSubview:noRecordLabel];
     [noRecordLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(self->processDetails);
@@ -1235,10 +1158,7 @@
     
     [processFixView removeFromSuperview];
     [refreshPanelProcess removeFromSuperview];
-    [bookScanView removeFromSuperview];
-    
-    [loadGifForProcess removeFromSuperview];
-    [loadGifForRecentBook removeFromSuperview];
+
     //提示框
     [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
                        animated:YES
@@ -1268,9 +1188,6 @@
         };
         
         [MyThreadPool executeJob:myblock Main:^{NSLog(@"被点击的书架的id是%@",[[[self->bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]);}];
-       
-        //    NSDictionary* dic=[ConnectionFunction getBookLearnMsg:[userInfo valueForKey:@"userKey"] Id:[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"]];
-        //    NSLog(@"新接口的信息是%@",[dic valueForKey:@"data"]);
         
         //这个接口中还没有书籍名称这一条信息，
         

@@ -63,6 +63,11 @@
     UILabel* lessontitle;
     //存放内容的句子
     NSMutableArray* titleArray;
+    //中文翻译
+    NSMutableArray* translateLabelArray;
+    //1/4标题
+    NSMutableArray* haveLearnedTipArray;
+    NSArray* learnedArray;
     //左侧图书界面
     UIScrollView* bookPicView;
     //整个下方界面
@@ -94,9 +99,7 @@
     //setting=======
     //播放次数
     NSInteger playTimes;
-    
-    //中文翻译
-    NSMutableArray* translateLabelArray;
+
     //中文翻译是否隐藏
     BOOL translateIsHided;
     //连续播放下句
@@ -124,7 +127,7 @@
     sentenceArray=[[NSArray alloc]init];
     bookPicArray=[[NSArray alloc]init];
 
-    settingArray=@[@"1",@"1",@"0",@"1",@"1"];
+    settingArray=@[@"1",@"1",@"0",@"0",@"1"];
     chooseLessonShow=settingShow=true;
     angleBtn.selected=false;
     
@@ -143,7 +146,6 @@
     [self showChooseLessonView];
     
     //录音所用
-    //self.progressView.progress = 0;
     translateIsHided = NO;
     continuePlay = NO;
     
@@ -518,10 +520,14 @@
     //清空一下存放右侧内容单元的数组，不然会影响缩放显示
     [contentArray  removeAllObjects];
     
+    NSString* picId = [[self->bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"pictureId"];
     //注意异步！
     //添加图片学习信息
-    [ConnectionFunction addUserPictureMsg:[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"pictureId"]
-                                                        UserKey:[userInfo valueForKey:@"userKey"]];
+    [MyThreadPool executeJob:^{
+        [ConnectionFunction addUserPictureMsg:picId
+                                      UserKey:[self->userInfo valueForKey:@"userKey"]];
+    } Main:^{}];
+    
     //强转一下类型，不然出来的类型对不上
     NSString* page=[NSString stringWithFormat:@"%@",[[bookPicArray objectAtIndex:sender.view.tag]valueForKey:@"page"]];
     [contentDetailScrollView removeFromSuperview];
@@ -536,6 +542,7 @@
     titleArray=[[NSMutableArray alloc]init];
     voiceArray=[[NSMutableArray alloc]init];
     translateLabelArray = [[NSMutableArray alloc]init];
+    haveLearnedTipArray = [[NSMutableArray alloc]init];
     for (NSDictionary* dic in sentenceArray) {
         if ([[NSString stringWithFormat:@"%@",[dic valueForKey:@"page"]]isEqualToString:page]) {
             [titleArray addObject:dic];
@@ -584,8 +591,8 @@
     for (int i=0; i<titleArray.count; i++) {
         NSDictionary* titleDic=titleArray[i];
         //内容的底板
-        float y=15.44*(i+1)+57.37*i;
-        content=[[UIView alloc]initWithFrame:CGRectMake(0, y, contentView.frame.size.width-156, 57.37)];
+        float y=15.44*(i+1)+63*i;
+        content=[[UIView alloc]initWithFrame:CGRectMake(0, y, contentView.frame.size.width-156, 63)];
         content.layer.backgroundColor=[UIColor whiteColor].CGColor;
         content.layer.cornerRadius=10;
         [contentDetailScrollView addSubview:content];
@@ -600,6 +607,7 @@
         progressLabel.textAlignment=NSTextAlignmentCenter;
         progressLabel.font=[UIFont systemFontOfSize:10];
         progressLabel.textColor=[UIColor whiteColor];
+        [haveLearnedTipArray addObject:progressLabel];
         [content addSubview:progressLabel];
         
         [progressLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -608,7 +616,6 @@
             make.height.equalTo(@15.44);
             make.width.equalTo(@35.32);
         }];
-
         
         //喇叭图标
         laba=[[UIImageView alloc]initWithFrame:CGRectMake(17.66, 32, 17.66, 16.55)];
@@ -618,29 +625,31 @@
         //学习内容
         UILabel* title=[[UILabel alloc]init];
         title.text=[titleDic valueForKey:@"sentenceEng"];
-        title.font=[UIFont systemFontOfSize:16];
+        title.font=[UIFont systemFontOfSize:15];
+        title.numberOfLines = 2;
         title.adjustsFontSizeToFitWidth =YES;
         [content addSubview:title];
         
         [title mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->content).with.offset(26.48);
-            make.left.equalTo(self->content).with.offset(46.36);
-            make.height.equalTo(@24.27);
-            make.right.equalTo(self->content);
+            make.top.equalTo(self->content).with.offset(22);
+            make.left.equalTo(self->content).with.offset(45);
+            make.height.equalTo(@45);
+            make.right.equalTo(content);
         }];
         
-        UILabel* translateLabel=[[UILabel alloc]initWithFrame:CGRectMake(46.36, 59.58, 200, 24.27)];
+        UILabel* translateLabel=[[UILabel alloc]init];
         translateLabel.text=[titleDic valueForKey:@"sentenceChn"];
-        translateLabel.font=[UIFont systemFontOfSize:16];
+        translateLabel.font=[UIFont systemFontOfSize:14];
+        translateLabel.numberOfLines = 2;
         translateLabel.adjustsFontSizeToFitWidth =YES;
         [translateLabelArray addObject:translateLabel];
         if (!translateIsHided) {
             [content addSubview:translateLabel];
             
             [translateLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-                make.top.equalTo(self->content).with.offset(59.58);
-                make.left.equalTo(self->content).with.offset(46.36);
-                make.height.equalTo(@24.27);
+                make.top.equalTo(self->content).with.offset(70);
+                make.left.equalTo(self->content).with.offset(40);
+                make.height.equalTo(@35);
                 make.right.equalTo(self->content);
             }];
         }
@@ -655,6 +664,26 @@
         content.tag=i;
         [contentArray addObject:content];
     }
+    
+    ConBlock jobBlock = ^(NSDictionary* dic){
+       self->learnedArray = [dic valueForKey:@"data"];//可能为nsnull
+        if (self->learnedArray.count) {
+             [self->learnedArray enumerateObjectsUsingBlock:^(id  _Nonnull obj1, NSUInteger idx, BOOL * _Nonnull stop) {
+               [self->titleArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                   if ([[obj1 valueForKey:@"sentenceId"]isEqualToString:[obj valueForKey:@"sentenceId"]]) {
+                       UILabel* label = [self->haveLearnedTipArray objectAtIndex:idx];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                           label.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
+                        });
+                   }
+               }];
+            }];
+        }
+    };
+    [MyThreadPool executeJob:^{
+       [ConnectionFunction getUserSentenceMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"] ConBlock:jobBlock];
+    } Main:^{}];
+
 }
 //点击内容展示收缩
 -(void)clickContent:(UITapGestureRecognizer*)sender{
@@ -700,8 +729,6 @@
         }
         //1.获取原始的frame
         CGRect originFrame = label.frame;
-        //获取label中n/n的标签，一会用于变颜色
-        UILabel* progressLabel=label.subviews[0];
         
         UIView* labaView ;
         //获取喇叭图标
@@ -760,7 +787,8 @@
                 label.frame = originFrame;
             }
             flag=false;
-    
+         
+            UILabel* progressLabel = label.subviews[0];
             progressLabel.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
             
             //把喇叭换成动图
@@ -782,7 +810,6 @@
             
         }
         else{
-            progressLabel.layer.backgroundColor=ssRGBHex(0x9B9B9B).CGColor;
             //非点击的按钮恢复原状态
             if (originFrame.size.height>=167.71) {
                 originFrame.size.height -= 110.34;
@@ -831,7 +858,7 @@
 -(void)initSettingView{
     //整体灰色背景
     settingView=[[UIView alloc]init];
-    settingView.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    
     //上部分白色背景
     UILabel* settingLabel=[[UILabel alloc]init];
     settingLabel.backgroundColor=[UIColor whiteColor];
@@ -844,6 +871,20 @@
         make.left.equalTo(self->settingView);
         make.right.equalTo(self->settingView);
         make.height.equalTo(@180);
+    }];
+    
+    //下部分灰色背景
+    UIView* settingGray=[[UIView alloc]init];
+    settingGray.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    UITapGestureRecognizer* cancelGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(cancelSetting)];
+    [settingGray addGestureRecognizer:cancelGesture];
+    [settingView addSubview:settingGray];
+
+    [settingGray mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.top.equalTo(settingLabel.mas_bottom);
+       make.left.equalTo(self->settingView);
+       make.right.equalTo(self->settingView);
+       make.height.equalTo(self->settingView);
     }];
     
     //左侧标题数组  ,@"播放时间间隔",@"播放中文语音"
@@ -966,6 +1007,9 @@
     }
     
 }
+-(void)cancelSetting{
+    [settingView removeFromSuperview];
+}
 
 //点击各种设置的处理函数
 -(void)actionOfAutoPlay:(UIButton*)btn{
@@ -1006,6 +1050,12 @@
             for (int i = 0; i < contentArray.count ; i++) {
                 UIView *view = [contentArray objectAtIndex:i];
                 [view addSubview:[translateLabelArray objectAtIndex:i]];
+                [[translateLabelArray objectAtIndex:i] mas_makeConstraints:^(MASConstraintMaker *make) {
+                  make.top.equalTo(view).with.offset(75);
+                  make.left.equalTo(view).with.offset(46.36);
+                  make.height.equalTo(@24.27);
+                  make.right.equalTo(view);
+                }];
             }
             translateIsHided = NO;
         }
@@ -1100,7 +1150,7 @@
     [MyThreadPool executeJob:^{
         [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
     } Main:^{}];
-
+    
     [lessontitle removeFromSuperview];
     
     [self presentLessionView];

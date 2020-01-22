@@ -37,7 +37,6 @@
     //自定义问题答案界面
     TestFunctions* questionAndAnswerView;
     
-    
     BOOL showSetting;
     BOOL chooseLessonShow;
     //答案是否可选
@@ -60,7 +59,6 @@
     
     //记录当前测试坐标
     int testFlag;
-    
     
     //上一题下一题按钮
     UIButton* nextSubBtn;
@@ -513,7 +511,26 @@
         make.right.equalTo(self->settingView);
         make.height.equalTo(@213);
     }];
+    
+    //下部分灰色背景
+    UIView* settingGray=[[UIView alloc]init];
+    settingGray.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+    UITapGestureRecognizer* cancelGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(cancelSetting)];
+    [settingGray addGestureRecognizer:cancelGesture];
+    [settingView addSubview:settingGray];
+
+    [settingGray mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.top.equalTo(settingList.mas_bottom);
+       make.left.equalTo(self->settingView);
+       make.right.equalTo(self->settingView);
+       make.height.equalTo(self->settingView);
+    }];
 }
+
+-(void)cancelSetting{
+    [settingView removeFromSuperview];
+}
+
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }

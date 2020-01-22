@@ -428,12 +428,11 @@
 
 
 //用户书本学习信息
-+(NSDictionary*)getBookLearnMsg:(NSString*)userkey Id:(NSString*)bookId{
++(void)getBookLearnMsg:(NSString*)userkey Id:(NSString*)bookId Block:(ConBlock)block{
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"user_bookinfo"];
     url=[url URLByAppendingPathComponent:bookId];
-    NSDictionary* dataDic=[self threadGetRequestWithHead:userkey Path:url];
-    return dataDic;
+    [self getRequestWithHeadWithBlock:userkey Path:url Block:block];
 }
 
 
@@ -447,13 +446,12 @@
     return dataDic;
 }
 
-//获取用户句子学习信息记录   显示用户句子以前读的分数的
-+(NSDictionary*)getUserSentenceMsg:(NSString*)sentenceId UserKey:(NSString*)userkey{
+//获取用户句子学习信息记录   但是传参传课本id
++(void)getUserSentenceMsg:(NSString*)articleId UserKey:(NSString*)userkey ConBlock:(ConBlock)block{
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"user_sentence"];
-    url=[url URLByAppendingPathComponent:sentenceId];
-    NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
-    return dataDic;
+    url=[url URLByAppendingPathComponent:articleId];
+    [self getRequestWithHeadWithBlock:userkey Path:url Block:block];
 }
 
 //获取用户图片学习进度信息
@@ -717,6 +715,7 @@
 }
 
 +(NSDictionary*)postRequestWithHead:(NSURL*)url Head:(NSString*)headMsg{
+    NSLog(@"post-url:%@",url);
     NSURLSession *session=[NSURLSession sharedSession];
     NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
     

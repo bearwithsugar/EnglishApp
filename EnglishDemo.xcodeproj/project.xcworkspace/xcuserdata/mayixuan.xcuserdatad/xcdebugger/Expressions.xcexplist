@@ -90,6 +90,20 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "-[WrongNotesViewController addQAview]:WrongNotesViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__39-[RechargeViewController refreshXuefen]_block_invoke:RechargeViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "str">
+            </PersistentString>
+            <PersistentString
+               value = "dictionary valueForKey:@&quot;data&quot;">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__27-[VoiceChooseChn playVoice]_block_invoke:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
@@ -107,21 +121,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "__39-[RechargeViewController refreshXuefen]_block_invoke:RechargeViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "str">
-            </PersistentString>
-            <PersistentString
-               value = "dictionary valueForKey:@&quot;data&quot;">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[MyShelfViewController clickBook:]:MyShelfViewController.m">
-      </ContextState>
-      <ContextState
-         contextName = "-[WrongNotesViewController addQAview]:WrongNotesViewController.m">
+         contextName = "+[WordsListFunction getWordsList:UserKey:]:WordsListFunction.m">
       </ContextState>
       <ContextState
          contextName = "__32+[AgentFunction isTokenExpired:]_block_invoke:AgentFunction.m">
@@ -132,7 +132,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "+[WordsListFunction getWordsList:UserKey:]:WordsListFunction.m">
+         contextName = "-[MyShelfViewController clickBook:]:MyShelfViewController.m">
       </ContextState>
       <ContextState
          contextName = "__28-[VoiceChooseChn answerView]_block_invoke.74:VoiceChooseChn.m">
@@ -181,10 +181,10 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "-[TestFunctions wrongFrom]:TestFunctions.m">
+         contextName = "__40-[MyShelfViewController viewWillAppear:]_block_invoke_3:MyShelfViewController.m">
       </ContextState>
       <ContextState
-         contextName = "__40-[MyShelfViewController viewWillAppear:]_block_invoke_3:MyShelfViewController.m">
+         contextName = "-[TestFunctions wrongFrom]:TestFunctions.m">
       </ContextState>
       <ContextState
          contextName = "-[WordsTestViewController initData]:WordsTestViewController.m">
@@ -205,6 +205,14 @@
       </ContextState>
       <ContextState
          contextName = "__38-[LearningViewController loadAudioMsg]_block_invoke:LearningViewController.m">
+      </ContextState>
+      <ContextState
+         contextName = "__49-[LearningViewController learningContent:PicTag:]_block_invoke_5:LearningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "titleArray">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
       <ContextState
          contextName = "__28-[VoiceChooseChn answerView]_block_invoke.77:VoiceChooseChn.m">
@@ -238,6 +246,9 @@
       </ContextState>
       <ContextState
          contextName = "+[ConnectionFunction getTestWordMsg:UserKey:]:ConnectionFunction.m">
+      </ContextState>
+      <ContextState
+         contextName = "__74-[LearningViewController showContent:senArray:classId:unitName:className:]_block_invoke_2:LearningViewController.m">
       </ContextState>
       <ContextState
          contextName = "__67-[WordsTestViewController showContent:className:testArray:classId:]_block_invoke:WordsTestViewController.m">

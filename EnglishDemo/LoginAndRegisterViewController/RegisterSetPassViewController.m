@@ -10,6 +10,7 @@
 #import "../Functions/ConnectionFunction.h"
 #import "../Common/HeadView.h"
 #import "../Functions/WarningWindow.h"
+#import "LoginViewController.h"
 #import "Masonry.h"
 #import <objc/runtime.h>
 
@@ -17,6 +18,7 @@
 {
     UITextField* passwordTextField;
     UITextField* passwordDefineTextField;
+    LoginViewController* loginViewController;
 }
 
 @end
@@ -177,5 +179,11 @@
     [self.navigationController popViewControllerAnimated:true];
 }
 
+-(void)pushToLogin{
+    if(![self.navigationController.topViewController isKindOfClass:[loginViewController class]]) {
+        loginViewController = [[LoginViewController alloc]init];
+    }
+    [self.navigationController pushViewController:loginViewController animated:true];
+}
 
 @end

@@ -74,7 +74,7 @@ typedef void (^ConBlock) (NSDictionary*);
 +(NSDictionary*)recentLearnMsgByBook:(NSString*)userkey Id:(NSString*)bookId;
 
 //用户书本学习信息
-+(NSDictionary*)getBookLearnMsg:(NSString*)userkey Id:(NSString*)bookId;
++(void)getBookLearnMsg:(NSString*)userkey Id:(NSString*)bookId Block:(ConBlock)block;
 
 // 添加错题信息
 +(NSDictionary*)addWrongMsg:(NSString*)userkey Id:(NSString*)wrongId  Type:(NSString*)type;
@@ -90,8 +90,8 @@ typedef void (^ConBlock) (NSDictionary*);
 
 //待测试
 
-//获取用户句子学习信息记录
-+(NSDictionary*)getUserSentenceMsg:(NSString*)sentenceId UserKey:(NSString*)userkey;
+//获取用户句子学习信息记录   但是传参传课本id
++(void)getUserSentenceMsg:(NSString*)articleId UserKey:(NSString*)userkey ConBlock:(ConBlock)block;
 
 //获取用户图片学习进度信息
 +(NSDictionary*)getUserPictureMsg:(NSString*)pictureId UserKey:(NSString*)userkey;

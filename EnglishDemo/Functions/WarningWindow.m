@@ -90,6 +90,20 @@
     return alert;
 }
 
+//执行代码块
++(UIAlertController*)MsgWithBlock:(NSString*)message Block:(JobBlock)block{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"我知道了" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        block();
+        
+    }];
+    
+    [alert addAction:action1];
+    
+    return alert;
+}
 
 
 @end

@@ -97,28 +97,28 @@
         make.centerX.equalTo(self->surfaceView);
     }];
     
-    UIButton* pushHeadBtn=[[UIButton alloc]init];
-    pushHeadBtn.layer.cornerRadius=55;
-    //把多余部分去掉
-    pushHeadBtn.layer.masksToBounds = YES;
-    [pushHeadBtn setTitle:@"点击上传" forState:UIControlStateNormal];
-    UIImage* backImg=[BackgroundImageWithColor imageWithColor:[UIColor blackColor]];
-    [pushHeadBtn setBackgroundImage:[BackgroundImageWithColor imageByApplyingAlpha:0.5 image:backImg] forState:UIControlStateNormal];
-    [pushHeadBtn addTarget:self action:@selector(pushTheHeadPic) forControlEvents:UIControlEventTouchUpInside];
-    [surfaceView addSubview:pushHeadBtn];
-    
-    [pushHeadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->surfaceView).with.offset(90);
-        make.height.equalTo(@110);
-        make.width.equalTo(@110);
-        make.centerX.equalTo(self->surfaceView.mas_centerX);
-    }];
+//    UIButton* pushHeadBtn=[[UIButton alloc]init];
+//    pushHeadBtn.layer.cornerRadius=55;
+//    //把多余部分去掉
+//    pushHeadBtn.layer.masksToBounds = YES;
+//    [pushHeadBtn setTitle:@"点击上传" forState:UIControlStateNormal];
+//    UIImage* backImg=[BackgroundImageWithColor imageWithColor:[UIColor blackColor]];
+//    [pushHeadBtn setBackgroundImage:[BackgroundImageWithColor imageByApplyingAlpha:0.5 image:backImg] forState:UIControlStateNormal];
+//    [pushHeadBtn addTarget:self action:@selector(pushTheHeadPic) forControlEvents:UIControlEventTouchUpInside];
+//    [surfaceView addSubview:pushHeadBtn];
+//    
+//    [pushHeadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(self->surfaceView).with.offset(90);
+//        make.height.equalTo(@110);
+//        make.width.equalTo(@110);
+//        make.centerX.equalTo(self->surfaceView.mas_centerX);
+//    }];
 }
--(void)pushTheHeadPic{
-    
-    [self warnMsg:@"此功能暂未开放"];
-    return;
-}
+//-(void)pushTheHeadPic{
+//
+//    [self warnMsg:@"此功能暂未开放"];
+//    return;
+//}
 #pragma mark <2>相册协议中方法，选中某张图片后调用方法
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {

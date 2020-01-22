@@ -84,7 +84,6 @@
     passwordTextField=[[UITextField alloc]init];
     passwordTextField.placeholder=@"请输入登录密码";
     passwordTextField.text=@"";
-    //[passwordTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     Ivar ivar2 =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
     UILabel *placeholderLabel2 = object_getIvar(passwordTextField, ivar2);
     placeholderLabel2.font = [UIFont boldSystemFontOfSize:12];
@@ -187,16 +186,22 @@
         make.height.equalTo(@19);
     }];
     
-    [MyThreadPool executeJob:^{
-        if ([DocuOperate fileExistInPath:@"password.plist"]) {
-            self->userDic = [DocuOperate readFromPlist:@"password.plist"];
-        }
-    } Main:^{
-        if (self->userDic!=nil) {
-            self->usernameTextField.text = [self->userDic valueForKey:@"username"];
-            self->passwordTextField.text = [self->userDic valueForKey:@"password"];
-        }
-    }];
+    if (_userText!=nil && _passText!=nil) {
+        usernameTextField.text = _userText;
+        passwordTextField.text = _passText;
+        _userText = _passText = nil;
+    }else{
+        [MyThreadPool executeJob:^{
+            if ([DocuOperate fileExistInPath:@"password.plist"]) {
+                self->userDic = [DocuOperate readFromPlist:@"password.plist"];
+            }
+        } Main:^{
+            if (self->userDic!=nil) {
+                self->usernameTextField.text = [self->userDic valueForKey:@"username"];
+                self->passwordTextField.text = [self->userDic valueForKey:@"password"];
+            }
+        }];
+    }
 }
 
 - (void)changePassVisible:(UIButton *)button{

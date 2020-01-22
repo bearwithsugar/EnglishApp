@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WarningWindow : NSObject
 
+typedef void (^JobBlock) (void);
+
 //跳转到登录界面的警告 选项为跳转和取消
 +(UIAlertController*)transToLoginWithCancel:(NSString*)message Navigation:(UINavigationController*)navigation;
 
@@ -24,6 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 //退出程序
 +(UIAlertController*)ExitAPP:(NSString*)message;
+
+//执行代码块
++(UIAlertController*)MsgWithBlock:(NSString*)message Block:(JobBlock)block;
+
+@property JobBlock myblock1;
+@property JobBlock myblock2;
+
 
 
 @end

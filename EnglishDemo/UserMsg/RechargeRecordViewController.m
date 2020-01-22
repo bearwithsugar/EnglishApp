@@ -11,6 +11,7 @@
 #import "../Functions/ConnectionFunction.h"
 #import "../DiyGroup/OrderTableViewCell.h"
 #import "../DiyGroup/UnloginMsgView.h"
+#import "../Functions/WarningWindow.h"
 #import "../Common/HeadView.h"
 #import "Masonry.h"
 
@@ -33,7 +34,13 @@
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
         orderDic=[[ConnectionFunction orderMsg:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-        [self rechargeMsg];
+        if (orderDic.count == 0) {
+            [self presentViewController:[WarningWindow MsgWithBlock:@"您还未充值，暂无记录！" Block:^{
+                [self popBack];
+            }] animated:YES completion:nil];
+        }else{
+            [self rechargeMsg];
+        }
     }
     else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
