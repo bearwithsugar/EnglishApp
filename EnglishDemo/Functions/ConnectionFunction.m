@@ -336,16 +336,13 @@
 
 //获取用户第三方绑定信息
 
-+(NSDictionary*)getBindingMsg:(NSString*)userkey{
++(void)getBindingMsg:(NSString*)userkey Block:(ConBlock)block{
     
     NSURL* url=[FixValues getUrl];
     
     url=[url URLByAppendingPathComponent:@"/account/binding"];
     
-    NSDictionary* dataDic=[self getRequestWithHead:userkey Path:url];
-    
-    return dataDic;
-    
+    [self getRequestWithHeadWithBlock:userkey Path:url Block:block];
 }
 
 #pragma mark --测试模块
@@ -902,7 +899,7 @@
 +(NSDictionary*)deleteRequestWithHead:(NSURL*)url Head:(NSString*)headMsg{
     NSURLSession *session=[NSURLSession sharedSession];
     NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
-    
+    NSLog(@"delete-url:%@",url);
     //添加请求头
     NSDictionary *headers = @{ @"English-user": headMsg};
     [request setHTTPMethod:@"DELETE"];

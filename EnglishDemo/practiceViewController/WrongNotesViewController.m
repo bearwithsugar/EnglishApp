@@ -132,7 +132,6 @@
         self->wordArray=[resultDic valueForKey:@"bookWordInfos"];
         self->sentenceArray=[resultDic valueForKey:@"bookSentenceInfos"];
            
-           
         for (NSDictionary* dic in self->wordArray) {
             [self->testArray addObject:dic];
            }
@@ -148,13 +147,26 @@
             self->processTip.text=[present stringByAppendingString:total];
 
             if ([self->testArray isKindOfClass:[NSNull class]]||self->testArray.count==0) {
-                [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还没有错题!先去做题吧！"] animated:YES completion:nil];
+                [self presentViewController:[WarningWindow MsgWithBlock:@"您还没有错题!先去做题吧！" Block:^{
+                    [self popBack];
+                }] animated:YES completion:nil];
                 [SVProgressHUD dismiss];
             }else{
                //加载内容
                 dispatch_async(dispatch_get_main_queue(), ^{
                      [self addQAview];
                      [SVProgressHUD dismiss];
+                    if (self->testFlag==0) {
+                        [self->lastSubBtn setBackgroundColor:ssRGBHex(0x9B9B9B)];
+                    }else{
+                        [self->lastSubBtn setBackgroundColor:ssRGBHex(0xF5A623)];
+                    }
+                    
+                    if (self->testFlag==self->testArray.count-1 && self->testArray.count!=0) {
+                        [self->nextSubBtn setBackgroundColor:ssRGBHex(0x9B9B9B)];
+                    }else{
+                        [self->nextSubBtn setBackgroundColor:ssRGBHex(0xF5A623)];
+                    }
                 });
               
             }
@@ -166,7 +178,7 @@
     [SVProgressHUD show];
     [MyThreadPool executeJob:^{
         [ConnectionFunction getWrongMsgWithBlock:[self->userInfo valueForKey:@"userKey"] Id:self->_recentBookId Block:myBlock];
-    } Main:^{}];
+    } Main:^{    }];
 }
 
 //标题栏显示
@@ -203,7 +215,7 @@
     UIButton* returnBtn=[[UIButton alloc]init];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateNormal];
     [returnBtn setBackgroundImage:[UIImage imageNamed:@"icon_return_ffffff"] forState:UIControlStateHighlighted];
-    [returnBtn addTarget:self action:@selector(popBack:) forControlEvents:UIControlEventTouchUpInside];
+    [returnBtn addTarget:self action:@selector(popBack) forControlEvents:UIControlEventTouchUpInside];
     [touchField addSubview:returnBtn];
     
     [returnBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -213,7 +225,7 @@
         make.height.equalTo(@22.62);
     }];
     
-    UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack:)];
+    UITapGestureRecognizer* touchFunc=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(popBack)];
     [touchField addGestureRecognizer:touchFunc];
 
     
@@ -244,11 +256,6 @@
     }];
     
     lastSubBtn=[[UIButton alloc]init];
-    if (testFlag==0) {
-        [lastSubBtn setBackgroundColor:ssRGBHex(0x9B9B9B)];
-    }else{
-        [lastSubBtn setBackgroundColor:ssRGBHex(0xF5A623)];
-    }
     lastSubBtn.layer.cornerRadius=8;
     [lastSubBtn setTitle:@"上一题" forState:UIControlStateNormal];
     lastSubBtn.titleLabel.font=[UIFont systemFontOfSize:10];
@@ -264,11 +271,6 @@
     }];
     
     nextSubBtn=[[UIButton alloc]init];
-    if (testFlag==testArray.count-1 && testArray.count!=0) {
-        [nextSubBtn setBackgroundColor:ssRGBHex(0x9B9B9B)];
-    }else{
-        [nextSubBtn setBackgroundColor:ssRGBHex(0xF5A623)];
-    }
     nextSubBtn.layer.cornerRadius=8;
     [nextSubBtn setTitle:@"下一题" forState:UIControlStateNormal];
     nextSubBtn.titleLabel.font=[UIFont systemFontOfSize:10];
@@ -317,10 +319,7 @@
         }
         lastSubBtn.backgroundColor=ssRGBHex(0xF5A623);
         lastclickable=true;
-        
     }
-    
-    
 }
 //上一题点击事件
 -(void)lastSubject:(UIButton*)btn{
@@ -338,7 +337,6 @@
         }
         nextSubBtn.backgroundColor=ssRGBHex(0xF5A623);
         nextclickable=true;
-     
     }
 }
 
@@ -484,7 +482,8 @@
     
 }
 
--(void)popBack:(UITapGestureRecognizer*)sender{
+-(void)popBack{
+    [testArray removeAllObjects];
     [settingView removeFromSuperview];
     [self.navigationController popViewControllerAnimated:true];
     [self->voiceplayer stopPlay];

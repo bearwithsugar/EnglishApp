@@ -21,7 +21,7 @@
           TestType:(NSString*)testType
           UserInfo:(NSDictionary*)userInfo
            BookId:(NSString*)bookId
-             View:(UIViewController*)controller
+             View:(UIViewController<UITextFieldDelegate>*)controller
 {
     if (self=[super init]) {
         _testFlag=testFlag;

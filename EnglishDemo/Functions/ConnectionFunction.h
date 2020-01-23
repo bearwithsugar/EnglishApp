@@ -63,7 +63,7 @@ typedef void (^ConBlock) (NSDictionary*);
 +(NSDictionary*)modifyUserMsg:(NSString*)nickname UserKey:(NSString*)userkey Phone:(NSString*)phone Password:(NSString*)password;
 
 //获取用户第三方绑定信息
-+(NSDictionary*)getBindingMsg:(NSString*)userkey;
++(void)getBindingMsg:(NSString*)userkey Block:(ConBlock)block;
 
 //版本信息
 +(NSDictionary*)getVersionMsg :(NSString*)userkey;

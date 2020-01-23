@@ -292,7 +292,7 @@
                       [ConnectionFunction deleteWrongMsg:[super.userInfo valueForKey:@"userKey"]
                                                    ContentId:[NSString stringWithFormat:@"%@",
                                                               [[[super.testArray objectAtIndex:super.testFlag]
-                                                               valueForKey:@"bookWord"]valueForKey:@"sentenceId"]
+                                                               valueForKey:@"bookSentence"]valueForKey:@"sentenceId"]
                                                               ]];
                      super.testFlag-=1;
                       NSLog(@"错题添加结果%@",dic);

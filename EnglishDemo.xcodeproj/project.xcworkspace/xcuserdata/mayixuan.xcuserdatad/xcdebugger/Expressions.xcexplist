@@ -50,6 +50,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "-[WrongNotesViewController lastAndNext]:WrongNotesViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "testArray.count">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
          <PersistentStrings>
             <PersistentString
