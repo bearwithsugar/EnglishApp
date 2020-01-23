@@ -1172,6 +1172,7 @@
 
 #pragma mark --otherFunction
 -(void)cleanMsg{
+    recentBook = nil;
     bookpicImageView.image=[UIImage imageNamed:@"group_book_learning_unlogged"];
     [self loadBookShelfResume:NO];
      
@@ -1225,12 +1226,11 @@
         [self.navigationController pushViewController:unitMsg animated:true];
     }
     
-   
-    
-    
-    
 }
 -(void)recentBookPushToUnit{
+    if (recentBook == nil) {
+        return;
+    }
     if (unitMsg==nil) {
         unitMsg = [[UnitViewController alloc]init];
     }

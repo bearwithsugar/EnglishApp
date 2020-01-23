@@ -223,15 +223,15 @@
         
         UIButton* modifyUserMsg=[[UIButton alloc]init];
         [modifyUserMsg setTitle:@"修改个人信息" forState:UIControlStateNormal];
-        modifyUserMsg.titleLabel.font=[UIFont systemFontOfSize:12];
+        modifyUserMsg.titleLabel.font=[UIFont systemFontOfSize:15];
         [modifyUserMsg addTarget:self action:@selector(modifyUser) forControlEvents:UIControlEventTouchUpInside];
         [headPicView addSubview:modifyUserMsg];
         
         [modifyUserMsg mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->headPicView).with.offset(40);
+            make.top.equalTo(self->headPicView).with.offset(35);
             make.right.equalTo(self->headPicView).with.offset(-15);
-            make.width.equalTo(@88.32);
-            make.height.equalTo(@24);
+            make.width.equalTo(@95);
+            make.height.equalTo(@25);
         }];
         
         UIButton* loginOut=[[UIButton alloc]init];

@@ -308,6 +308,7 @@
     str=[str stringByAppendingString:phone];
     str=[str stringByAppendingString:@"&password="];
     str=[str stringByAppendingString:password];
+    str=[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
     url=[NSURL URLWithString:str];
     
     NSDictionary* dataDic=[self putRequestWithHead:url Head:userkey];

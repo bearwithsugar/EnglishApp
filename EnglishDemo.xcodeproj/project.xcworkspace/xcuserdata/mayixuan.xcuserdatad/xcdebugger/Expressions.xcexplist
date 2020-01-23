@@ -204,6 +204,14 @@
          contextName = "-[WordsListeningViewController showContent:className:wordsArray:classId:]:WordsListeningViewController.m">
       </ContextState>
       <ContextState
+         contextName = "-[ViewController recentBookPushToUnit]:ViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "recentBook">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__38-[LearningViewController loadAudioMsg]_block_invoke:LearningViewController.m">
       </ContextState>
       <ContextState
@@ -211,6 +219,14 @@
          <PersistentStrings>
             <PersistentString
                value = "titleArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__46+[ConnectionFunction putRequestWithHead:Head:]_block_invoke:ConnectionFunction.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "url">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
