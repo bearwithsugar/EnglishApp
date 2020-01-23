@@ -150,6 +150,7 @@
         
         if ([[dic valueForKey:@"message"]isEqualToString:@"success"]) {
             [self popBack];
+            [self pushToLogin];
         }else{
             [self presentViewController: [WarningWindow MsgWithoutTrans:[dic valueForKey:@"message"]] animated:YES completion:nil];
         }
@@ -182,6 +183,8 @@
 -(void)pushToLogin{
     if(![self.navigationController.topViewController isKindOfClass:[loginViewController class]]) {
         loginViewController = [[LoginViewController alloc]init];
+        loginViewController.userText = _phoneNumber;
+        loginViewController.passText = passwordTextField.text;
     }
     [self.navigationController pushViewController:loginViewController animated:true];
 }

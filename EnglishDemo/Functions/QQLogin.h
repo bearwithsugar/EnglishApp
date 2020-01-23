@@ -13,8 +13,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface QQLogin : NSObject
-//获取单例
-+(QQLogin*)getInstance;
+
+@property(nonatomic,copy)NSString* type;
+
+-(id)initWithtype:(NSString*)type;
 
 //qq登录启动
 -(void)toQQlogin;

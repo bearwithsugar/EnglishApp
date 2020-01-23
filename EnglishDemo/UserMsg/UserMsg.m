@@ -60,7 +60,7 @@
     saintArray=[NSArray arrayWithContentsOfFile:path];
     self.view.backgroundColor=[UIColor whiteColor];
     
-    qqlogin=[QQLogin getInstance];
+    qqlogin=[[QQLogin alloc]init];
     [self userTitle];
     
 }

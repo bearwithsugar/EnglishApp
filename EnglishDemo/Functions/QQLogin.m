@@ -21,31 +21,24 @@
 }
 @property (nonatomic, strong) TencentOAuth *tencentOAuth;
 @end
- QQLogin *qqlogin;
+
 @implementation QQLogin
 
-//获取单例
-+(QQLogin*)getInstance{
-    if (qqlogin==nil) {
-        qqlogin=[[QQLogin alloc]init];
+-(id)initWithtype:(NSString*)type{
+    if (self == [super init]) {
+        _type = type;
     }
-    return qqlogin;
+    return self;
 }
 
 //qq登录启动
 -(void)toQQlogin{
-//    if ([QQApiInterface isQQInstalled] && [QQApiInterface isQQSupportApi])
-//    {
-        NSArray* permissions = [self getPermissions];
-        //授权列表数组 根据实际需要添加
-        _tencentOAuth = [[TencentOAuth alloc]initWithAppId:@"101537865" andDelegate:self];
-        _tencentOAuth.redirectURI = @"";
-        _tencentOAuth.authShareType = AuthShareType_QQ;
-        [_tencentOAuth authorize:permissions inSafari:NO];
-        
-//    }else{
-//        [[FixValues navigationViewController] presentViewController: [WarningWindow MsgWithoutTrans:@"您的手机未安装qq！"] animated:YES completion:nil];
-//    }
+    NSArray* permissions = [self getPermissions];
+    //授权列表数组 根据实际需要添加
+    _tencentOAuth = [[TencentOAuth alloc]initWithAppId:@"101537865" andDelegate:self];
+    _tencentOAuth.redirectURI = @"";
+    _tencentOAuth.authShareType = AuthShareType_QQ;
+    [_tencentOAuth authorize:permissions inSafari:NO];
 }
 
 //========================================================
@@ -54,7 +47,11 @@
     NSLog(@"respons:%@",response.jsonResponse);
     userMsg=[[NSDictionary alloc]initWithDictionary:response.jsonResponse];
     NSLog(@"userMsg的内容是%@",userMsg);
-    [self qqLoginReturnMsg];
+    if ([_type isEqualToString:@"FORLOGIN"]) {
+        [self qqLoginReturnMsg];
+    }else if([_type isEqualToString:@"FORBAND"]){
+        [self qqLoginReturnMsgforBand];
+    }
 }
 -(void)qqLoginReturnMsg{
     NSDictionary* qqLoginDic=[ConnectionFunction OtherLogin:_tencentOAuth.openId
@@ -84,6 +81,9 @@
                                            Type:@"other"
                                         UserMsg:userMsg] animated:YES completion:nil];
     }
+}
+-(void)qqLoginReturnMsgforBand{
+    
 }
 //强制登录专用提示框
 -(UIAlertController*)forceLogin:(NSString*)message Openid:(NSString*)openid Type:(NSString*)type UserMsg:(NSDictionary*)usermsg{
