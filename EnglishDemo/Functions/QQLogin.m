@@ -21,16 +21,15 @@
 }
 @property (nonatomic, strong) TencentOAuth *tencentOAuth;
 @end
-
+ QQLogin *qqlogin;
 @implementation QQLogin
-
--(id)initWithtype:(NSString*)type{
-    if (self == [super init]) {
-        _type = type;
+//获取单例
++(QQLogin*)getInstance{
+    if (qqlogin==nil) {
+        qqlogin=[[QQLogin alloc]init];
     }
-    return self;
+    return qqlogin;
 }
-
 //qq登录启动
 -(void)toQQlogin{
     NSArray* permissions = [self getPermissions];
@@ -83,7 +82,7 @@
     }
 }
 -(void)qqLoginReturnMsgforBand{
-    
+    NSLog(@"usermsg%@",userMsg);
 }
 //强制登录专用提示框
 -(UIAlertController*)forceLogin:(NSString*)message Openid:(NSString*)openid Type:(NSString*)type UserMsg:(NSDictionary*)usermsg{
@@ -116,7 +115,6 @@
 
 - (void)tencentDidLogin {
     [_tencentOAuth getUserInfo];
-    
     if (_tencentOAuth.accessToken && 0 != [_tencentOAuth.accessToken length]) {
         // 记录登录用户的OpenID、Token以及过期时间
     } else {

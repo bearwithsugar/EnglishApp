@@ -13,6 +13,8 @@
 #import "../Functions/LocalDataOperation.h"
 #import "../Functions/BackgroundImageWithColor.h"
 #import "../Functions/DocuOperate.h"
+#import "../Functions/QQLogin.h"
+#import "../Functions/MyThreadPool.h"
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Common/HeadView.h"
 #import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
@@ -24,8 +26,12 @@
     UITextField* nicknameTextField;
     UITextField* phoneTextField;
     UIImageView* headPic;
-    NSDictionary* binding;
     UIView* surfaceView;
+    
+    NSDictionary* binding;
+    
+    UIButton* wechatBond;
+    UIButton* QQBond;
     
 }
 
@@ -56,6 +62,7 @@
         [self headPicView];
         [self detailMsg];
         [self defineBtn];
+        [self loadData];
     }else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
         [self.view addSubview:unloginView];
@@ -232,7 +239,7 @@
     wechatLabel.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:wechatLabel];
     
-    UIButton* wechatBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 350, 100, 49)];
+    wechatBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 350, 100, 49)];
     [wechatBond removeFromSuperview];
     wechatBond.titleLabel.font=[UIFont systemFontOfSize:14];
     [wechatBond setTitle:@"未绑定" forState:UIControlStateNormal];
@@ -250,9 +257,10 @@
     qqLabel.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:qqLabel];
     
-    UIButton* QQBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
+    QQBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
     [QQBond removeFromSuperview];
     [QQBond setTitle:@"未绑定" forState:UIControlStateNormal];
+    [QQBond addTarget:self action:@selector(QQBand) forControlEvents:UIControlEventTouchUpInside];
     QQBond.titleLabel.font=[UIFont systemFontOfSize:14];
     [QQBond setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
     [surfaceView addSubview:QQBond];
@@ -262,21 +270,24 @@
     lineView4.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView4.layer.borderWidth=1;
     [surfaceView addSubview:lineView4];
-    
-    binding = [[ConnectionFunction getBindingMsg:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-    if(binding != NULL){
-        NSString* qq = [NSString stringWithFormat:@"%@",[binding valueForKey:@"qq"]];
-        NSString* weixin = [NSString stringWithFormat:@"%@",[binding valueForKey:@"weixin"]];
-        if (![qq isEqualToString:@"0"]) {
-            [QQBond setTitle:@"已绑定" forState:UIControlStateNormal];
-            [QQBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+}
+-(void)loadData{
+    ConBlock jobBlock = ^(NSDictionary* resultDic){
+        self->binding = [resultDic valueForKey:@"data"];
+        if(self->binding != NULL){
+            NSString* qq = [NSString stringWithFormat:@"%@",[self->binding valueForKey:@"qq"]];
+            NSString* weixin = [NSString stringWithFormat:@"%@",[self->binding valueForKey:@"weixin"]];
+            if (![qq isEqualToString:@"0"]) {
+                [self->QQBond setTitle:@"已绑定" forState:UIControlStateNormal];
+                [self->QQBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+            }
+            if (![weixin isEqualToString:@"0"]) {
+                [self->wechatBond setTitle:@"已绑定" forState:UIControlStateNormal];
+                [self->wechatBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+            }
         }
-        if (![weixin isEqualToString:@"0"]) {
-            [wechatBond setTitle:@"已绑定" forState:UIControlStateNormal];
-            [wechatBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
-        }
-    }
-
+    };
+    [ConnectionFunction getBindingMsg:[self->userInfo valueForKey:@"userKey"] Block:jobBlock];
 }
 -(void)defineBtn{
     UIButton* toModify=[[UIButton alloc]init];
@@ -338,10 +349,13 @@
         
     }else {
         NSLog(@"请安装微信");
-        
     }
 }
 
+-(void)QQBand{
+//    QQLogin* qqlogin=[[QQLogin alloc]initWithtype:@"FORBAND"];
+//    [qqlogin toQQlogin];
+}
 //点击背景收起键盘
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [self.view endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的

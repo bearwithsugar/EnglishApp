@@ -53,6 +53,7 @@
 		594B248A21EC729400807A4A /* TestFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 594B248921EC729400807A4A /* TestFunctions.m */; };
 		594B248D21ECAB1600807A4A /* ChnChooseEng.m in Sources */ = {isa = PBXBuildFile; fileRef = 594B248C21ECAB1600807A4A /* ChnChooseEng.m */; };
 		594B249021ECADAE00807A4A /* EngChooseChi.m in Sources */ = {isa = PBXBuildFile; fileRef = 594B248F21ECADAE00807A4A /* EngChooseChi.m */; };
+		595501DE23D9B34D000F699C /* WechatLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 595501DD23D9B34D000F699C /* WechatLog.m */; };
 		5967211521F09BD800409403 /* WrongNotesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967211421F09BD800409403 /* WrongNotesViewController.m */; };
 		5967212321F2E88300409403 /* BackgroundImageWithColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967212221F2E88300409403 /* BackgroundImageWithColor.m */; };
 		5967214121F3101600409403 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967214021F3101600409403 /* libc++.tbd */; };
@@ -234,6 +235,8 @@
 		594B248C21ECAB1600807A4A /* ChnChooseEng.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChnChooseEng.m; sourceTree = "<group>"; };
 		594B248E21ECADAE00807A4A /* EngChooseChi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EngChooseChi.h; sourceTree = "<group>"; };
 		594B248F21ECADAE00807A4A /* EngChooseChi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EngChooseChi.m; sourceTree = "<group>"; };
+		595501DC23D9B34D000F699C /* WechatLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WechatLog.h; sourceTree = "<group>"; };
+		595501DD23D9B34D000F699C /* WechatLog.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WechatLog.m; sourceTree = "<group>"; };
 		5967211321F09BD800409403 /* WrongNotesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WrongNotesViewController.h; sourceTree = "<group>"; };
 		5967211421F09BD800409403 /* WrongNotesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WrongNotesViewController.m; sourceTree = "<group>"; };
 		5967212121F2E88300409403 /* BackgroundImageWithColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BackgroundImageWithColor.h; sourceTree = "<group>"; };
@@ -444,6 +447,8 @@
 				593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */,
 				5927B1CB22E95A8800742182 /* MyThreadPool.h */,
 				5927B1CC22E95A8800742182 /* MyThreadPool.m */,
+				595501DC23D9B34D000F699C /* WechatLog.h */,
+				595501DD23D9B34D000F699C /* WechatLog.m */,
 			);
 			path = Functions;
 			sourceTree = "<group>";
@@ -988,6 +993,7 @@
 				59DE41FB2172DF11008D65CC /* RegisterViewController.m in Sources */,
 				59341B9E22FD54B100838941 /* MASLayoutConstraint.m in Sources */,
 				59B1C60423C7089D009943FB /* SVProgressHUD.m in Sources */,
+				595501DE23D9B34D000F699C /* WechatLog.m in Sources */,
 				597392A621C63B2F0050CA1B /* FSAudioController.m in Sources */,
 				59DE4226217AB239008D65CC /* DeviceManagerViewController.m in Sources */,
 				59EFFB3021AA333300127FF6 /* ModifyUserMsgViewController.m in Sources */,

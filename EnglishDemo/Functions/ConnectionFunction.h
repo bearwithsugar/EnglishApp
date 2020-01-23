@@ -25,8 +25,6 @@ typedef void (^ConBlock) (NSDictionary*);
 
 //第三方登录
 +(NSDictionary*)OtherLogin:(NSString*)openid Nickname:(NSString*)nickname DeviceId:(NSString*)device_id DeviceName:(NSString*)device_name Type:(NSString*)type Pic:(NSString*)picurl;
-//微信登录代理方法
-+(void)WXLoginAgent:(NSString*)code;
 
 +(NSDictionary*)resetPass:(long)phoneNumber Pass:(NSString*)password;
 //用户书架接口
@@ -137,9 +135,12 @@ typedef void (^ConBlock) (NSDictionary*);
 //微信获取个人信息
 +(NSDictionary*)getWXuserMsg:(NSString*)access_token Openid:(NSString*)openid;
 
+//绑定
++(void)toBand:(NSString*)userkey OpenId:(NSString*)openId Type:(NSString*)type Picurl:(NSString*)picurl Block:(ConBlock)block;
+
+
 // 用户意见反馈
 +(NSDictionary*)feedback:(NSString*)userkey Opinion:(NSString*)opinion;
-
 
 @end
 

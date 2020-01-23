@@ -331,7 +331,7 @@
     str=[str stringByAppendingString:@"&strategy_id="];
     str=[str stringByAppendingString:strategyId];
     url=[NSURL URLWithString:str];
-    [self postRequestWithHeadAndBlock:url Head:userkey Block:myBlock];
+    [self postRequestWithHeadAndVoidBlock:url Head:userkey Block:myBlock];
 }
 
 //获取用户第三方绑定信息
@@ -611,61 +611,6 @@
     return dataDic;
 }
 
-//===============下面的三个方法必须分为三个方法且在一个类中，
-//微信登录代理方法
-+(void)WXLoginAgent:(NSString*)code{
-    NSDictionary* accessDic=[self getWXaccess:code];
-    NSString* access_token=[accessDic valueForKey:@"access_token"];
-    NSString* openid=[accessDic valueForKey:@"openid"];
-    NSDictionary* userMsg=[self getWXuserMsg:access_token Openid:openid];
-    [self WXtoLogin:userMsg];
-}
-//微信登录
-+(void)WXtoLogin:(NSDictionary*)userMsg{
-    NSDictionary* wxLogDic=[self OtherLogin:[userMsg valueForKey:@"openid"]
-                                   Nickname:[userMsg valueForKey:@"nickname"]
-                                   DeviceId:[FixValues getUniqueId]
-                                 DeviceName:[[UIDevice currentDevice] name]
-                                       Type:@"WEIXIN"
-                                        Pic:[userMsg valueForKey:@"headimgurl"]];
-    if ([[wxLogDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        //dictionary：过滤字典中空值
-        if ([DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[wxLogDic valueForKey:@"data"]]]) {
-            [[FixValues navigationViewController] popViewControllerAnimated:true];
-        }else{
-            [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"登录信息保存失败"] animated:YES completion:nil];
-            
-        }
-    }else if([[wxLogDic valueForKey:@"message"]isEqualToString:@"该账号绑定设备已达上限，请先用已绑定设备登录，解绑后再重新尝试。"]){
-        [[AgentFunction theTopviewControler] presentViewController:[WarningWindow  MsgWithoutTrans:[wxLogDic valueForKey:@"message"]] animated:YES completion:nil];
-    }else{
-        [[AgentFunction theTopviewControler]
-         presentViewController:[self forceLogin:[wxLogDic valueForKey:@"message"]
-                                         Openid:[userMsg valueForKey:@"openid"]
-                                           Type:@"other"
-                                        UserMsg:userMsg] animated:YES completion:nil];
-    }
-}
-
-//强制登录专用提示框
-+(UIAlertController*)forceLogin:(NSString*)message Openid:(NSString*)openid Type:(NSString*)type UserMsg:(NSDictionary*)usermsg{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"强制登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [self userOccupation:openid Type:type Other_type:@"WEIXIN"];
-        [self WXtoLogin:usermsg];
-        
-    }];
-    UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-    }];
-    [action2 setValue:[UIColor redColor] forKey:@"titleTextColor"];
-    [alert addAction:action1];
-    [alert addAction:action2];
-    
-    return alert;
-}
-//==================================
-
 //第三方登录
 +(NSDictionary*)OtherLogin:(NSString*)openid Nickname:(NSString*)nickname DeviceId:(NSString*)device_id DeviceName:(NSString*)device_name Type:(NSString*)type Pic:(NSString*)picurl{
     NSURL* url=[FixValues getUrl];
@@ -689,6 +634,22 @@
     return dataDic;
 }
 
+//绑定
++(void)toBand:(NSString*)userkey OpenId:(NSString*)openId Type:(NSString*)type Picurl:(NSString*)picurl Block:(ConBlock)block{
+    NSURL* url=[FixValues getUrl];
+    url=[url URLByAppendingPathComponent:@"/bindings"];
+    NSString* str=[NSString stringWithFormat:@"%@",url];
+    str=[str stringByAppendingString:@"?openId="];
+    str=[str stringByAppendingString:openId];
+    str=[str stringByAppendingString:@"&type="];
+    str=[str stringByAppendingString:type];
+    str=[str stringByAppendingString:@"&pictureUrl="];
+    str=[str stringByAppendingString:picurl];
+    str=[str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+    url=[NSURL URLWithString:str];
+    [self postRequestWithHeadAndBlock:url Head:userkey Block:block];
+    
+}
 
 #pragma mark --get\post\put方法
 +(NSDictionary*)postRequest:(NSURL*)url{
@@ -739,7 +700,7 @@
     return dataDic;
 }
 
-+(NSDictionary*)postRequestWithHeadAndBlock:(NSURL*)url Head:(NSString*)headMsg Block:(VoidBlock)myBlock{
++(NSDictionary*)postRequestWithHeadAndVoidBlock:(NSURL*)url Head:(NSString*)headMsg Block:(VoidBlock)myBlock{
     NSURLSession *session=[NSURLSession sharedSession];
     NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
     
@@ -757,6 +718,32 @@
         CFRunLoopStop(CFRunLoopGetMain());
         [AgentFunction isTokenExpired:dataDic];
         myBlock();
+    }];
+    
+    [dataTask resume];
+    //这里恢复RunLoop
+    CFRunLoopRun();
+    return dataDic;
+}
+
++(NSDictionary*)postRequestWithHeadAndBlock:(NSURL*)url Head:(NSString*)headMsg Block:(ConBlock)myBlock{
+    NSURLSession *session=[NSURLSession sharedSession];
+    NSMutableURLRequest *request=[NSMutableURLRequest requestWithURL:url];
+    
+    //添加请求头
+    NSDictionary *headers = @{ @"English-user": headMsg};
+    [request setAllHTTPHeaderFields:headers];
+    
+    request.HTTPMethod=@"POST";
+    [request setValue: @"application/json" forHTTPHeaderField:@"Content-Type"];
+    static NSDictionary *dataDic;
+    
+    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error){
+        dataDic=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        //这里改变RunLoop模式
+        CFRunLoopStop(CFRunLoopGetMain());
+        [AgentFunction isTokenExpired:dataDic];
+        myBlock(dataDic);
     }];
     
     [dataTask resume];

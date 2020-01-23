@@ -16,8 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,copy)NSString* type;
 
--(id)initWithtype:(NSString*)type;
-
+//获取单例
++(QQLogin*)getInstance;
 //qq登录启动
 -(void)toQQlogin;
 

@@ -11,6 +11,7 @@
 #import "WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 #import "Functions/FixValues.h"
 #import "Functions/ConnectionFunction.h"
+#import "Functions/WechatLog.h"
 #import "Functions/WarningWindow.h"
 #import <TencentOpenAPI/TencentOAuth.h>
 #import <TencentOpenAPI/QQApiInterface.h>
@@ -91,10 +92,10 @@
             SendAuthResp *resp2 = (SendAuthResp *)resp;
             [[NSNotificationCenter defaultCenter] postNotificationName:@"wxLogin" object:resp2.code];
             NSLog(@"授权的信息%@",resp2.code);
-            [ConnectionFunction WXLoginAgent:resp2.code];
-            
-        }else{ //失败
-            //            SHOWHUDERR(@"授权失败");
+            WechatLog* wechat = [WechatLog getInstance];
+            wechat.type = @"FORLOG";
+            [wechat WXLoginAgent:resp2.code];
+        }else{
             NSLog(@"授权失败");
             [WarningWindow MsgWithoutTrans:@"授权失败"];
         }

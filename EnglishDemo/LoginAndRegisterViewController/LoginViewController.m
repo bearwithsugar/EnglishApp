@@ -417,7 +417,8 @@
     }
 }
 -(void)QQlogin{
-    QQLogin* qqlogin=[[QQLogin alloc]initWithtype:@"FORLOGIN"];
+    QQLogin* qqlogin=[QQLogin getInstance];
+    qqlogin.type = @"FORLOGIN";
     [qqlogin toQQlogin];
 }
 -(void)warnMsg:(NSString*)msg{
