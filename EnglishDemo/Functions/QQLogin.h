@@ -7,14 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "../Functions/ConnectionFunction.h"
 
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface QQLogin : NSObject
 
+@property VoidBlock myBlock;
 @property(nonatomic,copy)NSString* type;
+@property(nonatomic,copy)NSString* userKey;
 
 //获取单例
 +(QQLogin*)getInstance;

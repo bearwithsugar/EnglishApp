@@ -136,7 +136,7 @@ typedef void (^ConBlock) (NSDictionary*);
 +(NSDictionary*)getWXuserMsg:(NSString*)access_token Openid:(NSString*)openid;
 
 //绑定
-+(void)toBand:(NSString*)userkey OpenId:(NSString*)openId Type:(NSString*)type Picurl:(NSString*)picurl Block:(ConBlock)block;
++(void)toBinding:(NSString*)userkey OpenId:(NSString*)openId Type:(NSString*)type Picurl:(NSString*)picurl Block:(ConBlock)block;
 
 
 // 用户意见反馈

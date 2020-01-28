@@ -99,6 +99,7 @@
 		597392AD21C63B2F0050CA1B /* http_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5973929C21C63B2F0050CA1B /* http_stream.cpp */; };
 		597392AE21C63B2F0050CA1B /* FSParseRssPodcastFeedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5973929D21C63B2F0050CA1B /* FSParseRssPodcastFeedRequest.m */; };
 		59840A4422FC12A100BF8754 /* libWeChatSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 59840A4322FC12A100BF8754 /* libWeChatSDK.a */; settings = {ATTRIBUTES = (Required, ); }; };
+		598A131023E003390044AEC1 /* ChooseBookView.m in Sources */ = {isa = PBXBuildFile; fileRef = 598A130F23E003390044AEC1 /* ChooseBookView.m */; };
 		598B21642189EADC002E84AF /* ConnectionFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 598B21632189EADC002E84AF /* ConnectionFunction.m */; };
 		598E16A72269730D00DDF959 /* GSKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E16A42269730D00DDF959 /* GSKey.m */; };
 		598E16A82269730D00DDF959 /* UUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 598E16A62269730D00DDF959 /* UUID.m */; };
@@ -312,6 +313,8 @@
 		5973929C21C63B2F0050CA1B /* http_stream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = http_stream.cpp; sourceTree = "<group>"; };
 		5973929D21C63B2F0050CA1B /* FSParseRssPodcastFeedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FSParseRssPodcastFeedRequest.m; sourceTree = "<group>"; };
 		59840A4322FC12A100BF8754 /* libWeChatSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libWeChatSDK.a; path = EnglishDemo/WeChatSDK/WeChatSDK1.8.3/libWeChatSDK.a; sourceTree = "<group>"; };
+		598A130E23E003390044AEC1 /* ChooseBookView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChooseBookView.h; sourceTree = "<group>"; };
+		598A130F23E003390044AEC1 /* ChooseBookView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChooseBookView.m; sourceTree = "<group>"; };
 		598B21622189EADC002E84AF /* ConnectionFunction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionFunction.h; sourceTree = "<group>"; };
 		598B21632189EADC002E84AF /* ConnectionFunction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConnectionFunction.m; sourceTree = "<group>"; };
 		598E16A32269730D00DDF959 /* UUID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UUID.h; sourceTree = "<group>"; };
@@ -801,6 +804,8 @@
 				596721B821F40FEE00409403 /* OrderTableViewCell.xib */,
 				596E4BB121FB15E60046F215 /* UnloginMsgView.h */,
 				596E4BB221FB15E60046F215 /* UnloginMsgView.m */,
+				598A130E23E003390044AEC1 /* ChooseBookView.h */,
+				598A130F23E003390044AEC1 /* ChooseBookView.m */,
 			);
 			path = DiyGroup;
 			sourceTree = "<group>";
@@ -912,6 +917,7 @@
 				5910AC57218050F40024768A /* UserMsgTableViewCell.m in Sources */,
 				59341B9F22FD54B100838941 /* NSArray+MASAdditions.m in Sources */,
 				59341BA222FD54B100838941 /* MASViewConstraint.m in Sources */,
+				598A131023E003390044AEC1 /* ChooseBookView.m in Sources */,
 				596E4BB321FB15E60046F215 /* UnloginMsgView.m in Sources */,
 				59341BA022FD54B100838941 /* View+MASAdditions.m in Sources */,
 				59DE420A217566A1008D65CC /* RechargeRecordViewController.m in Sources */,

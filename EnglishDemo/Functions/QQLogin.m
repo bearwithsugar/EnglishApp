@@ -9,7 +9,6 @@
 #import "QQLogin.h"
 #import <TencentOpenAPI/TencentOAuth.h>
 #import <TencentOpenAPI/QQApiInterface.h>
-#import "../Functions/ConnectionFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../Functions/DataFilter.h"
 #import "../Functions/WarningWindow.h"
@@ -48,8 +47,8 @@
     NSLog(@"userMsg的内容是%@",userMsg);
     if ([_type isEqualToString:@"FORLOGIN"]) {
         [self qqLoginReturnMsg];
-    }else if([_type isEqualToString:@"FORBAND"]){
-        [self qqLoginReturnMsgforBand];
+    }else if([_type isEqualToString:@"FORBINDING"]){
+        [self qqLoginReturnMsgforBinding];
     }
 }
 -(void)qqLoginReturnMsg{
@@ -81,8 +80,19 @@
                                         UserMsg:userMsg] animated:YES completion:nil];
     }
 }
--(void)qqLoginReturnMsgforBand{
+-(void)qqLoginReturnMsgforBinding{
     NSLog(@"usermsg%@",userMsg);
+    ConBlock jobblock = ^(NSDictionary* resultDic){
+        if ([resultDic valueForKey:@"code"] && [[resultDic valueForKey:@"code"]intValue]==200) {
+            self->_myBlock();
+        }else{
+            [[AgentFunction theTopviewControler]presentViewController:
+            [WarningWindow MsgWithoutTrans:[resultDic valueForKey:@"message"]]
+                                                            animated:YES
+                                                          completion:nil];
+        }
+    };
+    [ConnectionFunction toBinding:_userKey OpenId:_tencentOAuth.appId Type:@"QQ" Picurl:[userMsg valueForKey:@"figureurl_2"] Block:jobblock];
 }
 //强制登录专用提示框
 -(UIAlertController*)forceLogin:(NSString*)message Openid:(NSString*)openid Type:(NSString*)type UserMsg:(NSDictionary*)usermsg{

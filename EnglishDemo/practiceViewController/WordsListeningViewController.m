@@ -430,14 +430,7 @@
         [self->voiceplayer playAudio:0];
 
     };
-    
-
-    
     [MyThreadPool executeJob:playBlock Main:^{}];
-    
-    
-    
-        
 }
 
 -(void)popBack:(UITapGestureRecognizer*)sender{

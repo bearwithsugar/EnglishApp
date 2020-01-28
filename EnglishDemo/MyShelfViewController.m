@@ -17,11 +17,14 @@
 #import "Functions/ConnectionInstance.h"
 #import "Functions/MyThreadPool.h"
 #import "DiyGroup/UnloginMsgView.h"
+#import "DiyGroup/ChooseBookView.h"
+#import "AgentFunction.h"
 #import "Masonry.h"
 
 @interface MyShelfViewController (){
    // NSDictionary* shelf
     NSArray* bookArray;
+    NSArray* chooseBookArray;
     //用户信息字典
     NSDictionary* userInfo;
     //请求书架返回信息字典
@@ -30,6 +33,9 @@
     UnitViewController* unitMsg;
     
     UIImageView* loadGif;
+    UIView* chooseBookView;
+    UIView* startChooseView;
+    UIButton* cancelBtn;
     
     NSMutableDictionary* processDic;
     
@@ -164,11 +170,123 @@
     
 }
 -(void)addBook{
-    [self presentViewController:[WarningWindow MsgWithoutTrans:@"请返回主页点击选择课本进行选课！"]
-                       animated:YES
-                     completion:nil];
+    [self chooseBook];
 }
+-(void)chooseBook{
+    if (cancelBtn == nil) {
+        cancelBtn = [[UIButton alloc]init];
+        [cancelBtn setTitle:@"取消选择" forState:UIControlStateNormal];
+        [cancelBtn setTitleColor:ssRGBHex(0xFD7272) forState:UIControlStateNormal];
+        [cancelBtn addTarget:self action:@selector(cancelChoose) forControlEvents:UIControlEventTouchUpInside];
+    }
+    [self.view addSubview:cancelBtn];
+    [cancelBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view).with.offset(90);
+        make.left.equalTo(self.view).with.offset(100);
+        make.right.equalTo(self.view).with.offset(-100);
+        make.height.equalTo(@40);
+    }];
+
+    
+    NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
+        //选择完年级和出版社之后返回的书籍信息y
+        NSDictionary* returnMsg=[ConnectionFunction getBookMsg:[[gradesArr objectAtIndex:row]valueForKey:@"categoryId"] UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
+        //把返回信息加入到书籍数组
+        self->chooseBookArray=[returnMsg valueForKey:@"data"];
+        //加载显示选择书籍的页面
+        [self startChooseView];
+        //清除原有页面，添加新页面
+        [self.view addSubview:self->startChooseView];
+        [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->chooseBookView.mas_bottom);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
+    };;
+    
+    [shelfView removeFromSuperview];
+    
+    if (chooseBookView==nil) {
+        chooseBookView=[[ChooseBookView alloc]initWithBlock:myBlock UserKey:[userInfo valueForKey:@"userKey"]];
+    }
+    [self.view addSubview:chooseBookView];
+    [chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.top.equalTo(self.view).with.offset(140);
+       make.left.equalTo(self.view);
+       make.right.equalTo(self.view);
+       make.height.equalTo(@250);
+    }];
+}
+
+-(void)startChooseView{
+    startChooseView=[[UIView alloc]init];
+    startChooseView.backgroundColor=ssRGBHex(0xFCF8F7);
+    NSUInteger size=chooseBookArray.count;
+    float heigh=ceilf(size/3.0)*187.58+26.48;
+    UIScrollView* shelfView=[[UIScrollView alloc]init];
+    shelfView.contentSize=CGSizeMake(414, heigh);
+    [startChooseView addSubview:shelfView];
+    [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(startChooseView);
+       }];
+    
+    for (int i=0;i<size; i++) {
+        float y=26.48+187.58*(i/3);
+        float x=11.4+133.58*(i%3);
+        UIImageView* book=[[UIImageView alloc]initWithFrame:CGRectMake(x,y, 125.85, 161.1)];
+        book.image=[LocalDataOperation getImage:[[chooseBookArray[i]valueForKey:@"book"] valueForKey:@"bookId" ] httpUrl:[[chooseBookArray[i]valueForKey:@"book"] valueForKey:@"coverPicture" ]];
+        [book setUserInteractionEnabled:YES];
+        [shelfView addSubview:book];
+        
+        UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(haveAdd)];
+        
+        if ([[chooseBookArray[i]valueForKey:@"boughtState"]intValue]==0&&
+            userInfo) {
+            UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
+            [loadBtn setBackgroundImage:[UIImage imageNamed:@"icon_weitianjiadaoshujia"] forState:UIControlStateNormal];
+            [loadBtn addTarget:self action:@selector(addBook:) forControlEvents:UIControlEventTouchUpInside];
+            loadBtn.tag=i;
+            [book addSubview:loadBtn];
+        }else{
+            [book addGestureRecognizer:gesture];
+        }
+    }
+
+}
+-(void)cancelChoose{
+    [cancelBtn removeFromSuperview];
+    [chooseBookView removeFromSuperview];
+    [startChooseView removeFromSuperview];
+    [self bookView];
+}
+
+-(void)addBook:(UIButton*)loadBtn{
+    //NSDictionary* userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+    NSLog(@"bookarray%@",[chooseBookArray objectAtIndex:loadBtn.tag]);
+    NSLog(@"userkey%@",[userInfo valueForKey:@"userKey"]);
+    NSLog(@"标号%ld",(long)loadBtn.tag);
+    NSDictionary* dataDic=[ConnectionFunction addBook:[[[chooseBookArray objectAtIndex:loadBtn.tag] valueForKey:@"book"]valueForKey:@"bookId"] BoughtState:@"2" UserKey:[userInfo valueForKey:@"userKey"]];
+    NSLog(@"添加书籍返回的结果是：%@",dataDic);
+    if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+        if ([[dataDic valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
+            [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
+        }else{
+            [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加成功!"] animated:YES completion:nil];
+        }
+    }else{
+        [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];
+    }
+}
+
+-(void)haveAdd{
+    [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
+}
+
 -(void)popBack{
+    [cancelBtn removeFromSuperview];
+    [chooseBookView removeFromSuperview];
+    [startChooseView removeFromSuperview];
     [self.navigationController popViewControllerAnimated:true];
 }
 

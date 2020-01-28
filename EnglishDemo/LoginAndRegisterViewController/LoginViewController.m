@@ -19,6 +19,7 @@
 #import "../Functions/WarningWindow.h"
 #import "../Functions/FixValues.h"
 #import "../Functions/MyThreadPool.h"
+#import "../Functions/WechatLog.h"
 #import "../Common/HeadView.h"
 #import "../SVProgressHUD/SVProgressHUD.h"
 #import "Masonry.h"
@@ -405,6 +406,8 @@
 }
 -(void)WXlogin{
     if ([WXApi isWXAppInstalled]) {
+        WechatLog* we = [WechatLog getInstance];
+        we.type = @"FORLOG";
         SendAuthReq *req = [[SendAuthReq alloc] init];
         req.scope = @"snsapi_userinfo";
         req.state = @"App";

@@ -93,7 +93,6 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:@"wxLogin" object:resp2.code];
             NSLog(@"授权的信息%@",resp2.code);
             WechatLog* wechat = [WechatLog getInstance];
-            wechat.type = @"FORLOG";
             [wechat WXLoginAgent:resp2.code];
         }else{
             NSLog(@"授权失败");

@@ -9,7 +9,6 @@
 #import "WechatLog.h"
 #import "DocuOperate.h"
 #import "FixValues.h"
-#import "ConnectionFunction.h"
 #import "AgentFunction.h"
 #import "DataFilter.h"
 #import "WarningWindow.h"
@@ -33,8 +32,8 @@ static WechatLog* instance = nil;
     NSDictionary* userMsg=[ConnectionFunction getWXuserMsg:access_token Openid:openid];
     if([_type isEqualToString:@"FORLOG"]){
         [self WXtoLogin:userMsg];
-    }else if([_type isEqualToString:@"FORBAND"]){
-        [self WXtoBand:userMsg];
+    }else if([_type isEqualToString:@"FORBINDING"]){
+        [self WXtoBinding:userMsg];
     }
 }
 //微信登录
@@ -67,12 +66,18 @@ static WechatLog* instance = nil;
     }
 }
 
--(void)WXtoBand:(NSDictionary*)userMsg{
+-(void)WXtoBinding:(NSDictionary*)userMsg{
     ConBlock jobblock = ^(NSDictionary* resultDic){
-        NSLog(@"resultDic");
+        if ([resultDic valueForKey:@"code"] && [[resultDic valueForKey:@"code"]intValue]==200) {
+            self->_myBlock();
+        }else{
+            [[AgentFunction theTopviewControler]presentViewController:
+             [WarningWindow MsgWithoutTrans:[resultDic valueForKey:@"message"]]
+                                                             animated:YES
+                                                           completion:nil];
+        }
     };
-    [ConnectionFunction toBand:@"" OpenId:[userMsg valueForKey:@"openid"] Type:@"WEIXIN" Picurl:[userMsg valueForKey:@"headimgurl"] Block:jobblock];
-    
+    [ConnectionFunction toBinding:_userKey OpenId:[userMsg valueForKey:@"openid"] Type:@"WEIXIN" Picurl:[userMsg valueForKey:@"headimgurl"] Block:jobblock];
 }
 
 

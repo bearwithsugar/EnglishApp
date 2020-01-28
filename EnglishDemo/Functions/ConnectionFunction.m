@@ -635,9 +635,9 @@
 }
 
 //绑定
-+(void)toBand:(NSString*)userkey OpenId:(NSString*)openId Type:(NSString*)type Picurl:(NSString*)picurl Block:(ConBlock)block{
++(void)toBinding:(NSString*)userkey OpenId:(NSString*)openId Type:(NSString*)type Picurl:(NSString*)picurl Block:(ConBlock)block{
     NSURL* url=[FixValues getUrl];
-    url=[url URLByAppendingPathComponent:@"/bindings"];
+    url=[url URLByAppendingPathComponent:@"account/binding"];
     NSString* str=[NSString stringWithFormat:@"%@",url];
     str=[str stringByAppendingString:@"?openId="];
     str=[str stringByAppendingString:openId];

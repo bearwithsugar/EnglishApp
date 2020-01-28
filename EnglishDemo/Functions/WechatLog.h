@@ -7,12 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ConnectionFunction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface WechatLog : NSObject
 
+
+@property VoidBlock myBlock;
 @property(nonatomic,copy) NSString* type;
+@property(nonatomic,copy) NSString* userKey;
 
 +(WechatLog *) getInstance;
 

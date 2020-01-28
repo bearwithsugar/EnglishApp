@@ -15,7 +15,9 @@
 #import "../Functions/DocuOperate.h"
 #import "../Functions/QQLogin.h"
 #import "../Functions/MyThreadPool.h"
+#import "../Functions/WechatLog.h"
 #import "../DiyGroup/UnloginMsgView.h"
+#import "SVProgressHUD.h"
 #import "../Common/HeadView.h"
 #import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 #import "Masonry.h"
@@ -30,8 +32,8 @@
     
     NSDictionary* binding;
     
-    UIButton* wechatBond;
-    UIButton* QQBond;
+    UIButton* wechatBinding;
+    UIButton* QQBinding;
     
 }
 
@@ -239,12 +241,13 @@
     wechatLabel.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:wechatLabel];
     
-    wechatBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 350, 100, 49)];
-    [wechatBond removeFromSuperview];
-    wechatBond.titleLabel.font=[UIFont systemFontOfSize:14];
-    [wechatBond setTitle:@"未绑定" forState:UIControlStateNormal];
-    [wechatBond setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
-    [surfaceView addSubview:wechatBond];
+    wechatBinding=[[UIButton alloc]initWithFrame:CGRectMake(140, 350, 100, 49)];
+    [wechatBinding removeFromSuperview];
+    wechatBinding.titleLabel.font=[UIFont systemFontOfSize:14];
+    [wechatBinding setTitle:@"未绑定" forState:UIControlStateNormal];
+    [wechatBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
+    [wechatBinding addTarget:self action:@selector(WXBinding) forControlEvents:UIControlEventTouchUpInside];
+    [surfaceView addSubview:wechatBinding];
     
     //中部横线
     UIView* lineView3=[[UIView alloc]initWithFrame:CGRectMake(0, 399, 414, 1)];
@@ -257,13 +260,13 @@
     qqLabel.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:qqLabel];
     
-    QQBond=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
-    [QQBond removeFromSuperview];
-    [QQBond setTitle:@"未绑定" forState:UIControlStateNormal];
-    [QQBond addTarget:self action:@selector(QQBand) forControlEvents:UIControlEventTouchUpInside];
-    QQBond.titleLabel.font=[UIFont systemFontOfSize:14];
-    [QQBond setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
-    [surfaceView addSubview:QQBond];
+    QQBinding=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
+    [QQBinding removeFromSuperview];
+    [QQBinding setTitle:@"未绑定" forState:UIControlStateNormal];
+    [QQBinding addTarget:self action:@selector(QQBinding) forControlEvents:UIControlEventTouchUpInside];
+    QQBinding.titleLabel.font=[UIFont systemFontOfSize:14];
+    [QQBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
+    [surfaceView addSubview:QQBinding];
     
     //中部横线
     UIView* lineView4=[[UIView alloc]initWithFrame:CGRectMake(0, 449, 414, 1)];
@@ -278,12 +281,16 @@
             NSString* qq = [NSString stringWithFormat:@"%@",[self->binding valueForKey:@"qq"]];
             NSString* weixin = [NSString stringWithFormat:@"%@",[self->binding valueForKey:@"weixin"]];
             if (![qq isEqualToString:@"0"]) {
-                [self->QQBond setTitle:@"已绑定" forState:UIControlStateNormal];
-                [self->QQBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self->QQBinding setTitle:@"已绑定" forState:UIControlStateNormal];
+                    [self->QQBinding setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+                });
             }
             if (![weixin isEqualToString:@"0"]) {
-                [self->wechatBond setTitle:@"已绑定" forState:UIControlStateNormal];
-                [self->wechatBond setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self->wechatBinding setTitle:@"已绑定" forState:UIControlStateNormal];
+                    [self->wechatBinding setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+                });
             }
         }
     };
@@ -340,21 +347,45 @@
     [self.navigationController popViewControllerAnimated:true];
 }
 
--(void)WXlogin{
+-(void)WXBinding{
+    VoidBlock myBlock = ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD showSuccessWithStatus:@"绑定成功"];
+            [self->wechatBinding setTitle:@"已绑定" forState:UIControlStateNormal];
+            [self->wechatBinding setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+        });
+    };
     if ([WXApi isWXAppInstalled]) {
+        WechatLog* wechat = [WechatLog getInstance];
+        wechat.myBlock = myBlock;
+        wechat.type = @"FORBINDING";
+        wechat.userKey = [userInfo valueForKey:@"userKey"];
         SendAuthReq *req = [[SendAuthReq alloc] init];
         req.scope = @"snsapi_userinfo";
         req.state = @"App";
         [WXApi sendReq:req];
-        
     }else {
         NSLog(@"请安装微信");
     }
 }
 
--(void)QQBand{
-//    QQLogin* qqlogin=[[QQLogin alloc]initWithtype:@"FORBAND"];
-//    [qqlogin toQQlogin];
+-(void)QQBinding{
+    VoidBlock myBlock = ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD showSuccessWithStatus:@"绑定成功"];
+            [self->QQBinding setTitle:@"已绑定" forState:UIControlStateNormal];
+            [self->QQBinding setTitleColor:ssRGBHex(0xFF7474) forState:UIControlStateNormal];
+        });
+    };
+    if ([WXApi isWXAppInstalled]) {
+        QQLogin* qqlog = [QQLogin getInstance];
+        qqlog.myBlock = myBlock;
+        qqlog.type = @"FORBINDING";
+        qqlog.userKey = [userInfo valueForKey:@"userKey"];
+        [qqlog toQQlogin];
+    }else {
+        NSLog(@"请安装微信");
+    }
 }
 //点击背景收起键盘
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{

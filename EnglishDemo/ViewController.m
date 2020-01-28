@@ -30,13 +30,14 @@
 #import "Reachability.h"
 #import "Functions/MyThreadPool.h"
 #import "SVProgressHUD.h"
+#import "DiyGroup/ChooseBookView.h"
 #import "Masonry.h"
 
 
 //首先为需要的对象分配内存空间
 //当页面d第一次出现时一次性加载 单元练习  标题栏 标题菜单 和其他固定界面
 
-@interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface ViewController ()
 {
     UserMsg* userMsg;
     UnitViewController* unitMsg;
@@ -83,8 +84,6 @@
     NSMutableDictionary* processDic;
     //存放出版社列表对象的数组，每个元素是一个字典
     NSArray* publicationArray;
-    //存放年级列表的c数组
-    NSArray* gradesArray;
     //年级tableview
     UITableView* chooseGradeTable;
     //查询结果书籍的数组
@@ -126,8 +125,6 @@
         myShelfView=[[UIView alloc]init];
         synchronousPractice=[[UIView alloc]init];
         selectedPublication=[[NSString alloc]init];
-        //先为年级数组分配空间
-        gradesArray=[[NSArray alloc]init];
         //为书籍数组分配空间
         bookArray=[[NSArray alloc]init];
         titleBtnArray = [[NSMutableArray alloc]init];
@@ -351,8 +348,8 @@
         }];
         
     }else if(btn.tag==2){
-
-        [self cleanView];
+        [synchronousPractice removeFromSuperview];
+        [myShelfView removeFromSuperview];
         if (publicationMsgDic == nil) {
             [self chooseBookinit];
         }
@@ -363,9 +360,8 @@
             make.top.equalTo(self.view).with.offset(137.93);
             make.left.equalTo(self.view);
             make.right.equalTo(self.view);
-            make.bottom.equalTo(self.view);
+            make.height.equalTo(@250);
         }];
-        
     }
     
     for (UIButton* button in titleBtnArray) {
@@ -422,7 +418,6 @@
         make.width.equalTo(@172);
         make.height.equalTo(@238.34);
     }];
-    
     
     UILabel* processDetailsTitle=[[UILabel alloc]init];
     processDetailsTitle.text=@"我的练习成绩";
@@ -972,157 +967,44 @@
    
 }
 -(void)chooseBook{
-    if (chooseBookView!=nil) {
-        return;
-    }
-    chooseBookView=[[UIView alloc]init];
-    
-    UITableView* choosePublishTable=[[UITableView alloc]init];
-    choosePublishTable.dataSource=self;
-    choosePublishTable.delegate=self;
-    choosePublishTable.tag=4;
-    [chooseBookView addSubview:choosePublishTable];
-    
-    chooseGradeTable=[[UITableView alloc]init];
-    chooseGradeTable.dataSource=self;
-    chooseGradeTable.delegate=self;
-    chooseGradeTable.tag=3;
-    [chooseBookView addSubview:chooseGradeTable];
-    
-    [chooseGradeTable mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->chooseBookView);
-        make.left.equalTo(self->chooseBookView);
-        make.width.equalTo(self->chooseBookView).multipliedBy(0.55);
-        make.height.equalTo(@370.75);
-    }];
-    
-    [choosePublishTable mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->chooseBookView);
-        make.right.equalTo(self->chooseBookView);
-        make.width.equalTo(self->chooseBookView).multipliedBy(0.45);
-        make.height.equalTo(@370.75);
-    }];
-    
-    //下部分灰色背景
-    UIView* chooseGray=[[UIView alloc]init];
-    chooseGray.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
-    UITapGestureRecognizer* cancelGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(cancelChooseing)];
-    [chooseGray addGestureRecognizer:cancelGesture];
-    [chooseBookView addSubview:chooseGray];
-
-    [chooseGray mas_makeConstraints:^(MASConstraintMaker *make) {
-       make.top.equalTo(chooseGradeTable.mas_bottom);
-       make.left.equalTo(chooseBookView);
-       make.right.equalTo(chooseBookView);
-       make.height.equalTo(chooseBookView);
-    }];
-}
-
--(void)cancelChooseing{
-    [chooseBookView removeFromSuperview];
-}
-
--(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if (tableView.tag==4) {
-        return publicationArray.count;
-    }else{
-        return gradesArray.count;
-    }
-}
-
--(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    static NSString *cellID = @"flag";
-    //取消分割线
-    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    if (tableView.tag==4) {
-        ChoosePublishTableViewCell* cell;
-        for (int i=0; i<publicationArray.count; i++) {
-            if (indexPath.row==i) {
-                cell=[ChoosePublishTableViewCell createCellWithTableView:tableView];
-                NSDictionary* publicationMsg=publicationArray[i];
-                [cell loadData:[publicationMsg valueForKey:@"categoryName"]];
-                cell.tag=[[publicationMsg valueForKey:@"categoryId"]intValue];
-            }
-            cell.backgroundColor=[UIColor whiteColor];
-            UIView *backgroundViews = [[UIView alloc]initWithFrame:cell.frame];
-            backgroundViews.backgroundColor = ssRGBHex(0xFD7272);
-            [cell setSelectedBackgroundView:backgroundViews];
-        }
-        return cell;
-     }
-    else{
-        UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-        if (cell==nil) {
-            cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID];
-        }
-
-        for (int i=0; i<gradesArray.count; i++) {
-             if (indexPath.row==i) {
-                 NSDictionary* gradeMsg=gradesArray[i];
-                 cell.textLabel.text=[gradeMsg valueForKey:@"categoryName"];
-                 NSLog(@"获取到的出版社id%@",[gradeMsg valueForKey:@"categoryId"]);
-                 cell.tag=[[gradeMsg valueForKey:@"categoryId"]integerValue];
-
-             }
-            cell.textLabel.font=[UIFont systemFontOfSize:12];
-            cell.textLabel.textColor=ssRGBHex(0x4A4A4A);
-            
-            UIView *backgroundViews = [[UIView alloc]initWithFrame:cell.frame];
-            backgroundViews.backgroundColor = [UIColor whiteColor];
-            
-            //cell选中颜色
-            [cell setSelectedBackgroundView:backgroundViews];
-            
-            //cell选中字体颜色
-            cell.textLabel.highlightedTextColor=ssRGBHex(0xFD7272);
-         }
-        return cell;
-    }
- }
-
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 52.96;
-}
-
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (tableView.tag==4) {
-        NSDictionary* dic = [ConnectionFunction getLineByParent: [[publicationArray objectAtIndex:indexPath.row]valueForKey:@"categoryId"] UserKey:[userInfo valueForKey:@"userKey"]];
-        NSLog(@"年级数组是：%@",[dic valueForKey:@"data"]);
-
-        //赋值给年级数组
-        gradesArray=[dic valueForKey:@"data"];
-        [chooseGradeTable reloadData];
-        
-    }else{
-        //选择完年级和出版社之后返回的书籍信息
-        NSDictionary* returnMsg=[ConnectionFunction getBookMsg:[[gradesArray objectAtIndex:indexPath.row]valueForKey:@"categoryId"] UserKey:[userInfo valueForKey:@"userKey"] UserId:[userInfo valueForKey:@"userId"]];
+    NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
+        //选择完年级和出版社之后返回的书籍信息y
+        NSDictionary* returnMsg=[ConnectionFunction getBookMsg:[[gradesArr objectAtIndex:row]valueForKey:@"categoryId"] UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
         //把返回信息加入到书籍数组
-        bookArray=[returnMsg valueForKey:@"data"];
+        self->bookArray=[returnMsg valueForKey:@"data"];
         //加载显示选择书籍的页面
         [self startChooseView];
-        //清除原有页面，添加新页面
-        [chooseBookView removeFromSuperview];
-        [myShelfView removeFromSuperview];
-        [synchronousPractice removeFromSuperview];
-        [self.view addSubview:startChooseView];
+        
+        [self.view addSubview:self->startChooseView];
+        [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->chooseBookView.mas_bottom);
+            make.right.equalTo(self.view);
+            make.left.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
+    };;
+    if (chooseBookView == nil) {
+        chooseBookView=[[ChooseBookView alloc]initWithBlock:myBlock UserKey:[userInfo valueForKey:@"userKey"]];
     }
 }
 
 #pragma mark --startChooseView
 -(void)startChooseView{
 
-    startChooseView=[[UIView alloc]initWithFrame:CGRectMake(0, 137.93, 414, 598.06)];
-    startChooseView.backgroundColor=ssRGBHex(0xFCF8F7);
+    if (startChooseView==nil) {
+        startChooseView=[[UIView alloc]init];
+        startChooseView.backgroundColor=ssRGBHex(0xFCF8F7);
+    }
     
     NSUInteger size=bookArray.count;
     float heigh=ceilf(size/3.0)*187.58+26.48;
-    UIScrollView* shelfView=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 414, 598.06)];
+    UIScrollView* shelfView=[[UIScrollView alloc]init];
     shelfView.contentSize=CGSizeMake(414, heigh);
     [startChooseView addSubview:shelfView];
+    [shelfView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(startChooseView);
+      }];
+    
     for (int i=0;i<size; i++) {
         float y=26.48+187.58*(i/3);
         float x=11.4+133.58*(i%3);

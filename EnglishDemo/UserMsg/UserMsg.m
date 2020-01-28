@@ -142,7 +142,7 @@
         make.top.equalTo(self.view).with.offset(88);
         make.left.equalTo(self.view);
         make.right.equalTo(self.view);
-        make.height.equalTo(@143);
+        make.height.equalTo(@144);
     }];
     
     UIImageView* headPic=[[UIImageView alloc]init];
@@ -221,18 +221,9 @@
             make.height.equalTo(@20);
         }];
         
-        UIButton* modifyUserMsg=[[UIButton alloc]init];
-        [modifyUserMsg setTitle:@"修改个人信息" forState:UIControlStateNormal];
-        modifyUserMsg.titleLabel.font=[UIFont systemFontOfSize:15];
-        [modifyUserMsg addTarget:self action:@selector(modifyUser) forControlEvents:UIControlEventTouchUpInside];
-        [headPicView addSubview:modifyUserMsg];
-        
-        [modifyUserMsg mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->headPicView).with.offset(35);
-            make.right.equalTo(self->headPicView).with.offset(-15);
-            make.width.equalTo(@95);
-            make.height.equalTo(@25);
-        }];
+        UITapGestureRecognizer* modifyUserMsg = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(modifyUser)];
+        [headPicView addGestureRecognizer:modifyUserMsg];
+        headPicView.userInteractionEnabled = YES;
         
         UIButton* loginOut=[[UIButton alloc]init];
         [loginOut setTitle:@"退出登录" forState:UIControlStateNormal];
@@ -245,7 +236,7 @@
         [headPicView addSubview:loginOut];
         
         [loginOut mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->headPicView).with.offset(70);
+            make.top.equalTo(self->headPicView).with.offset(60);
             make.right.equalTo(self->headPicView).with.offset(-15);
             make.width.equalTo(@88.32);
             make.height.equalTo(@24);
