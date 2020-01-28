@@ -29,12 +29,9 @@
     UITextField* phoneTextField;
     UIImageView* headPic;
     UIView* surfaceView;
-    
     NSDictionary* binding;
-    
     UIButton* wechatBinding;
     UIButton* QQBinding;
-    
 }
 
 @end
@@ -45,10 +42,8 @@
     [super viewDidLoad];
     self.view.backgroundColor=[UIColor whiteColor];
     [self titleView];
-    
-    
-
 }
+
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
