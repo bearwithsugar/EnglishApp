@@ -40,6 +40,7 @@
     NSMutableDictionary* processDic;
     
     UIScrollView* shelfView;
+    NSString* publicationMsg;
 }
 
 @end
@@ -189,8 +190,9 @@
 
     
     NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
+        self->publicationMsg = [[gradesArr objectAtIndex:row]valueForKey:@"categoryId"];
         //选择完年级和出版社之后返回的书籍信息y
-        NSDictionary* returnMsg=[ConnectionFunction getBookMsg:[[gradesArr objectAtIndex:row]valueForKey:@"categoryId"] UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
+        NSDictionary* returnMsg=[ConnectionFunction getBookMsg:self->publicationMsg UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
         //把返回信息加入到书籍数组
         self->chooseBookArray=[returnMsg valueForKey:@"data"];
         //加载显示选择书籍的页面
@@ -220,6 +222,7 @@
 }
 
 -(void)startChooseView{
+    [startChooseView removeFromSuperview];
     startChooseView=[[UIView alloc]init];
     startChooseView.backgroundColor=ssRGBHex(0xFCF8F7);
     NSUInteger size=chooseBookArray.count;
@@ -239,8 +242,6 @@
         [book setUserInteractionEnabled:YES];
         [shelfView addSubview:book];
         
-        UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(haveAdd)];
-        
         if ([[chooseBookArray[i]valueForKey:@"boughtState"]intValue]==0&&
             userInfo) {
             UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
@@ -249,7 +250,13 @@
             loadBtn.tag=i;
             [book addSubview:loadBtn];
         }else{
-            [book addGestureRecognizer:gesture];
+            UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
+            [loadBtn setTitle:@"已添加" forState:UIControlStateNormal];
+            [loadBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+            loadBtn.backgroundColor = [UIColor grayColor];
+            loadBtn.layer.cornerRadius = 5;
+            [loadBtn addTarget:self action:@selector(haveAdd) forControlEvents:UIControlEventTouchUpInside];
+            [book addSubview:loadBtn];
         }
     }
 
@@ -273,6 +280,18 @@
             [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
         }else{
             [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加成功!"] animated:YES completion:nil];
+            //选择完年级和出版社之后返回的书籍信息y
+           NSDictionary* returnMsg=[ConnectionFunction getBookMsg:self->publicationMsg UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
+           //把返回信息加入到书籍数组
+           self->chooseBookArray=[returnMsg valueForKey:@"data"];
+           [self startChooseView];
+           [self.view addSubview:self->startChooseView];
+           [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
+              make.top.equalTo(self->chooseBookView.mas_bottom);
+              make.right.equalTo(self.view);
+              make.left.equalTo(self.view);
+              make.bottom.equalTo(self.view);
+           }];
         }
     }else{
         [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];

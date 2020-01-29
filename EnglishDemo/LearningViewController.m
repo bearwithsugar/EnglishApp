@@ -127,7 +127,7 @@
     sentenceArray=[[NSArray alloc]init];
     bookPicArray=[[NSArray alloc]init];
 
-    settingArray=@[@"1",@"1",@"0",@"0",@"1"];
+    settingArray=@[@"1",@"1",@"0",@"0",@"0"];
     chooseLessonShow=settingShow=true;
     angleBtn.selected=false;
     

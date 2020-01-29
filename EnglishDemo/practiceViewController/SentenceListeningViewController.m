@@ -78,6 +78,7 @@
         [self chooseLesson];
         //加载当前课程标签
         [self presentLessionView];
+        [self showChooseLessonView];
         
     }
     else{

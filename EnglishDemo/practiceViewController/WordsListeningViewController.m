@@ -60,10 +60,9 @@
     wordsArray=[[NSArray alloc]init];
     lessonArray=[[NSArray alloc]init];
     //bool显示选课信息界面
-    chooseLessonShow=NO;
+    chooseLessonShow=YES;
     //加载标题
     [self titleShow];
-    [self showChooseLessonView];
 
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -80,6 +79,7 @@
         [self chooseLesson];
         //加载当前课程标签
         [self presentLessionView];
+        [self showChooseLessonView];
     }
     else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];

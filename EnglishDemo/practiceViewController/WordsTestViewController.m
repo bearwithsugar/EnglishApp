@@ -108,6 +108,7 @@
         [self chooseLessonViewInit];
         [self chooseLesson];
         [self presentLessionView];
+        [self showChooseLessonView];
     }
     else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]initWithFrame:CGRectMake(0, 88.27, 414, 647)];
