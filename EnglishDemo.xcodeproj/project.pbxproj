@@ -610,9 +610,9 @@
 		5967213F21F3101500409403 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				59840A4322FC12A100BF8754 /* libWeChatSDK.a */,
 				59BB10AA2394EF2400F2F668 /* StoreKit.framework */,
 				593F6962230BB7A000582A8B /* SDWebImage.framework */,
-				59840A4322FC12A100BF8754 /* libWeChatSDK.a */,
 				596721B321F3876A00409403 /* libsqlite3.0.tbd */,
 				596721AB21F386B400409403 /* Security.framework */,
 				5967215621F310A300409403 /* AlipaySDK.framework */,

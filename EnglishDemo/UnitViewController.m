@@ -46,8 +46,6 @@
     unitArray=[[NSArray alloc]init];
     unitProcessArray=[[NSArray alloc]init];
     
-    
-    
     [self unitInit];
     NSLog(@"unitArray的值是%@",unitArray);
     //此处用单元进度数组来判断token是否过期，因为单元数组接口不能验证
@@ -64,14 +62,7 @@
     
 }
 -(void)viewWillAppear:(BOOL)animated{
-//    JobBlock initUnitBlock = ^{
-//        [self unitInit];
-//    };
-//    JobBlock refreshUI = ^{
-//        [self->processMsg reloadData];
-//    };
-//
-//    [MyThreadPool executeJob:initUnitBlock Main:refreshUI];
+
 }
 -(void)unitInit{
     
@@ -137,12 +128,14 @@
         make.right.equalTo(progressView).with.offset(-100);
     }];
     
-    
-    
     processMsg=[[UITableView alloc]init];
     processMsg.dataSource=self;
     processMsg.delegate=self;
     [self.view addSubview:processMsg];
+    
+    //无内容时不显示下划线
+    UIView *v = [[UIView alloc] initWithFrame:CGRectZero];
+    [processMsg setTableFooterView:v];
     
     [processMsg mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(progressView);
@@ -159,16 +152,6 @@
     return unitArray.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    //另一种cell格式，现在用不到
-//    if (indexPath.row<=3) {
-//        UnitsListTableViewCell* cell=[UnitsListTableViewCell createCellWithTableView:tableView];
-//        [cell loadData:@"Unit 1" description:@"学习进度：35%"];
-//        return cell;
-//    }else{
-//        UnitsListDownTableViewCell* cell=[UnitsListDownTableViewCell createCellWithTableView:tableView];
-//        [cell loadData:@"Unit2"];
-//        return cell;
-//    }
     UnitsListTableViewCell* cell=[UnitsListTableViewCell createCellWithTableView:tableView];
     //单元进度和单元长度不一致j会报错
 //    NSLog(@"unitArray的长度是：%lu",(unsigned long)unitArray.count);
@@ -194,7 +177,6 @@
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 52.96;
 }
-
 
 -(void)pushToLearningView:(NSInteger)clickedUnit{
     LearningViewController* learningView;

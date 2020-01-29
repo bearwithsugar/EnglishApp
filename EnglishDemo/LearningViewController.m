@@ -448,6 +448,7 @@
                     [theBook sd_setImageWithURL:imagePath];
                     [theBook addSubview:showBigPic];
                     [self->bookPicView addSubview:theBook];
+                    //[[SDImageCache sharedImageCache] clearMemory];
                     
                     UITapGestureRecognizer* clickClassPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showContent:)];
                     [theBook addGestureRecognizer:clickClassPic];
@@ -1286,4 +1287,8 @@
     
 }
 
+-(void)didReceiveMemoryWarning{
+    [super didReceiveMemoryWarning];
+    NSLog(@"");
+}
 @end

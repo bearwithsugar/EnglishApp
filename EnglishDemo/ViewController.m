@@ -31,6 +31,7 @@
 #import "Functions/MyThreadPool.h"
 #import "SVProgressHUD.h"
 #import "DiyGroup/ChooseBookView.h"
+#import <SDWebImage/SDWebImage.h>
 #import "Masonry.h"
 
 
@@ -506,7 +507,7 @@
         
 
         if (recentBook!=nil) {
-             bookpicImageView.image=[LocalDataOperation getImage:[recentBook valueForKey:@"bookId"] httpUrl:[recentBook valueForKey:@"coverPicture"]];
+            [bookpicImageView sd_setImageWithURL:[LocalDataOperation getImagePath:[recentBook valueForKey:@"bookId"] httpUrl:[recentBook valueForKey:@"coverPicture"]]];
         }
     
     }
@@ -1009,7 +1010,7 @@
         float y=26.48+187.58*(i/3);
         float x=11.4+133.58*(i%3);
         UIImageView* book=[[UIImageView alloc]initWithFrame:CGRectMake(x,y, 125.85, 161.1)];
-        book.image=[LocalDataOperation getImage:[[bookArray[i]valueForKey:@"book"] valueForKey:@"bookId" ] httpUrl:[[bookArray[i]valueForKey:@"book"] valueForKey:@"coverPicture" ]];
+        [book sd_setImageWithURL:[LocalDataOperation getImagePath:[[bookArray[i]valueForKey:@"book"] valueForKey:@"bookId" ] httpUrl:[[bookArray[i]valueForKey:@"book"] valueForKey:@"coverPicture" ]]];
         [book setUserInteractionEnabled:YES];
         [shelfView addSubview:book];
         
