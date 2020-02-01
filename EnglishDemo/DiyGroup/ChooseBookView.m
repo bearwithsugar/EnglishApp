@@ -150,8 +150,7 @@
             });
         };
         NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-        [sender getRequestWithHead:_userKey
-                              Path:[[ConnectionFunction getInstance]getLineByParent_Get_H:[[_publicationArray objectAtIndex:indexPath.row]valueForKey:@"categoryId"]]
+        [sender getRequest:[[ConnectionFunction getInstance]getLineByParent_Get_H:[[_publicationArray objectAtIndex:indexPath.row]valueForKey:@"categoryId"]]
                              Block:conBlk];
         
     }else{

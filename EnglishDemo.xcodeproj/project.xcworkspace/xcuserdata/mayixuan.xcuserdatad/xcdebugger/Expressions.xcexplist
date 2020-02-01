@@ -69,6 +69,9 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__54-[ChooseLessonView tableView:didSelectRowAtIndexPath:]_block_invoke_2.155:ChooseLessonView.m">
+      </ContextState>
+      <ContextState
          contextName = "-[LearningViewController actionOfReplayTimes:]:LearningViewController.m">
          <PersistentStrings>
             <PersistentString
@@ -167,6 +170,17 @@
       <ContextState
          contextName = "__66-[WordsListeningViewController tableView:didSelectRowAtIndexPath:]_block_invoke:WordsListeningViewController.m">
          <PersistentStrings>
+            <PersistentString
+               value = "wordsArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "__66-[WordsListeningViewController tableView:didSelectRowAtIndexPath:]_block_invoke_2:WordsListeningViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "playUrl">
+            </PersistentString>
             <PersistentString
                value = "wordsArray">
             </PersistentString>

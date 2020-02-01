@@ -91,8 +91,8 @@
 }
 
 //执行代码块
-+(UIAlertController*)MsgWithBlock:(NSString*)message Block:(JobBlock)block{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
++(UIAlertController*)MsgWithBlock:(NSString*)title Block:(JobBlock)block{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:title
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"我知道了" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -106,11 +106,11 @@
 }
 
 //执行代码块
-+(UIAlertController*)MsgWithBlock2:(NSString*)message Block1:(JobBlock)block1 Msg:(NSString*)message2 Block2:(JobBlock)block2{
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
++(UIAlertController*)MsgWithBlock2:(NSString*)title Msg:(NSString*)message1 Block1:(JobBlock)block1 Msg2:(NSString*)message2 Block2:(JobBlock)block2{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:title
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction *action1 = [UIAlertAction actionWithTitle:message style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *action1 = [UIAlertAction actionWithTitle:message1 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         block1();
         
     }];

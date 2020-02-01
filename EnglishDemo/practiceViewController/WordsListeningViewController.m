@@ -361,7 +361,7 @@
         
         //如果不这样做一下字典准换会出现no summary
         NSMutableArray* voiceArray = [[NSMutableArray alloc]init];
-        for (NSDictionary* dic in self->wordsArray) {
+        for (NSDictionary* dic in wordsArr) {
             NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
             [dictionary setValue:[dic valueForKey:@"engUrl"] forKey:@"url"];
             [dictionary setValue:[dic valueForKey:@"wordId"] forKey:@"id"];

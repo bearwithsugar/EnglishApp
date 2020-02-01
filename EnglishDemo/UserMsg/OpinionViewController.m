@@ -41,12 +41,14 @@
     [opinionText setContentInset:UIEdgeInsetsMake(5, 5, 5, 5)];
     [self.view addSubview:opinionText];
     opinionText.font = [UIFont systemFontOfSize:20];
+    opinionText.layer.borderColor = ssRGBHex(0xFF7474).CGColor;
+    opinionText.layer.borderWidth = 1;
     
     [opinionText mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.view).offset(117);
         make.left.equalTo(self.view).offset(22);
         make.right.equalTo(self.view).offset(-22);
-        make.bottom.equalTo(self.view).offset(-100);
+        make.bottom.equalTo(self.view).offset(-200);
     }];
     
     

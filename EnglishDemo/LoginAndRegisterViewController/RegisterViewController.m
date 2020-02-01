@@ -164,7 +164,7 @@
         });
     };
     NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-    [sender getRequest:[[ConnectionFunction getInstance]getYzmForReg_Post:[phonenumberTextField.text longLongValue]] Block:conBlk];
+    [sender postRequest:[[ConnectionFunction getInstance]getYzmForReg_Post:[phonenumberTextField.text longLongValue]] Block:conBlk];
 
 }
 //验证电话号码格式

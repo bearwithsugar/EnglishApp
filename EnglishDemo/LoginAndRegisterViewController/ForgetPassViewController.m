@@ -174,7 +174,7 @@
         });
     };
     NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-    [sender getRequest:[[ConnectionFunction getInstance]getYzmForPassword_Post:[phonenumber.text longLongValue]] Block:conBlk];
+    [sender postRequest:[[ConnectionFunction getInstance]getYzmForPassword_Post:[phonenumber.text longLongValue]] Block:conBlk];
 }
 
 -(BOOL)verifyMobile:(NSString *)mobilePhone{

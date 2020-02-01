@@ -669,7 +669,7 @@
 -(void)showContent:(NSString*)unitname className:(NSString*)classname testArray:(NSArray*)testarray classId:(NSString*)classid{
     setBtn.hidden = NO;
     JobBlock myblock = ^{
-        NSMutableArray* voiceArray;
+        NSMutableArray* voiceArray = [[NSMutableArray alloc]init];
         for (NSDictionary* dic in testarray) {
             NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
             [dictionary setValue:[dic valueForKey:@"engUrl"] forKey:@"url"];

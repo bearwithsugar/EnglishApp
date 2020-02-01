@@ -29,7 +29,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   
-    [NSThread sleepForTimeInterval:3.0];
+    [NSThread sleepForTimeInterval:2.0];
     [WXApi registerApp:[FixValues getAppId]];
     
     //测试真机是否可以正常播放音频，如果可以，就删掉下面这句话

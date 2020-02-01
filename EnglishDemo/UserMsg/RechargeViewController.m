@@ -19,6 +19,7 @@
 #import "../SVProgressHUD/SVProgressHUD.h"
 #import "../Functions/MyThreadPool.h"
 #import "../Functions/FixValues.h"
+#import "../DiyGroup/UnloginMsgView.h"
 #import "Masonry.h"
 #import <objc/runtime.h>
 #import <StoreKit/StoreKit.h>
@@ -56,14 +57,24 @@
     //[self stategyView];
     xuefenNumber = [[UILabel alloc]init];
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
-    [self newStrategyView];
 }
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+        [self newStrategyView];
+        [self refreshXuefen];
+    }else{
+        UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
+        [self.view addSubview:unloginView];
+        [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(88.27);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.bottom.equalTo(self.view);
+        }];
     }
      //[self payBtn];
-    [self refreshXuefen];
+
 }
 -(void)titleShow{
     [HeadView titleShow:@"学分充值" Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
@@ -147,33 +158,14 @@
 }
 //===================================================================
 -(void)refreshXuefen{
-    
-    [MyThreadPool executeJob:^{
-      NSURL* url=[FixValues getUrl];
-        url=[url URLByAppendingPathComponent:@"account/score"];
-        
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-        NSURLSession *session=[NSURLSession sharedSession];
-        //添加请求头
-        NSDictionary *headers = @{@"English-user": [self->userInfo valueForKey:@"userKey"]};
-        [request setHTTPMethod:@"GET"];
-        [request setAllHTTPHeaderFields:headers];
-        
-        NSURLSessionDataTask *dataTask=[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-            NSDictionary* dictionary=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-            CFRunLoopStop(CFRunLoopGetMain());
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self->xuefenNumber.text = [NSString stringWithFormat:@"%@",[dictionary valueForKey:@"data"]];
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self->xuefenNumber.text = [NSString stringWithFormat:@"%@",[dataDic valueForKey:@"data"]];
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getScore_Get_H] Block:conBlk];
 
-                   });
-           
-        }];
-        [dataTask resume];
-        //这里恢复RunLoop
-        CFRunLoopRun();
-    } Main:^{}];
-
-  
 }
 -(void)newStrategyView{
     
@@ -296,9 +288,7 @@
     }];
     
 }
--(void)strategyOneToPay{
-    
-}
+
 -(void)AppStorePay:(UIButton*)btn{
     NSString* product = [@"xuefen" stringByAppendingString:[NSString stringWithFormat:@"%ld",btn.tag]];
     _currentProId = product;

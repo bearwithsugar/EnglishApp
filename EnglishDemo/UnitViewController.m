@@ -48,6 +48,8 @@
     unitArray=[[NSArray alloc]init];
     unitProcessArray=[[NSArray alloc]init];
     [SVProgressHUD show];
+}
+-(void)viewWillAppear:(BOOL)animated{
     [self unitInit];
 }
 -(void)unitInit{
@@ -56,7 +58,6 @@
     ConBlock blk2 = ^(NSDictionary* dic){
         self->unitProcessArray = [dic valueForKey:@"data"];
         NSLog(@"显示单元进度数组%@",self->unitProcessArray);
-        NSLog(@"unitArray的值是%@",self->unitArray);
         //此处用单元进度数组来判断token是否过期，因为单元数组接口不能验证
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self->unitProcessArray.count==0) {
@@ -76,6 +77,7 @@
     
     ConBlock blk1 = ^(NSDictionary* dic){
         self->unitArray = [dic valueForKey:@"data"];
+        NSLog(@"unitArray的值是%@",self->unitArray);
         [sender1 getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
                                Path:[[ConnectionFunction getInstance]unitProcess_Get_H:self->_bookId]
                               Block:blk2];

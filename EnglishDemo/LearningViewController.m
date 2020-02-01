@@ -443,7 +443,7 @@
             showBigPic.textAlignment=NSTextAlignmentCenter;
             showBigPic.layer.cornerRadius=9;
             
-            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 
                 NSDictionary* bookDic=[self->bookPicArray objectAtIndex:i];
                 NSString* picUrl=[bookDic valueForKey:@"pictureUrl"];
@@ -587,16 +587,14 @@
     followReadBtn=[[UIButton alloc]init];
     followReadBtn.layer.backgroundColor=ssRGBHex(0xFF7474).CGColor;
     followReadBtn.layer.cornerRadius=5;
-    [followReadBtn setTitle:@"我来跟读" forState:UIControlStateNormal];
-    [followReadBtn setTitle:@"正在录音" forState:UIControlStateSelected];
+    [followReadBtn setTitle:@"长按跟读" forState:UIControlStateNormal];
     [followReadBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [followReadBtn setImage:[UIImage imageNamed:@"voice_light"] forState:UIControlStateNormal];
     [followReadBtn setImageEdgeInsets:UIEdgeInsetsMake(0.0, -10, 0.0, 0.0)];
     [followReadBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
     //录音按钮
-    //[followReadBtn addTarget:self action:@selector(startRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
-    
     UILongPressGestureRecognizer* longPressGes = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longBtnAction:)];
+    
     [followReadBtn addGestureRecognizer:longPressGes];
 
     for (int i=0; i<titleArray.count; i++) {
@@ -700,8 +698,12 @@
 -(void)longBtnAction:(UILongPressGestureRecognizer*)ges{
     if ([ges state] == UIGestureRecognizerStateBegan) {
         NSLog(@"长按开始");
+        [followReadBtn setTitle:@"正在录音" forState:UIControlStateNormal];
+        [self startRecordBtnAction];
     }else if([ges state] == UIGestureRecognizerStateEnded){
         NSLog(@"长按结束");
+        [followReadBtn setTitle:@"长按跟读" forState:UIControlStateNormal];
+        [self stopRecord];
     }
     
 }
@@ -723,7 +725,6 @@
     NSLog(@"当前句子id是%@",recordingSentenceId);
    
     VoidBlock addLearnMsg = ^{
-        
         //添加句子学习信息记录
         NSString* sentenceId=[[self->titleArray objectAtIndex:id] valueForKey:@"sentenceId"];
         NetSenderFunction* sender = [[NetSenderFunction alloc]init];
@@ -1261,8 +1262,6 @@
     [[AudioRecorder shareInstance] startRecordWithFilePath:[self getFilePathWithFileName:recordingSentenceId]];
     [[AudioRecorder shareInstance] setRecorderDelegate:self];
     
-    //自动停止录音
-    [NSTimer scheduledTimerWithTimeInterval:4.0 target:self selector:@selector(stopRecord) userInfo:nil repeats:NO];
 }
 
 //停止录音

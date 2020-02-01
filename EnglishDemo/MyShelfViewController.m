@@ -38,6 +38,8 @@
     
     UIScrollView* shelfView;
     NSString* publicationMsg;
+    
+    UnloginMsgView* unloginView;
 }
 
 @end
@@ -48,8 +50,6 @@
     [super viewDidLoad];
     self.view.backgroundColor=[UIColor whiteColor];
     [self titleShow];
-    
-    [SVProgressHUD show];
     if([DocuOperate fileExistInPath:@"process.plist"]){
         NSDictionary* dic=[DocuOperate readFromPlist:@"process.plist"];
         for (int i=0; i<[dic allKeys].count; i++) {
@@ -66,31 +66,33 @@
         self->userInfo=[[NSDictionary alloc]initWithDictionary:[DocuOperate readFromPlist:@"userInfo.plist"]];
     } Main:^{
         if (!self->userInfo || self->userInfo.count == 0) {
-              [self->shelfView removeFromSuperview];
-              UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
-              [self.view addSubview:unloginView];
-              [unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
-                  make.top.equalTo(self.view).with.offset(88.27);
-                  make.left.equalTo(self.view);
-                  make.right.equalTo(self.view);
-                  make.bottom.equalTo(self.view);
-              }];
-              return;
-           }else{
-               ConBlock myBlock = ^(NSDictionary* dic){
-                   dispatch_async(dispatch_get_main_queue(), ^{
-                       self->bookArray=[dic valueForKey:@"data"];
-                       [self->shelfView removeFromSuperview];
-                       [self bookView];
-                       //k加载完成，取消动画
-                       [SVProgressHUD dismiss];
-                   });
-               };
-               NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-               [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
-                                     Path:[[ConnectionFunction getInstance]getBookShelf_Get_H]
-                                    Block:myBlock];
-           }
+            [self->shelfView removeFromSuperview];
+            self->unloginView=[[UnloginMsgView alloc]init];
+            [self.view addSubview:self->unloginView];
+            [self->unloginView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self.view).with.offset(88.27);
+                make.left.equalTo(self.view);
+                make.right.equalTo(self.view);
+                make.bottom.equalTo(self.view);
+            }];
+            return;
+        }else{
+            [SVProgressHUD show];
+            [self->unloginView removeFromSuperview];
+            ConBlock myBlock = ^(NSDictionary* dic){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self->bookArray=[dic valueForKey:@"data"];
+                    [self->shelfView removeFromSuperview];
+                    [self bookView];
+                    //k加载完成，取消动画
+                    [SVProgressHUD dismiss];
+                });
+            };
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+            Path:[[ConnectionFunction getInstance]getBookShelf_Get_H]
+            Block:myBlock];
+        }
     }];
     
 }

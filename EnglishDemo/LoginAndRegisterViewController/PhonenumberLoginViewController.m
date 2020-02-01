@@ -53,6 +53,9 @@
     
     usernameTextField=[[UITextField alloc]init];
     usernameTextField.placeholder=@"请输入手机号码";
+    if (_phoneNumber != nil) {
+        usernameTextField.text = _phoneNumber;
+    }
     //[usernameTextField setValue:[UIFont boldSystemFontOfSize:12] forKeyPath:@"_placeholderLabel.font"];
     
     Ivar ivar =  class_getInstanceVariable([UITextField class], "_placeholderLabel");
@@ -170,7 +173,7 @@
         });
     };
     NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-    [sender getRequest:[[ConnectionFunction getInstance]getYzmForPassword_Post:[usernameTextField.text longLongValue]] Block:conBlk];
+    [sender postRequest:[[ConnectionFunction getInstance]getYzmForPassword_Post:[usernameTextField.text longLongValue]] Block:conBlk];
 }
 -(void)toLogin{
     if ([usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length==0||[passwordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length==0) {
@@ -183,7 +186,7 @@
             if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
                 if ([DocuOperate writeIntoPlist:@"userInfo.plist"
                                      dictionary:[DataFilter DictionaryFilter:[dataDic valueForKey:@"data"]]]) {
-                    [self pushToMain];
+                    [self popToMain];
                 }else{
                     [self warnMsg:@"写入用户信息失败，稍后再试"];
                 }
@@ -213,14 +216,12 @@
     [self.navigationController popViewControllerAnimated:true];
 }
 
--(void)pushToMain{
+-(void)popToMain{
     for (UIViewController *controller in self.navigationController.viewControllers) {
         if ([controller isKindOfClass:[ViewController class]]) {
-            ViewController *A =(ViewController *)controller;
-            [self.navigationController popToViewController:A animated:YES];
+            [self.navigationController popToViewController:controller animated:YES];
         }
     }
-    
 }
 
 @end

@@ -31,6 +31,7 @@ DownloadAudioService* downInstance;
     }
     NSData * mp3Data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:url]];
     [mp3Data writeToFile:filePath options:NSDataWritingAtomic error:nil];
+    NSLog(@"音频%@下载完成",name);
 }
 -(NSString*)getAudioPath:(NSString*)name{
     return [[[DocuOperate cacheDirectory] stringByAppendingPathComponent:@"audioFile"]

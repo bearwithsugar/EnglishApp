@@ -7,6 +7,7 @@
 //
 
 #import "ResetPassViewController.h"
+#import "LoginViewController.h"
 #import "../Functions/netOperate/ConnectionFunction.h"
 #import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Common/HeadView.h"
@@ -147,8 +148,15 @@
     if ([passwordTextField.text isEqualToString:passwordDefineTextField.text]) {
         ConBlock conBlk = ^(NSDictionary* dic){
             NSLog(@"注册结果是：%@",[dic valueForKey:@"message"]);
+            VoidBlock backBlk = ^{
+                [self popToLogin];
+            };
             dispatch_async(dispatch_get_main_queue(), ^{
-                [self presentViewController:[WarningWindow MsgWithoutTrans:[dic valueForKey:@"message"]] animated:YES completion:nil];
+                if([[dic valueForKey:@"code"]intValue] == 200){
+                    [self presentViewController:[WarningWindow MsgWithBlock:[dic valueForKey:@"message"] Block:backBlk] animated:YES completion:nil];
+                }else{
+                    [self presentViewController:[WarningWindow MsgWithoutTrans:[dic valueForKey:@"message"]] animated:YES completion:nil];
+                }
             });
         };
         NetSenderFunction* sender = [[NetSenderFunction alloc]init];
@@ -165,8 +173,12 @@
     [self.view endEditing:YES]; //实现该方法是需要注意view需要是继承UIControl而来的
 }
 
--(void)popBack{
-    [self.navigationController popViewControllerAnimated:true];
+-(void)popToLogin{
+    for (UIViewController *controller in self.navigationController.viewControllers) {
+        if ([controller isKindOfClass:[LoginViewController class]]) {
+            [self.navigationController popToViewController:(LoginViewController*)controller animated:YES];
+        }
+    }
 }
 
 

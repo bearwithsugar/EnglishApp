@@ -186,7 +186,11 @@ static ConnectionFunction* instance = nil;
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"books"];
     url=[url URLByAppendingPathComponent:publictionId];
-    url=[url URLByAppendingPathComponent:userId];
+     if (userId == nil) {
+         url=[url URLByAppendingPathComponent:@"111"];
+     }else{
+         url=[url URLByAppendingPathComponent:userId];
+     }
     return url;
 }
 

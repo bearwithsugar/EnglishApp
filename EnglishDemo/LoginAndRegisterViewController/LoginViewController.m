@@ -10,6 +10,7 @@
 #import "PhonenumberLoginViewController.h"
 #import "RegisterViewController.h"
 #import "ForgetPassViewController.h"
+#import "ViewController.h"
 #import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 #import "../AppDelegate.h"
 #import "../Functions/netOperate/ConnectionFunction.h"
@@ -366,30 +367,24 @@
     
     ConBlock conBlk = ^(NSDictionary* loginDic){
         //如果登录成功，获取s用户数据并写入文件然后跳转页面
+        dispatch_async(dispatch_get_main_queue(), ^{
            if ([[loginDic valueForKey:@"message"]isEqualToString:@"success"]) {
                //dictionary：过滤字典中空值
                if ([DocuOperate writeIntoPlist:@"userInfo.plist"
-                                    dictionary:[DataFilter DictionaryFilter:[loginDic valueForKey:@"data"]]]
-                   ) {
-                   dispatch_async(dispatch_get_main_queue(), ^{
-                       [SVProgressHUD dismiss];
-                       [self popBack];
-                       NSDictionary* usernameDic = [[NSDictionary alloc]
-                                                          initWithObjectsAndKeys:self->usernameTextField.text,@"username",
-                                                               self->passwordTextField.text,@"password", nil];
-                       [MyThreadPool executeJob:^{
-                           [DocuOperate writeIntoPlist:@"password.plist" dictionary:usernameDic];
-                       } Main:^{
-                           NSLog(@"记住密码成功");
-                       }];
-                    });
+                                    dictionary:[DataFilter DictionaryFilter:[loginDic valueForKey:@"data"]]]) {
+                   [SVProgressHUD dismiss];
+                   [self popToMain];
+                   NSDictionary* usernameDic = [[NSDictionary alloc]
+                                                      initWithObjectsAndKeys:self->usernameTextField.text,@"username",
+                                                           self->passwordTextField.text,@"password", nil];
+                   [MyThreadPool executeJob:^{
+                       [DocuOperate writeIntoPlist:@"password.plist" dictionary:usernameDic];
+                   } Main:^{
+                       NSLog(@"记住密码成功");
+                   }];
                }else{
-                   dispatch_async(dispatch_get_main_queue(), ^{
                        [self warnMsg:@"写入用户信息失败，稍后再试"];
-                   });
                }
-               
-               
            }else if([[loginDic valueForKey:@"message"]isEqualToString:@"该账号已在其他设备登录，是否确认登录？"]){
                [SVProgressHUD dismiss];
                [self warnMsgWithOpe:[loginDic valueForKey:@"message"]];
@@ -401,6 +396,7 @@
                [self warnMsg:[loginDic valueForKey:@"message"]];
                [SVProgressHUD dismiss];
            }
+        });
     };
     NetSenderFunction* sender = [[NetSenderFunction alloc]init];
     [sender postRequest:[[ConnectionFunction getInstance]login_password_Post:[usernameTextField.text longLongValue]
@@ -465,6 +461,7 @@
 -(void)pushToPhonenumberLogin{
     if (phonenumberLogin==nil) {
         phonenumberLogin = [[PhonenumberLoginViewController alloc]init];
+        phonenumberLogin.phoneNumber = usernameTextField.text;
     }
     [self.navigationController pushViewController:phonenumberLogin animated:true];
 }
@@ -481,8 +478,12 @@
     [self.navigationController pushViewController:forgetPass animated:true];
 }
 
--(void)popBack{
-    [self.navigationController popViewControllerAnimated:true];
+-(void)popToMain{
+    for (UIViewController *controller in self.navigationController.viewControllers) {
+        if ([controller isKindOfClass:[ViewController class]]) {
+            [self.navigationController popToViewController:controller animated:YES];
+        }
+    }
 }
 
 @end

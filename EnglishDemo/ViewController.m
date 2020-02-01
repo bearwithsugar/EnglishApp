@@ -652,7 +652,7 @@
     [attri insertAttributedString:string atIndex:6];
     myShelf.attributedText=attri;
     myShelf.userInteractionEnabled=YES;
-    UITapGestureRecognizer* clickmyShelf=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(action)];
+    UITapGestureRecognizer* clickmyShelf=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(pushToMyShelfView)];
     [myShelf addGestureRecognizer:clickmyShelf];
     [myProgressTitle addSubview:myShelf];
     
@@ -786,14 +786,6 @@
     
 }
 
--(void)action{
-    if (userInfo==nil) {
-        [self loginWarn:@"您尚未登录！"];
-    }else{
-        [self pushToMyShelfView];
-    }
-    
-}
 -(void)loginWarn:(NSString*)message{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
@@ -969,13 +961,7 @@
 
 
 #pragma mark --chooseBook
-//-(void)chooseBookinit{
-//    //存放返回数据的字典
-//    publicationMsgDic=[ConnectionFunction getLineByType:@"3" UserKey:[userInfo valueForKey:@"userKey"]];
-//    //存放列表对象的数组，每个元素是一个字典
-//    publicationArray=[publicationMsgDic valueForKey:@"data"];
-//
-//}
+
 -(void)chooseBook{
     
     ConBlock jobBlock = ^(NSDictionary* resultDic){
@@ -991,16 +977,19 @@
                make.left.equalTo(self.view);
                make.bottom.equalTo(self.view);
             }];
+            [SVProgressHUD dismiss];
         });
     };
     
     NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD show];
+        });
         [MyThreadPool executeJob:^{
             self->publicationMsg = [[gradesArr objectAtIndex:row]valueForKey:@"categoryId"];
             //选择完年级和出版社之后返回的书籍信息y
             NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
-                                  Path:[[ConnectionFunction getInstance]getBookMsg_Get_H:self->publicationMsg
+            [sender getRequest:[[ConnectionFunction getInstance]getBookMsg_Get_H:self->publicationMsg
                                                                                   UserId:[self->userInfo valueForKey:@"userId"]]
                                  Block:jobBlock];
         } Main:^{}];
@@ -1020,7 +1009,7 @@
     };
     if (chooseBookView == nil) {
         NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-        [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getLineByType_Get_H:@"3"] Block:conblock];
+        [sender getRequest:[[ConnectionFunction getInstance]getLineByType_Get_H:@"3"] Block:conblock];
     }else{
         [self.view addSubview:self->chooseBookView];
         [self->chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -1062,7 +1051,7 @@
             [loadBtn addTarget:self action:@selector(addBook:) forControlEvents:UIControlEventTouchUpInside];
             loadBtn.tag=i;
             [book addSubview:loadBtn];
-        }else{
+        }else if(userInfo != nil){
             UIButton* loadBtn=[[UIButton alloc]initWithFrame:CGRectMake(27.6, 35.31, 70.62, 70.62)];
             [loadBtn setTitle:@"已添加" forState:UIControlStateNormal];
             [loadBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -1070,6 +1059,9 @@
             loadBtn.layer.cornerRadius = 5;
             [loadBtn addTarget:self action:@selector(haveAdd) forControlEvents:UIControlEventTouchUpInside];
             [book addSubview:loadBtn];
+        }else{
+            UITapGestureRecognizer* gesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(unlogWaining)];
+            [book addGestureRecognizer:gesture];
         }
     }
 
@@ -1130,6 +1122,12 @@
 -(void)haveAdd{
     [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
 }
+-(void)unlogWaining{
+    VoidBlock myBlk = ^{
+        [self pushToLoginView];
+    };
+    [self presentViewController:[WarningWindow MsgWithBlock2:@"您尚未登录，不能添加书架！" Msg:@"登录" Block1:myBlk Msg2:@"好的" Block2:^{}] animated:YES completion:nil];
+}
 
 #pragma mark --otherFunction
 -(void)cleanMsg{
@@ -1149,7 +1147,7 @@
     [refreshPanelProcess removeFromSuperview];
 
     //提示框
-    [self presentViewController:[WarningWindow transToLogin:@"您尚未登录！" Navigation:self.navigationController]
+    [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，您可以点击‘选择课本’查看本软件包含的书本！" Navigation:self.navigationController]
                        animated:YES
                      completion:nil];
 }

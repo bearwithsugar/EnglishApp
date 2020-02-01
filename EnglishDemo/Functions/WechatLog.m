@@ -68,8 +68,7 @@ static WechatLog* instance = nil;
                 };
                 
                 [[AgentFunction theTopviewControler]
-                 presentViewController:[WarningWindow MsgWithBlock2:@"强制登录" Block1:myBlock Msg:@"取消" Block2:^{}]
-                 animated:YES completion:nil];
+                 presentViewController:[WarningWindow MsgWithBlock2:[wxLogDic valueForKey:@"message"] Msg:@"强制登录" Block1:myBlock Msg2:@"取消" Block2:^{}]animated:YES completion:nil];
             }
          });
     };
