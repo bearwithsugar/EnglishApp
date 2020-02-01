@@ -193,11 +193,15 @@
                 make.right.equalTo(self.view);
                 make.bottom.equalTo(self.view);
             }];
+            [SVProgressHUD dismiss];
         });
     };
     
     NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
         self->publicationMsg = [[gradesArr objectAtIndex:row]valueForKey:@"categoryId"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD show];
+        });
         NetSenderFunction* sender = [[NetSenderFunction alloc]init];
         [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
                               Path:[[ConnectionFunction getInstance]getBookMsg_Get_H:self->publicationMsg

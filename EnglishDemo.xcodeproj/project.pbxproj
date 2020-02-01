@@ -1134,6 +1134,7 @@
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = FF3W9T8H43;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1171,6 +1172,7 @@
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = FF3W9T8H43;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
