@@ -92,6 +92,8 @@
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>microphoneDesciption</string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

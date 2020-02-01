@@ -35,7 +35,6 @@
 		59344ADB21C24AF700198E8F /* load.gif in Resources */ = {isa = PBXBuildFile; fileRef = 59344ADA21C24AF700198E8F /* load.gif */; };
 		593D8EF422D2205A0064FBD1 /* DownloadAudioService.m in Sources */ = {isa = PBXBuildFile; fileRef = 593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */; };
 		593F6968230BB87000582A8B /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; };
-		593F6969230BF6CB00582A8B /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; };
 		593F696A230BF6CB00582A8B /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59477BB3216F3FC5000205A5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 59477BB2216F3FC5000205A5 /* AppDelegate.m */; };
 		59477BB6216F3FC5000205A5 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 59477BB5216F3FC5000205A5 /* ViewController.m */; };
@@ -400,7 +399,6 @@
 				5967214921F3105200409403 /* QuartzCore.framework in Frameworks */,
 				5967214721F3103900409403 /* CoreTelephony.framework in Frameworks */,
 				5967214521F3102600409403 /* SystemConfiguration.framework in Frameworks */,
-				593F6969230BF6CB00582A8B /* SDWebImage.framework in Frameworks */,
 				5967214321F3101E00409403 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -836,7 +834,7 @@
 		59477BA6216F3FC5000205A5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "马一轩";
 				TargetAttributes = {
 					59477BAD216F3FC5000205A5 = {
@@ -1132,7 +1130,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
@@ -1169,7 +1167,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "";
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
