@@ -441,7 +441,9 @@
         [SVProgressHUD showWithStatus:@"登录中"];
         NetSenderFunction *sender = [[NetSenderFunction alloc]init];
         [sender postRequest:[[ConnectionFunction getInstance]userOccupation_Post:self->usernameTextField.text Type:@"phone" Other_type:@"xxx"] Block:^(NSDictionary * dic) {
-            [self toLogin];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self toLogin];
+            });
         }];
     }];
     UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

@@ -256,7 +256,7 @@
     NSCharacterSet  *set = [NSCharacterSet whitespaceAndNewlineCharacterSet];
     answerStr = [answerStr stringByTrimmingCharactersInSet:set];
     
-    if ([answerStr isEqualToString: answer]) {
+    if ([answerStr caseInsensitiveCompare:answer] == NSOrderedSame) {
         NSLog(@"拼写正确");
         rightAnswer.text=@"Yes！";
         rightAnswer.textColor=[UIColor greenColor];

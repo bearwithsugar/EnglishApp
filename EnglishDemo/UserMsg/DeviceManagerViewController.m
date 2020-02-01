@@ -160,7 +160,7 @@
 -(void)releaseDevice:(UIButton*)btn{
     ConBlock conBlk = ^(NSDictionary* dic){
         //此处判断条件在重写代码后未验证！！
-        if ([[dic valueForKey:@"message"]isEqualToString:@"succself->ess"]) {
+        if ([[dic valueForKey:@"code"]intValue]==200) {
             NSLog(@"解除绑定成功");
             if ([[[self->deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
                    //如果是当前设备

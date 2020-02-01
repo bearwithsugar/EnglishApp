@@ -201,74 +201,141 @@
     [nicknameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self->surfaceView).with.offset(250);
         make.height.equalTo(@49);
-        make.width.equalTo(@80);
-        make.left.equalTo(self->surfaceView).offset(50);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
     }];
     
-    nicknameTextField=[[UITextField alloc]initWithFrame:CGRectMake(140, 250, 200, 49)];
+    nicknameTextField=[[UITextField alloc]init];
     nicknameTextField.text=[userInfo valueForKey:@"nickname"];
     nicknameTextField.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:nicknameTextField];
     
+    [nicknameTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(250);
+        make.height.equalTo(@49);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(50);
+    }];
+    
     //中部横线
-    UIView* lineView=[[UIView alloc]initWithFrame:CGRectMake(0, 299, 414, 1)];
+    UIView* lineView=[[UIView alloc]init];
     lineView.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView.layer.borderWidth=1;
     [surfaceView addSubview:lineView];
+    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(299);
+        make.height.equalTo(@1);
+        make.width.equalTo(self->surfaceView);
+        make.left.equalTo(self->surfaceView);
+    }];
     
-    UILabel* phoneLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 300, 80, 49)];
+    UILabel* phoneLabel=[[UILabel alloc]init];
     phoneLabel.text=@"电话号码：";
     phoneLabel.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:phoneLabel];
+    [phoneLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(300);
+        make.height.equalTo(@49);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
+    }];
     
-    phoneTextField=[[UITextField alloc]initWithFrame:CGRectMake(140, 300, 200, 49)];
+    phoneTextField=[[UITextField alloc]init];
     phoneTextField.font=[UIFont systemFontOfSize:14];
     phoneTextField.text=[userInfo valueForKey:@"phone"];;
     [surfaceView addSubview:phoneTextField];
+    [phoneTextField mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(300);
+        make.height.equalTo(@49);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(50);
+    }];
     
     //中部横线
-    UIView* lineView2=[[UIView alloc]initWithFrame:CGRectMake(0, 349, 414, 1)];
+    UIView* lineView2=[[UIView alloc]init];
     lineView2.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView2.layer.borderWidth=1;
     [surfaceView addSubview:lineView2];
+    [lineView2 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(349);
+        make.height.equalTo(@1);
+        make.width.equalTo(self->surfaceView);
+        make.left.equalTo(self->surfaceView);
+    }];
     
-    UILabel* wechatLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 350, 80, 49)];
+    UILabel* wechatLabel=[[UILabel alloc]init];
     wechatLabel.text=@"微信绑定：";
     wechatLabel.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:wechatLabel];
+    [wechatLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(350);
+        make.height.equalTo(@49);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
+    }];
     
-    wechatBinding=[[UIButton alloc]initWithFrame:CGRectMake(140, 350, 100, 49)];
+    wechatBinding=[[UIButton alloc]init];
     [wechatBinding removeFromSuperview];
     wechatBinding.titleLabel.font=[UIFont systemFontOfSize:14];
     [wechatBinding setTitle:@"未绑定" forState:UIControlStateNormal];
     [wechatBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
     [wechatBinding addTarget:self action:@selector(WXBinding) forControlEvents:UIControlEventTouchUpInside];
     [surfaceView addSubview:wechatBinding];
+    [wechatBinding mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(350);
+        make.height.equalTo(@49);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(50);
+    }];
     
     //中部横线
-    UIView* lineView3=[[UIView alloc]initWithFrame:CGRectMake(0, 399, 414, 1)];
+    UIView* lineView3=[[UIView alloc]init];
     lineView3.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView3.layer.borderWidth=1;
     [surfaceView addSubview:lineView3];
+    [lineView3 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(399);
+        make.height.equalTo(@1);
+        make.width.equalTo(self->surfaceView);
+        make.left.equalTo(self->surfaceView);
+    }];
     
-    UILabel* qqLabel=[[UILabel alloc]initWithFrame:CGRectMake(50, 400, 80, 49)];
+    UILabel* qqLabel=[[UILabel alloc]init];
     qqLabel.text=@"QQ绑定：";
     qqLabel.font=[UIFont systemFontOfSize:14];
     [surfaceView addSubview:qqLabel];
+    [qqLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(400);
+        make.height.equalTo(@49);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
+    }];
     
-    QQBinding=[[UIButton alloc]initWithFrame:CGRectMake(140, 400, 100, 49)];
+    QQBinding=[[UIButton alloc]init];
     [QQBinding removeFromSuperview];
     [QQBinding setTitle:@"未绑定" forState:UIControlStateNormal];
     [QQBinding addTarget:self action:@selector(QQBinding) forControlEvents:UIControlEventTouchUpInside];
     QQBinding.titleLabel.font=[UIFont systemFontOfSize:14];
     [QQBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
     [surfaceView addSubview:QQBinding];
+    [QQBinding mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(400);
+        make.height.equalTo(@49);
+        make.width.equalTo(@100);
+        make.left.equalTo(self->surfaceView.mas_centerX).offset(50);
+    }];
     
     //中部横线
-    UIView* lineView4=[[UIView alloc]initWithFrame:CGRectMake(0, 449, 414, 1)];
+    UIView* lineView4=[[UIView alloc]init];
     lineView4.layer.borderColor=ssRGBHex(0x979797).CGColor;
     lineView4.layer.borderWidth=1;
     [surfaceView addSubview:lineView4];
+    [lineView4 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self->surfaceView).with.offset(449);
+        make.height.equalTo(@1);
+        make.width.equalTo(self->surfaceView);
+        make.left.equalTo(self->surfaceView);
+    }];
 }
 -(void)loadData{
     ConBlock jobBlock = ^(NSDictionary* resultDic){
