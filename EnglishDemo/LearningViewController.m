@@ -460,8 +460,9 @@
                     
                     UITapGestureRecognizer* clickBigPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigPicGesture:)];
                     [showBigPic addGestureRecognizer:clickBigPic];
-                    if (theBook.tag==(size-1)) {
+                    if (i==(size-1)) {
                         [SVProgressHUD dismiss];
+                        [self loadAudioMsg:self->sentenceArray];
                     }
                 });
 
@@ -1173,9 +1174,9 @@
     
     [lessontitle removeFromSuperview];
     [self presentLessionView];
-    [self learningBook];
     [SVProgressHUD showWithStatus:@"资源加载中.."];
-    [self loadAudioMsg:self->sentenceArray];
+    [self learningBook];
+//    [self loadAudioMsg:self->sentenceArray];
     
 }
 
