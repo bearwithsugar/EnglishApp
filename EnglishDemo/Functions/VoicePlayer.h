@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VoicePlayer : NSObject
 @property (nonatomic,strong) FSAudioStream *audioStream;
 @property (nonatomic,strong) NSString* url;
+@property (nonatomic,strong) NSString* netUrl;
+@property (nonatomic,strong) NSString* sourceName;
 @property (nonatomic,strong) NSArray* urlArray;
 @property  NSInteger startIndex;
 

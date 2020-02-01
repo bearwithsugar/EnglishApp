@@ -18,10 +18,12 @@
 #import "../DiyGroup/XuefenTableViewCell.h"
 #import "../DiyGroup/NewVersonTableViewCell.h"
 #import "../Functions/DocuOperate.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Functions/LocalDataOperation.h"
 #import "../Functions/QQLogin.h"
 #import "../Functions/AgentFunction.h"
+#import "../Functions/MyThreadPool.h"
 #import "ModifyUserMsgViewController.h"
 #import "Masonry.h"
 
@@ -59,8 +61,6 @@
     NSString *path=[[NSBundle mainBundle]pathForResource:@"UserMsg.plist" ofType:nil];
     saintArray=[NSArray arrayWithContentsOfFile:path];
     self.view.backgroundColor=[UIColor whiteColor];
-    
-    qqlogin=[[QQLogin alloc]init];
     [self userTitle];
     
 }
@@ -77,14 +77,23 @@
     
 }
 -(void)refreshScore{
+    ConBlock conBlk = ^(NSDictionary* scoreDic){
+        self->score=[[scoreDic valueForKey:@"data"]intValue];
+        NSIndexPath *path=[NSIndexPath indexPathForRow:0 inSection:0];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self->userMsg reloadRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
+        });
+    };
     if (userInfo==nil) {
         score=0;
     }else{
-        NSDictionary* scoreDic=[ConnectionFunction getScore:[userInfo valueForKey:@"userKey"]];
-        score=[[scoreDic valueForKey:@"data"]intValue];
+        [MyThreadPool executeJob:^{
+            NetSenderFunction* sender= [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                  Path:[[ConnectionFunction getInstance]getScore_Get_H]
+                                 Block:conBlk];
+        } Main:^{}];
     }
-    NSIndexPath *path=[NSIndexPath indexPathForRow:0 inSection:0];
-    [userMsg reloadRowsAtIndexPaths:@[path] withRowAnimation:UITableViewRowAnimationTop];
     
 }
 -(void)userTitle{
@@ -161,21 +170,18 @@
     }];
     
     if (userInfo!=nil) {
-        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-            // 处理耗时操作的代码块...
+        __block UIImage* headpic;
+        [MyThreadPool executeJob:^{
             //通知主线程刷新
-            UIImage* headpic=[LocalDataOperation getImage:[self->userInfo valueForKey:@"userKey"] httpUrl:[self->userInfo valueForKey:@"pictureUrl"]];
-            //[myDelegate.userInfo valueForKey:@""];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                //回调或者说是通知主线程刷新，
-                if (headpic==nil) {
-                   
-                }else{
-                    NSLog(@"头像图片%@",headpic);
-                    headPic.image=headpic;
-                }
-            });
-        });
+            headpic = [LocalDataOperation getImage:[self->userInfo valueForKey:@"userKey"]
+                                                    httpUrl:[self->userInfo valueForKey:@"pictureUrl"]];
+        } Main:^{
+            //回调或者说是通知主线程刷新，
+            if (headpic!=nil) {
+               headPic.image=headpic;
+            }
+        }];
+        
     }
     
     if (userInfo==nil) {
@@ -285,21 +291,31 @@
                 [cell loadData:@""];
                 [cell setNoVersion];
             }else{
-                self->versionMsg = [[[ConnectionFunction getVersionMsg:[self->userInfo valueForKey:@"userKey"]] valueForKey:@"data"]firstObject];
-                if([DocuOperate fileExistInPath:@"version.plist"]){
-                    NSDictionary* oldVersion = [DocuOperate readFromPlist:@"version.plist"];
-                    if ([[oldVersion valueForKey:@"version"]isEqualToString:[self->versionMsg valueForKey:@"versionId"]]) {
-                        [cell setNoVersion];
-                    }else{
-                        [cell setNewVersion];
-                    }
-                }else{
-                    [DocuOperate writeIntoPlist:@"version.plist" dictionary:[NSDictionary dictionaryWithObjectsAndKeys:[self->versionMsg valueForKey:@"versionId"],@"version", nil]];
-                    [cell setNoVersion];
-                }
-                [cell loadData:[self->versionMsg valueForKey:@"versionName"]];
+                ConBlock conBlk = ^(NSDictionary* dic){
+                    self->versionMsg = [[dic valueForKey:@"data"]firstObject];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if([DocuOperate fileExistInPath:@"version.plist"]){
+                            NSDictionary* oldVersion = [DocuOperate readFromPlist:@"version.plist"];
+                        if ([[oldVersion valueForKey:@"version"]isEqualToString:[self->versionMsg valueForKey:@"versionId"]]) {
+                            [cell setNoVersion];
+                        }else{
+                            [cell setNewVersion];
+                        }
+                        }else{
+                            [DocuOperate writeIntoPlist:@"version.plist" dictionary:[NSDictionary dictionaryWithObjectsAndKeys:[self->versionMsg valueForKey:@"versionId"],@"version", nil]];
+                            [cell setNoVersion];
+                        }
+                        [cell loadData:[self->versionMsg valueForKey:@"versionName"]];
+                    });
+                };
+    
+                [MyThreadPool executeJob:^{
+                    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+                    [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                          Path:[[ConnectionFunction getInstance]getVersionMsg_Get_H]
+                                         Block:conBlk];
+                } Main:^{}];
             }
-        
 
             return cell;
         }
@@ -374,6 +390,7 @@
     [alertController addAction:({
         UIAlertAction *action = [UIAlertAction actionWithTitle:@"QQ分享" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             NSLog(@"QQ分享");
+            self->qqlogin = [QQLogin getInstance];
             [self->qqlogin qqshare];
             
         }];

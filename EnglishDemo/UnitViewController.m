@@ -10,13 +10,14 @@
 #import "LearningViewController.h"
 #import "DiyGroup/UnitsListTableViewCell.h"
 #import "DiyGroup/UnitsListDownTableViewCell.h"
-#import "Functions/ConnectionFunction.h"
+#import "Functions/netOperate/ConnectionFunction.h"
 #import "Functions/DocuOperate.h"
 #import "Common/HeadView.h"
 #import "Functions/WarningWindow.h"
 #import "Common/HeadView.h"
-#import "Functions/ConnectionInstance.h"
+#import "Functions/netOperate/NetSenderFunction.h"
 #import "Functions/MyThreadPool.h"
+#import "SVProgressHUD.h"
 #import "Masonry.h"
 
 @interface UnitViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -38,6 +39,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.view.backgroundColor=[UIColor whiteColor];
     NSLog(@"这边拿到的书籍id的值是%@",_bookId);
     NSLog(@"这边拿到的书籍名称的值是%@",_bookName);
@@ -45,41 +47,43 @@
     //初始化数组
     unitArray=[[NSArray alloc]init];
     unitProcessArray=[[NSArray alloc]init];
-    
+    [SVProgressHUD show];
     [self unitInit];
-    NSLog(@"unitArray的值是%@",unitArray);
-    //此处用单元进度数组来判断token是否过期，因为单元数组接口不能验证
-    if (unitProcessArray.count==0) {
-        //提示框
-        [self presentViewController:[WarningWindow transToLogin:@"您的账号在别处登录，请重新登录！" Navigation:self.navigationController]
-                           animated:YES
-                         completion:nil];
-    }else{
-        [self progressView];
-    }
-
-    [self titleShow];
-    
-}
--(void)viewWillAppear:(BOOL)animated{
-
 }
 -(void)unitInit{
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    NetSenderFunction* sender1 = [[NetSenderFunction alloc]init];
+    ConBlock blk2 = ^(NSDictionary* dic){
+        self->unitProcessArray = [dic valueForKey:@"data"];
+        NSLog(@"显示单元进度数组%@",self->unitProcessArray);
+        NSLog(@"unitArray的值是%@",self->unitArray);
+        //此处用单元进度数组来判断token是否过期，因为单元数组接口不能验证
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self->unitProcessArray.count==0) {
+                [SVProgressHUD dismiss];
+                //提示框
+                    [self presentViewController:[WarningWindow transToLogin:@"您的账号在别处登录，请重新登录！" Navigation:self.navigationController]
+                                   animated:YES
+                                 completion:nil];
+            }else{
+                [self progressView];
+                [SVProgressHUD dismiss];
+            }
+
+            [self titleShow];
+        });
+    };
     
-    ConnectionInstance* getUnitMsgInstance=[[ConnectionInstance alloc]init];
+    ConBlock blk1 = ^(NSDictionary* dic){
+        self->unitArray = [dic valueForKey:@"data"];
+        [sender1 getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                               Path:[[ConnectionFunction getInstance]unitProcess_Get_H:self->_bookId]
+                              Block:blk2];
+    };
+    [sender getRequestWithHead:[userInfo valueForKey:@"userKey"]
+                          Path:[[ConnectionFunction getInstance]getUnitMsg_Get_H:_bookId]
+                         Block:blk1];
     
-    ConnectionInstance* unitProcessInstance=[[ConnectionInstance alloc]init];
-    
-    NSDictionary* dataDic=[getUnitMsgInstance getUnitMsg:_bookId UserKey:[userInfo valueForKey:@"userKey"]];
-    
-    //[ConnectionFunction getUnitMsg:_bookId UserKey:[userInfo valueForKey:@"userKey"]];
-    
-    unitArray=[dataDic valueForKey:@"data"];
-    
-    unitProcessArray=[[unitProcessInstance unitProcess:_bookId UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-    
-//    [[ConnectionFunction unitProcess:_bookId UserKey:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
-    NSLog(@"显示单元进度数组%@",unitProcessArray);
 }
 -(void)titleShow{
     [HeadView titleShow:_bookName Color:ssRGBHex(0xFF7474) UIView:self.view UINavigationController:self.navigationController];
@@ -143,7 +147,6 @@
         make.bottom.equalTo(self.view);
         make.right.equalTo(self.view);
     }];
-    
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;

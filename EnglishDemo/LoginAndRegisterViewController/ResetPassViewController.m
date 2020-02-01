@@ -7,7 +7,8 @@
 //
 
 #import "ResetPassViewController.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Common/HeadView.h"
 #import "../Functions/WarningWindow.h"
 #import "Masonry.h"
@@ -144,9 +145,14 @@
     }
     
     if ([passwordTextField.text isEqualToString:passwordDefineTextField.text]) {
-        NSDictionary* dic= [ConnectionFunction resetPass:[_phoneNumber longLongValue] Pass:passwordTextField.text];
-        NSLog(@"注册结果是：%@",[dic valueForKey:@"message"]);
-        [self presentViewController:[WarningWindow MsgWithoutTrans:[dic valueForKey:@"message"]] animated:YES completion:nil];
+        ConBlock conBlk = ^(NSDictionary* dic){
+            NSLog(@"注册结果是：%@",[dic valueForKey:@"message"]);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self presentViewController:[WarningWindow MsgWithoutTrans:[dic valueForKey:@"message"]] animated:YES completion:nil];
+            });
+        };
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender postRequest:[[ConnectionFunction getInstance]resetPass_Post:[_phoneNumber longLongValue] Pass:passwordTextField.text] Block:conBlk];
 
     }else{
         [self presentViewController:[WarningWindow MsgWithoutTrans:@"两次密码不一样！"] animated:YES completion:nil];

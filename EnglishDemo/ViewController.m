@@ -17,7 +17,7 @@
 #import "practiceViewController/WordsTestViewController.h"
 #import "DiyGroup/ProcessLine.h"
 #import "DiyGroup/ChoosePublishTableViewCell.h"
-#import "Functions/ConnectionFunction.h"
+#import "Functions/netOperate/ConnectionFunction.h"
 #import "Functions/DocuOperate.h"
 #import "practiceViewController/WrongNotesViewController.h"
 #import "Functions/LocalDataOperation.h"
@@ -26,7 +26,7 @@
 #import "AppDelegate.h"
 #import "Functions/DataFilter.h"
 #import "Functions/FixValues.h"
-#import "Functions/ConnectionInstance.h"
+#import "Functions/netOperate/NetSenderFunction.h"
 #import "Reachability.h"
 #import "Functions/MyThreadPool.h"
 #import "SVProgressHUD.h"
@@ -80,11 +80,11 @@
     //用户信息字典
     NSDictionary* userInfo;
     //存放请求出版社列表返回数据的字典
-    NSDictionary* publicationMsgDic;
+    //NSDictionary* publicationMsgDic;
     //用户成绩plist文件所用字典
     NSMutableDictionary* processDic;
     //存放出版社列表对象的数组，每个元素是一个字典
-    NSArray* publicationArray;
+//    NSArray* publicationArray;
     //年级tableview
     UITableView* chooseGradeTable;
     //查询结果书籍的数组
@@ -153,7 +153,6 @@
 
         [self myGradeFixed];
         [self myProgressFixed];
-
         [self initForFirstLogin];
     }
     
@@ -165,27 +164,34 @@
     //用户是否登陆过
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-        ConnectionInstance* recentInstance=[[ConnectionInstance alloc]init];
+        ConBlock myBlock = ^(NSDictionary* resultDic){
+            //判断账号是否其他设备登录
+            if ([[resultDic valueForKey:@"code"]intValue]==401){
+                NSLog(@"账号在别处登录");
+            }else{
+                self->recentLearnMsg=resultDic;
+                NSLog(@"userKey:%@",[self->userInfo valueForKey:@"userKey"]);
 
-        //判断账号是否其他设备登录
-        if ([[[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]]valueForKey:@"code"]intValue]==401){
-            NSLog(@"账号在别处登录");
-        }else{
-            recentLearnMsg=[recentInstance recentLearnMsg:[userInfo valueForKey:@"userKey"]];
-            NSLog(@"userKey:%@",[userInfo valueForKey:@"userKey"]);
+                self->recentBook=[[self->recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
+                
+                 dispatch_async(dispatch_get_main_queue(), ^{
 
-            recentBook=[[recentLearnMsg valueForKey:@"data"]valueForKey:@"book"];
+                        [self myProgressUnfixed];
+                        
+                        if (![self->recentBook isKindOfClass:[NSNull class]]&&[self->recentBook count]) {
 
-            [self myProgressUnfixed];
-            
-            if (![recentBook isKindOfClass:[NSNull class]]&&[recentBook count]) {
+                            [self myGradeUnfixed];
 
-                [self myGradeUnfixed];
-
-                [self refreshMsg];
+                            [self refreshMsg];
+                        }
+                 });
             }
-        }
-
+        };
+        
+        [MyThreadPool executeJob:^{
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]recentLearnMsg_Get_H] Block:myBlock];
+        } Main:^{}];
     }else{
         [self cleanMsg];
     }
@@ -241,7 +247,10 @@
         [DocuOperate replacePlist:@"process.plist" dictionary:self->processDic];
     };
     [MyThreadPool executeJob:^{
-        [ConnectionFunction getBookLearnMsg:[self->userInfo valueForKey:@"userKey"] Id:[self->recentBook valueForKey:@"bookId"] Block:myBlock];
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                              Path:[[ConnectionFunction getInstance]getBookLearnMsg_Get_H:[self->recentBook valueForKey:@"bookId"]]
+                             Block:myBlock];
     } Main:^{
         [self loadGrade];
     }];
@@ -353,18 +362,11 @@
     }else if(btn.tag==2){
         [synchronousPractice removeFromSuperview];
         [myShelfView removeFromSuperview];
-        if (publicationMsgDic == nil) {
-            [self chooseBookinit];
-        }
+//        if (publicationMsgDic == nil) {
+//            [self chooseBookinit];
+//        }
         [self chooseBook];
-        [self.view addSubview:chooseBookView];
         
-        [chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.view).with.offset(137.93);
-            make.left.equalTo(self.view);
-            make.right.equalTo(self.view);
-            make.height.equalTo(@250);
-        }];
     }
     
     for (UIButton* button in titleBtnArray) {
@@ -680,10 +682,15 @@
         [refreshPanelProcess removeFromSuperview];
     }
     
-    bookshelfArray=[[ConnectionFunction getBookShelf:[userInfo valueForKey:@"userKey"]] valueForKey:@"data"];
-    
-    [self loadBookShelfResume:bookshelfArray.count];
-    
+    [MyThreadPool executeJob:^{
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getBookShelf_Get_H] Block:^(NSDictionary* dic){
+            self->bookshelfArray = [dic valueForKey:@"data"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self loadBookShelfResume:self->bookshelfArray.count];
+            });
+        }];
+    } Main:^{}];
 }
 
 -(void)loadBookShelfResume:(BOOL)flag{
@@ -962,32 +969,66 @@
 
 
 #pragma mark --chooseBook
--(void)chooseBookinit{
-    //存放返回数据的字典
-    publicationMsgDic=[ConnectionFunction getLineByType:@"3" UserKey:[userInfo valueForKey:@"userKey"]];
-    //存放列表对象的数组，每个元素是一个字典
-    publicationArray=[publicationMsgDic valueForKey:@"data"];
-   
-}
+//-(void)chooseBookinit{
+//    //存放返回数据的字典
+//    publicationMsgDic=[ConnectionFunction getLineByType:@"3" UserKey:[userInfo valueForKey:@"userKey"]];
+//    //存放列表对象的数组，每个元素是一个字典
+//    publicationArray=[publicationMsgDic valueForKey:@"data"];
+//
+//}
 -(void)chooseBook{
-    NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
-        self->publicationMsg = [[gradesArr objectAtIndex:row]valueForKey:@"categoryId"];
-        //选择完年级和出版社之后返回的书籍信息y
-        NSDictionary* returnMsg=[ConnectionFunction getBookMsg:self->publicationMsg UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
+    
+    ConBlock jobBlock = ^(NSDictionary* resultDic){
         //把返回信息加入到书籍数组
-        self->bookArray=[returnMsg valueForKey:@"data"];
-        //加载显示选择书籍的页面
-        [self startChooseView];
-        [self.view addSubview:self->startChooseView];
-        [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->chooseBookView.mas_bottom);
-            make.right.equalTo(self.view);
-            make.left.equalTo(self.view);
-            make.bottom.equalTo(self.view);
-        }];
-    };;
+        self->bookArray=[resultDic valueForKey:@"data"];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //加载显示选择书籍的页面
+            [self startChooseView];
+            [self.view addSubview:self->startChooseView];
+            [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.top.equalTo(self->chooseBookView.mas_bottom);
+               make.right.equalTo(self.view);
+               make.left.equalTo(self.view);
+               make.bottom.equalTo(self.view);
+            }];
+        });
+    };
+    
+    NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
+        [MyThreadPool executeJob:^{
+            self->publicationMsg = [[gradesArr objectAtIndex:row]valueForKey:@"categoryId"];
+            //选择完年级和出版社之后返回的书籍信息y
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                  Path:[[ConnectionFunction getInstance]getBookMsg_Get_H:self->publicationMsg
+                                                                                  UserId:[self->userInfo valueForKey:@"userId"]]
+                                 Block:jobBlock];
+        } Main:^{}];
+    };
+    
+    ConBlock conblock = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self->chooseBookView = [[ChooseBookView alloc]initWithBlock:myBlock User:[self->userInfo valueForKey:@"userKey"] PublicationArray:[dic valueForKey:@"data"]];
+            [self.view addSubview:self->chooseBookView];
+            [self->chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self.view).with.offset(137.93);
+                make.left.equalTo(self.view);
+                make.right.equalTo(self.view);
+                make.height.equalTo(@250);
+            }];
+        });
+    };
     if (chooseBookView == nil) {
-        chooseBookView=[[ChooseBookView alloc]initWithBlock:myBlock UserKey:[userInfo valueForKey:@"userKey"]];
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getLineByType_Get_H:@"3"] Block:conblock];
+    }else{
+        [self.view addSubview:self->chooseBookView];
+        [self->chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.view).with.offset(137.93);
+            make.left.equalTo(self.view);
+            make.right.equalTo(self.view);
+            make.height.equalTo(@250);
+        }];
     }
 }
 
@@ -1038,17 +1079,10 @@
     NSLog(@"bookarray%@",[bookArray objectAtIndex:loadBtn.tag]);
     NSLog(@"userkey%@",[userInfo valueForKey:@"userKey"]);
     NSLog(@"标号%ld",(long)loadBtn.tag);
-    NSDictionary* dataDic=[ConnectionFunction addBook:[[[bookArray objectAtIndex:loadBtn.tag] valueForKey:@"book"]valueForKey:@"bookId"] BoughtState:@"2" UserKey:[userInfo valueForKey:@"userKey"]];
-    NSLog(@"添加书籍返回的结果是：%@",dataDic);
-    if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        if ([[dataDic valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
-            [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
-        }else{
-            [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加成功!"] animated:YES completion:nil];
-            //选择完年级和出版社之后返回的书籍信息y
-            NSDictionary* returnMsg=[ConnectionFunction getBookMsg:self->publicationMsg UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
+    ConBlock jobBlock = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
             //把返回信息加入到书籍数组
-            self->bookArray=[returnMsg valueForKey:@"data"];
+            self->bookArray=[dic valueForKey:@"data"];
             [self startChooseView];
             [self.view addSubview:self->startChooseView];
             [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -1058,11 +1092,39 @@
                make.bottom.equalTo(self.view);
             }];
             [self myProgressUnfixed];
+        });
+    };
+    
+    ConBlock myBlock = ^(NSDictionary* dic){
+        if ([[dic valueForKey:@"message"]isEqualToString:@"success"]) {
+           if ([[dic valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
+               dispatch_async(dispatch_get_main_queue(), ^{
+                   [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
+               });
+           }else{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加成功!"] animated:YES completion:nil];
+                });
+               //选择完年级和出版社之后返回的书籍信息
+               NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+               [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                     Path:[[ConnectionFunction getInstance]getBookMsg_Get_H:self->publicationMsg
+                                                                                     UserId:[self->userInfo valueForKey:@"userId"]]
+                                    Block:jobBlock];
+           }
+        }else{
+            dispatch_async(dispatch_get_main_queue(), ^{
+            [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];
+            });
+           
         }
-    }else{
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];
-        
-    }
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequestWithHead:[[ConnectionFunction getInstance]addBook_Post_H:[[[bookArray objectAtIndex:loadBtn.tag]
+                                                                                  valueForKey:@"book"]valueForKey:@"bookId"]
+                                                                    BoughtState:@"2"]
+                           Head:[userInfo valueForKey:@"userKey"]
+                          Block:myBlock];
 }
 
 -(void)haveAdd{
@@ -1120,9 +1182,17 @@
         
         unitMsg.bookId=[[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"userBook"]valueForKey:@"bookId"];
         unitMsg.bookName=[[bookshelfArray objectAtIndex:btn.tag]valueForKey:@"bookName"];
-        unitMsg.recentLesson=[[[[ConnectionFunction recentLearnMsgByBook:[userInfo valueForKey:@"userKey"] Id:unitMsg.bookId] valueForKey:@"data"] valueForKey:@"article"]valueForKey:@"articleName" ];
-        NSLog(@"点击书本的最新学习信息%@",unitMsg.recentLesson);
-        [self.navigationController pushViewController:unitMsg animated:true];
+
+        ConBlock myBlock = ^(NSDictionary* dic){
+            self->unitMsg.recentLesson=[[[dic valueForKey:@"data"] valueForKey:@"article"]valueForKey:@"articleName"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.navigationController pushViewController:self->unitMsg animated:true];
+            });
+        };
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[userInfo valueForKey:@"userKey"]
+                              Path:[[ConnectionFunction getInstance]recentLearnMsgByBook_Get_H:unitMsg.bookId]
+                             Block:myBlock];
     }
     
 }

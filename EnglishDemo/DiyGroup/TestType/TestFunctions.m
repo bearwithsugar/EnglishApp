@@ -7,8 +7,6 @@
 //
 
 #import "TestFunctions.h"
-#import "../../Functions/ConnectionFunction.h"
-#import "../../Functions/VoicePlayer.h"
 #import "Masonry.h"
 
 @implementation TestFunctions{

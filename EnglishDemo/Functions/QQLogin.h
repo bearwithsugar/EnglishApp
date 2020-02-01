@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
 
 
 NS_ASSUME_NONNULL_BEGIN

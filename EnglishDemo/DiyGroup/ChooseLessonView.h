@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,copy)NSString* className;
 @property(nonatomic,copy)NSString* bookId;
 @property(nonatomic,copy)NSString* articleId;
+@property(nonatomic,copy)NSString* type;
 //单元下的课数组
 @property(nonatomic,copy)NSArray* lessonArray;
 
@@ -33,7 +34,7 @@ typedef void (^JobBlock) (void);
 
 @property ShowContentBlock showContentBlock;
 
--(id)initWithBookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock;
+-(id)initWithBookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit UnitArray:(NSArray*)unitArr ShowBlock:(ShowContentBlock)showContentBlock;
 
 @end
 

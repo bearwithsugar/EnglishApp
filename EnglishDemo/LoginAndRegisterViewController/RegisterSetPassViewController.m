@@ -7,7 +7,8 @@
 //
 
 #import "RegisterSetPassViewController.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Common/HeadView.h"
 #import "../Functions/WarningWindow.h"
 #import "LoginViewController.h"
@@ -144,17 +145,21 @@
         return;
     }
     
-    if ([passwordTextField.text isEqualToString:passwordDefineTextField.text]) {
-        NSDictionary* dic= [ConnectionFunction toRegister:[_phoneNumber longLongValue] Pass:passwordTextField.text  Nick:@""];
+    ConBlock conBlk = ^(NSDictionary* dic){
         NSLog(@"注册结果是：%@",[dic valueForKey:@"message"]);
-        
-        if ([[dic valueForKey:@"message"]isEqualToString:@"success"]) {
-            [self popBack];
-            [self pushToLogin];
-        }else{
-            [self presentViewController: [WarningWindow MsgWithoutTrans:[dic valueForKey:@"message"]] animated:YES completion:nil];
-        }
-        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[dic valueForKey:@"message"]isEqualToString:@"success"]) {
+                [self popBack];
+                [self pushToLogin];
+            }else{
+                [self presentViewController: [WarningWindow MsgWithoutTrans:[dic valueForKey:@"message"]] animated:YES completion:nil];
+            }
+        });
+    };
+    
+    if ([passwordTextField.text isEqualToString:passwordDefineTextField.text]) {
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender postRequest:[[ConnectionFunction getInstance]toRegister_Post:[_phoneNumber longLongValue] Pass:passwordTextField.text Nick:@""] Block:conBlk];
     }else{
         [self warnMsg:@"两次密码不一样！"];
     }

@@ -8,7 +8,8 @@
 
 #import "WrongNotesViewController.h"
 #import "../DiyGroup/ChooseLessonView.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../Functions/VoicePlayer.h"
 #import "../DiyGroup/TestType/TestFunctions.h"
@@ -177,7 +178,10 @@
     };
     [SVProgressHUD show];
     [MyThreadPool executeJob:^{
-        [ConnectionFunction getWrongMsgWithBlock:[self->userInfo valueForKey:@"userKey"] Id:self->_recentBookId Block:myBlock];
+        NetSenderFunction *sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                              Path:[[ConnectionFunction getInstance]getWrongMsgWithBlock_Get_H:self->_recentBookId]
+                             Block:myBlock];
     } Main:^{    }];
 }
 
@@ -466,6 +470,14 @@
     }else{
         
     }
+    
+    VoidBlock answerBlk = ^{
+        if (self->testFlag!=self->testArray.count-1) {
+            [self nextSubject:self->nextSubBtn];
+        }
+    };
+    [questionAndAnswerView setAnswerBlk:answerBlk];
+    
      NSString* total=[NSString stringWithFormat:@"%lu",(unsigned long)self->testArray.count];
      NSString* present=[NSString stringWithFormat:@"%d",(self->testFlag+1)];
         present=[present stringByAppendingString:@"/"];

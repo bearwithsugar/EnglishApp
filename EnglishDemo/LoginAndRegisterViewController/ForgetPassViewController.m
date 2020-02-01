@@ -8,7 +8,8 @@
 
 #import "ForgetPassViewController.h"
 #import "ResetPassViewController.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Common/HeadView.h"
 #import "Masonry.h"
 #import "../Functions/WarningWindow.h"
@@ -163,12 +164,17 @@
         return;
     }
     
-    NSDictionary* dataDic=[ConnectionFunction getYzmForPassword:[phonenumber.text longLongValue]];
-    if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"已发送，1分钟有效"] animated:YES completion:nil];
-    }else{
-        [self presentViewController:[WarningWindow MsgWithoutTrans:[dataDic valueForKey:@"message"]] animated:YES completion:nil];
-    }
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+                [self presentViewController:[WarningWindow MsgWithoutTrans:@"已发送，1分钟有效"] animated:YES completion:nil];
+            }else{
+                [self presentViewController:[WarningWindow MsgWithoutTrans:[dataDic valueForKey:@"message"]] animated:YES completion:nil];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender getRequest:[[ConnectionFunction getInstance]getYzmForPassword_Post:[phonenumber.text longLongValue]] Block:conBlk];
 }
 
 -(BOOL)verifyMobile:(NSString *)mobilePhone{
@@ -188,17 +194,21 @@
         return;
     }
     
-    NSDictionary* dataDic=[ConnectionFunction verifyYzm:[phonenumber.text longLongValue] yzm:yanzhengTextField.text];
-    
-    if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        if (resetPass==nil) {
-            resetPass = [[ResetPassViewController alloc]init];
-        }
-        resetPass.phoneNumber=phonenumber.text;
-        [self.navigationController pushViewController:resetPass animated:true];
-    }else{
-        [self presentViewController:[WarningWindow MsgWithoutTrans:[dataDic valueForKey:@"message"]] animated:YES completion:nil];
-    }
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+                if (self->resetPass==nil) {
+                    self->resetPass = [[ResetPassViewController alloc]init];
+                }
+                self->resetPass.phoneNumber=self->phonenumber.text;
+                [self.navigationController pushViewController:self->resetPass animated:true];
+            }else{
+                [self presentViewController:[WarningWindow MsgWithoutTrans:[dataDic valueForKey:@"message"]] animated:YES completion:nil];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequest:[[ConnectionFunction getInstance]verifyYzm_Post:[phonenumber.text longLongValue] yzm:yanzhengTextField.text] Block:conBlk];
 }
 
 //点击背景收起键盘

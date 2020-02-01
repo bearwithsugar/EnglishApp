@@ -8,7 +8,8 @@
 
 #import "RechargeRecordViewController.h"
 #import "../Functions/DocuOperate.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../DiyGroup/OrderTableViewCell.h"
 #import "../DiyGroup/UnloginMsgView.h"
 #import "../Functions/WarningWindow.h"
@@ -33,14 +34,22 @@
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-        orderDic=[[ConnectionFunction orderMsg:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-        if (orderDic.count == 0) {
-            [self presentViewController:[WarningWindow MsgWithBlock:@"您还未充值，暂无记录！" Block:^{
-                [self popBack];
-            }] animated:YES completion:nil];
-        }else{
-            [self rechargeMsg];
-        }
+        ConBlock blk = ^(NSDictionary* dic){
+            self->orderDic=[dic valueForKey:@"data"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self->orderDic.count == 0) {
+                    [self presentViewController:[WarningWindow MsgWithBlock:@"您还未充值，暂无记录！" Block:^{
+                      [self popBack];
+                    }] animated:YES completion:nil];
+                }else{
+                    [self rechargeMsg];
+                }
+            });
+        };
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[userInfo valueForKey:@"userKey"]
+                              Path:[[ConnectionFunction getInstance]orderMsg_Get_H]
+                             Block:blk];
     }
     else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];

@@ -8,7 +8,8 @@
 
 #import "LearningViewController.h"
 #import "DiyGroup/ChooseLessonView.h"
-#import "Functions/ConnectionFunction.h"
+#import "Functions/netOperate/ConnectionFunction.h"
+#import "Functions/netOperate/NetSenderFunction.h"
 #import "Functions/DocuOperate.h"
 #import "Record/AudioRecorder.h"
 #import "Functions/VoicePlayer.h"
@@ -132,6 +133,7 @@
     angleBtn.selected=false;
     
     userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
+    [SVProgressHUD show];
     [self titleShow];
     [self chooseLesson];
     [self presentLessionView];
@@ -142,18 +144,12 @@
     [self defaultSettingsShow];
     
     [self chooseLessonViewInit];
-    
-    [self showChooseLessonView];
-    
+
     //录音所用
     translateIsHided = NO;
     continuePlay = NO;
-    
-  
 }
--(void)viewWillAppear:(BOOL)animated{
-    NSLog(@"获取到的单元id是%@",_unitId);
-}
+
 -(void)titleShow{
     UILabel* title=[[UILabel alloc]init];
     title.text=_bookName;
@@ -303,15 +299,20 @@
                 }
                 i++;
             }
-            NSDictionary* dataDic=
-            [[ConnectionFunction getLessonMsg:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]
-                                      UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-            
-            [self showContent:[dataDic valueForKey:@"bookPictures"]
-                     senArray:[dataDic valueForKey:@"bookSentences"]
-                      classId:[[[dataDic valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
-                     unitName:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleName"]
-                    className:@""];
+            ConBlock conBlk = ^(NSDictionary* dic){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSDictionary* dataDic=[dic valueForKey:@"data"];
+                    [self showContent:[dataDic valueForKey:@"bookPictures"]
+                             senArray:[dataDic valueForKey:@"bookSentences"]
+                              classId:[[[dataDic valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
+                             unitName:[[self->lessonArray objectAtIndex:(i-1)]valueForKey:@"articleName"]
+                            className:@""];
+                });
+            };
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[userInfo valueForKey:@"userKey"]
+                                  Path:[[ConnectionFunction getInstance]getLessonMsg_Get_H:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]]
+                                 Block:conBlk];
         }
     }
     
@@ -343,15 +344,20 @@
                 }
                 i++;
             }
-            NSDictionary* dataDic=
-            [[ConnectionFunction getLessonMsg:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleId"]
-                                      UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];
-            [self showContent:[dataDic valueForKey:@"bookPictures"]
-                     senArray:[dataDic valueForKey:@"bookSentences"]
-                      classId:[[[dataDic valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
-                     unitName:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleName"]
-                    className:@""];
-            
+            ConBlock conBlk = ^(NSDictionary* dic){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSDictionary* dataDic=[dic valueForKey:@"data"];
+                    [self showContent:[dataDic valueForKey:@"bookPictures"]
+                             senArray:[dataDic valueForKey:@"bookSentences"]
+                              classId:[[[dataDic valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
+                             unitName:[[self->lessonArray objectAtIndex:(i+1)]valueForKey:@"articleName"]
+                            className:@""];
+                });
+            };
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[userInfo valueForKey:@"userKey"]
+                                  Path:[[ConnectionFunction getInstance]getLessonMsg_Get_H:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleId"]]
+                                 Block:conBlk];
         }
     }
 }
@@ -522,8 +528,8 @@
     //注意异步！
     //添加图片学习信息
     [MyThreadPool executeJob:^{
-        [ConnectionFunction addUserPictureMsg:picId
-                                      UserKey:[self->userInfo valueForKey:@"userKey"]];
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender postRequestWithHead:[[ConnectionFunction getInstance]addUserPictureMsg_Post_H:picId] Head:[self->userInfo valueForKey:@"userKey"] Block:^(NSDictionary * dic) {}];
     } Main:^{}];
     
     //强转一下类型，不然出来的类型对不上
@@ -685,7 +691,8 @@
         }
     };
     [MyThreadPool executeJob:^{
-       [ConnectionFunction getUserSentenceMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"] ConBlock:jobBlock];
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getUserSentenceMsg_Get_H:self->chooseLessonView.articleId] Block:jobBlock];
     } Main:^{}];
 
 }
@@ -709,12 +716,11 @@
     VoidBlock addLearnMsg = ^{
         
         //添加句子学习信息记录
-        
         NSString* sentenceId=[[self->titleArray objectAtIndex:id] valueForKey:@"sentenceId"];
-        
-        NSDictionary* dataDic=[ConnectionFunction addSentenceMsg:sentenceId UserKey:[self->userInfo valueForKey:@"userKey"]];
-        
-        NSLog(@"添加句子学习信息返回的数据是%@",dataDic);
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender postRequestWithHead:[[ConnectionFunction getInstance]addSentenceMsg_Post_H:sentenceId]
+                               Head:[self->userInfo valueForKey:@"userKey"]
+                              Block:^(NSDictionary* dataDic){NSLog(@"添加句子学习信息返回的数据是%@",dataDic);}];
         
     };
 
@@ -1130,8 +1136,6 @@
     
 }
 ////点击收起按钮，显示内容
-
-
 -(void)showContent:(NSArray*)bookpicarray senArray:(NSArray*)sentencearray classId:(NSString*)classid unitName:(NSString*)unitname className:(NSString*)classname{
     
     //刷新内容界面
@@ -1154,11 +1158,11 @@
     //添加学习进度信息
     //加载gif动画
     [MyThreadPool executeJob:^{
-        [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender postRequestWithHead:[[ConnectionFunction getInstance]addUserArticleMsg_Post_H:self->chooseLessonView.articleId] Head:[self->userInfo valueForKey:@"userKey"] Block:^(NSDictionary * dic){}];
     } Main:^{}];
     
     [lessontitle removeFromSuperview];
-    
     [self presentLessionView];
     [self learningBook];
 
@@ -1183,17 +1187,25 @@
 #pragma mark --chooseLesson
 -(void)chooseLessonViewInit{
     ShowContentBlock showContentBlock=^(NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname){
-        __weak LearningViewController*  weakSelf=self;
-        [weakSelf showContent:bookpicarray senArray:sentencearray classId:classid unitName:unitname className:classname];
+        [self showContent:bookpicarray senArray:sentencearray classId:classid unitName:unitname className:classname];
         self->chooseLessonShow=!self->chooseLessonShow;
     };
     
-    chooseLessonView=[[ChooseLessonView alloc]initWithBookId:_bookId DefaultUnit:_defaultUnit ShowBlock:showContentBlock];
+    ConBlock conBlk = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self->chooseLessonView=[[ChooseLessonView alloc]initWithBookId:self->_bookId DefaultUnit:self->_defaultUnit UnitArray:[dic valueForKey:@"data"] ShowBlock:showContentBlock];
+            [self showChooseLessonView];
+            [SVProgressHUD dismiss];
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getUnitMsg_Get_H:_bookId] Block:conBlk];
     
 }
 -(void)popBack{
     [self->voiceplayer stopPlay];
     [self.navigationController popViewControllerAnimated:true];
+    [SVProgressHUD dismiss];
 }
 
 #pragma mark - record
@@ -1285,10 +1297,5 @@
         return YES;
     }
     
-}
-
--(void)didReceiveMemoryWarning{
-    [super didReceiveMemoryWarning];
-    NSLog(@"");
 }
 @end

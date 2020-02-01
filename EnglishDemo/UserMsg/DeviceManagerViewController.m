@@ -7,7 +7,8 @@
 //
 
 #import "DeviceManagerViewController.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../LoginAndRegisterViewController/LoginViewController.h"
 #import "../Functions/WarningWindow.h"
@@ -47,8 +48,16 @@
     
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
-        [self dataInit];
-        [self deviceShow];
+        
+        ConBlock conBlk = ^(NSDictionary* dic){
+            self->deviceArray=[dic valueForKey:@"data"];;
+            NSLog(@"拿到的设备信息是%@",self->deviceArray);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self deviceShow];
+            });
+        };
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]deviceBinding_Get_H] Block:conBlk];
     }else{
         unloginView=[[UnloginMsgView alloc]init];
         [self.view addSubview:unloginView];
@@ -79,10 +88,7 @@
         make.height.equalTo(@60);
     }];
 }
--(void)dataInit{
-    deviceArray=[[ConnectionFunction deviceBinding:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"];;
-    NSLog(@"拿到的设备信息是%@",deviceArray);
-}
+
 -(void)deviceShow{
     deviceShowView=[[UIView alloc]init];
     [self.view addSubview:deviceShowView];
@@ -152,26 +158,29 @@
     
 }
 -(void)releaseDevice:(UIButton*)btn{
-    if ([ConnectionFunction deleteBinding:[userInfo valueForKey:@"userKey"] DeviceId:[[deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]]) {
-
-        NSLog(@"解除绑定成功");
-        if ([[[deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
-            //如果是当前设备
-            NSLog(@"是当前设备");
-            [DocuOperate deletePlist:@"userInfo.plist"];
-            [self pushToLogin];
-        }else{
-            [self popBack];
-        }
-        
-    }else{
-        NSLog(@"不是当前设备");
-        NSLog(@"解除绑定成功");
-        [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定失败！"] animated:YES completion:nil];
-    }
-    
-    
-  
+    ConBlock conBlk = ^(NSDictionary* dic){
+        //此处判断条件在重写代码后未验证！！
+        if ([[dic valueForKey:@"message"]isEqualToString:@"succself->ess"]) {
+            NSLog(@"解除绑定成功");
+            if ([[[self->deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
+                   //如果是当前设备
+                   NSLog(@"是当前设备");
+                   [DocuOperate deletePlist:@"userInfo.plist"];
+                   [self pushToLogin];
+               }else{
+                   [self popBack];
+               }
+               
+           }else{
+               NSLog(@"不是当前设备");
+               NSLog(@"解除绑定成功");
+               dispatch_async(dispatch_get_main_queue(), ^{
+                   [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定失败！"] animated:YES completion:nil];
+               });
+           }
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender deleteRequestWithHead:[[ConnectionFunction getInstance]deleteBinding_Delete_H:[[deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]] Head:[userInfo valueForKey:@"userKey"] Block:conBlk];
 }
 -(void)pushToLogin{
     if (loginAndRegister==nil) {

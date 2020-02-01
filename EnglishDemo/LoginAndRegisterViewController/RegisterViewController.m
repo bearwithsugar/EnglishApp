@@ -8,7 +8,8 @@
 
 #import "RegisterViewController.h"
 #import "RegisterSetPassViewController.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Common/HeadView.h"
 #import "../Functions/WarningWindow.h"
 #import "Masonry.h"
@@ -153,12 +154,17 @@
 //获取验证码
 -(void)getYzm{
 
-    NSDictionary* dataDic=[ConnectionFunction getYzmForReg:[phonenumberTextField.text longLongValue]];
-    if (![[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        [self warnMsg:[dataDic valueForKey:@"message"]];
-    }else{
-        [self warnMsg:[dataDic valueForKey:@"data"]];
-    }
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (![[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+                [self warnMsg:[dataDic valueForKey:@"message"]];
+            }else{
+                [self warnMsg:[dataDic valueForKey:@"data"]];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender getRequest:[[ConnectionFunction getInstance]getYzmForReg_Post:[phonenumberTextField.text longLongValue]] Block:conBlk];
 
 }
 //验证电话号码格式
@@ -194,18 +200,22 @@
         [self presentViewController: [WarningWindow MsgWithoutTrans:@"手机号或验证码为空！"] animated:YES completion:nil];
         return;
     }
-    NSDictionary* dataDic=[ConnectionFunction verifyYzm:[phonenumberTextField.text longLongValue] yzm:yanzhengTextField.text ];
-    NSLog(@"%@",[dataDic valueForKey:@"message"]);
-
-    if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        if (setPass==nil) {
-            setPass = [[RegisterSetPassViewController alloc]init];
-            setPass.phoneNumber=phonenumberTextField.text;
-        }
-        [self.navigationController pushViewController:setPass animated:true];
-    }else{
-        [self warnMsg:[dataDic valueForKey:@"message"]];
-    }
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"%@",[dataDic valueForKey:@"message"]);
+            if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+                if (self->setPass==nil) {
+                    self->setPass = [[RegisterSetPassViewController alloc]init];
+                    self->setPass.phoneNumber=self->phonenumberTextField.text;
+                }
+                [self.navigationController pushViewController:self->setPass animated:true];
+            }else{
+                [self warnMsg:[dataDic valueForKey:@"message"]];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequest:[[ConnectionFunction getInstance]verifyYzm_Post:[phonenumberTextField.text longLongValue] yzm:yanzhengTextField.text] Block:conBlk];
 }
 
 

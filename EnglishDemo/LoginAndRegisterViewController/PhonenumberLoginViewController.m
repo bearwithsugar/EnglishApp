@@ -7,7 +7,8 @@
 //
 
 #import "PhonenumberLoginViewController.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Common/HeadView.h"
 #import "../Functions/WarningWindow.h"
 #import "../Functions/FixValues.h"
@@ -159,13 +160,17 @@
 }
 
 -(void)getYzm{
-    NSDictionary* dataDic=[ConnectionFunction getYzmForPassword:[usernameTextField.text longLongValue]];
-    if (![[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        [self warnMsg:[dataDic valueForKey:@"message"]];
-    }else{
-        [self warnMsg:[dataDic valueForKey:@"data"]];
-    }
-
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (![[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+                [self warnMsg:[dataDic valueForKey:@"message"]];
+            }else{
+                [self warnMsg:[dataDic valueForKey:@"data"]];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender getRequest:[[ConnectionFunction getInstance]getYzmForPassword_Post:[usernameTextField.text longLongValue]] Block:conBlk];
 }
 -(void)toLogin{
     if ([usernameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length==0||[passwordTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length==0) {
@@ -173,21 +178,22 @@
         return;
     }
     NSLog(@"验证码打印：%d",[passwordTextField.text intValue]);
-    dataDic=[ConnectionFunction login_yzm:[usernameTextField.text longLongValue]
-                                      Yzm:passwordTextField.text
-                                   Device:[FixValues getUniqueId]
-                                     Name:[[UIDevice currentDevice] name]];
-    if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        if ([DocuOperate writeIntoPlist:@"userInfo.plist"
-                             dictionary:[DataFilter DictionaryFilter:[dataDic valueForKey:@"data"]]]
-            ) {
-            [self pushToMain];
-        }else{
-            [self warnMsg:@"写入用户信息失败，稍后再试"];
-        }
-    }else{
-        [self warnMsg:[dataDic valueForKey:@"message"]];
-    }
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+                if ([DocuOperate writeIntoPlist:@"userInfo.plist"
+                                     dictionary:[DataFilter DictionaryFilter:[dataDic valueForKey:@"data"]]]) {
+                    [self pushToMain];
+                }else{
+                    [self warnMsg:@"写入用户信息失败，稍后再试"];
+                }
+            }else{
+                [self warnMsg:[dataDic valueForKey:@"message"]];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequest:[[ConnectionFunction getInstance]login_yzm_Post:[usernameTextField.text longLongValue] Yzm:passwordTextField.text Device:[FixValues getUniqueId] Name:[[UIDevice currentDevice] name]] Block:conBlk];
 }
 -(void)warnMsg:(NSString*)msg{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:msg preferredStyle:UIAlertControllerStyleAlert];

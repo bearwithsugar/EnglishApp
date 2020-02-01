@@ -7,10 +7,9 @@
 //
 
 #import "VoicePlayer.h"
-
 #import <AVFoundation/AVFoundation.h>
-
 #import "DownloadAudioService.h"
+#import "SVProgressHUD.h"
 
 @interface VoicePlayer()<AVAudioPlayerDelegate>{}
 
@@ -64,12 +63,19 @@
     NSString *msg = [NSString stringWithFormat:@"音频文件声道数:%ld\n 音频文件持续时间:%g",_movePlayer.numberOfChannels,_movePlayer.duration];
     NSLog(@"%@",msg);
     
-    // 3.准备播放 (音乐播放的内存空间的开辟等功能)  不写这行代码直接播放也会默认调用prepareToPlay
-    [_movePlayer prepareToPlay];
+    if (_movePlayer.duration < 0.1) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [SVProgressHUD showErrorWithStatus:@"资源下载未完成"];
+        });
+    }
+        // 3.准备播放 (音乐播放的内存空间的开辟等功能)  不写这行代码直接播放也会默认调用prepareToPlay
+        [_movePlayer prepareToPlay];
+        
+        _movePlayer.numberOfLoops = times;
+        
+        [_movePlayer play];
     
-    _movePlayer.numberOfLoops = times;
     
-    [_movePlayer play];
 }
 
 -(void)stopPlay{

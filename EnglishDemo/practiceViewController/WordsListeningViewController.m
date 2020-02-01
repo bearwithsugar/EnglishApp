@@ -9,7 +9,8 @@
 #import "WordsListeningViewController.h"
 #import "../DiyGroup/WordsListeningTableViewCell.h"
 #import "../DiyGroup/ChooseLessonView.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../DiyGroup/ChooseLessonView.h"
 #import "../Functions/DocuOperate.h"
 #import "../Functions/VoicePlayer.h"
@@ -72,14 +73,12 @@
             return;
         }
         userInfo = [DocuOperate readFromPlist:@"userInfo.plist"];
-        //初始化选课信息
-        [self chooseLessonViewInit];
-        [self contentViewInit]; 
         //加载上一课下一课界面
         [self chooseLesson];
         //加载当前课程标签
         [self presentLessionView];
-        [self showChooseLessonView];
+        //初始化选课信息
+        [self chooseLessonViewInit];
     }
     else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];
@@ -103,16 +102,30 @@
 
 -(void)chooseLessonViewInit{
     ShowContentBlock showContentBlock=^(NSArray* bookpicarray,NSArray* sentencearray,NSString* classid,NSString* unitname,NSString* classname){
-        __weak WordsListeningViewController*  weakSelf=self;
         
-        [weakSelf showContent:unitname
-                    className:classname
-                   wordsArray:[[ConnectionFunction getTestWordMsg:self->chooseLessonView.articleId
-                                                          UserKey:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
-                      classId:classid];
-        self->chooseLessonShow=!self->chooseLessonShow;
+        ConBlock conBlk = ^(NSDictionary* dataDic){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self showContent:unitname
+                        className:classname
+                          classId:classid
+                             Word:[dataDic valueForKey:@"data"]];
+                self->chooseLessonShow=!self->chooseLessonShow;
+            });
+        };
+        
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                  Path:[[ConnectionFunction getInstance]getTestWordMsg_Get_H:self->chooseLessonView.articleId]
+                                 Block:conBlk];
     };
-    chooseLessonView=[[ChooseLessonView alloc]initWithBookId:_bookId DefaultUnit:0 ShowBlock:showContentBlock];
+    ConBlock conBlk = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self->chooseLessonView=[[ChooseLessonView alloc]initWithBookId:self->_bookId DefaultUnit:0 UnitArray:[dic valueForKey:@"data"] ShowBlock:showContentBlock];
+            [self showChooseLessonView];
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getUnitMsg_Get_H:_bookId] Block:conBlk];
 }
 
 //上一课下一课
@@ -204,11 +217,17 @@
                 }
                 i++;
             }
-
-            [self showContent:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleName"]
-                    className:@""
-                   wordsArray:[[ConnectionFunction getTestWordMsg:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"] UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
-                      classId:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]];
+      
+            ConBlock conBlk = ^(NSDictionary* dic){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showContent:[[self->lessonArray objectAtIndex:(i-1)]valueForKey:@"articleName"]
+                            className:@""
+                              classId:[[self->lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]
+                                 Word:[dic valueForKey:@"data"]];
+                });
+            };
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getTestWordMsg_Get_H:[[lessonArray objectAtIndex:(i-1)]valueForKey:@"articleId"]] Block:conBlk];
         }
     }
     
@@ -235,10 +254,16 @@
                 i++;
             }
             
-            [self showContent:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleName"]
-                    className:@""
-                   wordsArray:[[ConnectionFunction getTestWordMsg:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleId"] UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
-                      classId:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleId"]];
+            ConBlock conBlk = ^(NSDictionary* dic){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showContent:[[self->lessonArray objectAtIndex:(i+1)]valueForKey:@"articleName"]
+                            className:@""
+                              classId:[[self->lessonArray objectAtIndex:(i+1)]valueForKey:@"articleId"]
+                                 Word:[dic valueForKey:@"data"]];
+                });
+            };
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getTestWordMsg_Get_H:[[lessonArray objectAtIndex:(i+1)]valueForKey:@"articleId"]] Block:conBlk];
         }
     }
     
@@ -278,12 +303,12 @@
     }];
     
 }
--(void)contentViewInit{
-    wordsList=[[UITableView alloc]init];
-    wordsList.dataSource=self;
-    wordsList.delegate=self;
-}
 -(void)contentView{
+    if (wordsList == nil) {
+        wordsList=[[UITableView alloc]init];
+        wordsList.dataSource=self;
+        wordsList.delegate=self;
+    }
     [self.view addSubview:wordsList];
     
     //无内容时不显示下划线
@@ -312,11 +337,16 @@
     }else{
         if (chooseLessonView.unitName!=nil&&chooseLessonView.className!=nil) {
             lessonArray=chooseLessonView.lessonArray;
-            [self showContent:chooseLessonView.unitName
-                    className:chooseLessonView.className
-                   wordsArray:[[ConnectionFunction getTestWordMsg:chooseLessonView.articleId UserKey:[userInfo valueForKey:@"userKey"]]valueForKey:@"data"]
-                      classId:[[[chooseLessonView.dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
-             ];
+            ConBlock conBlk = ^(NSDictionary* dic){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self showContent:self->chooseLessonView.unitName
+                            className:self->chooseLessonView.className
+                              classId:[[[self->chooseLessonView.dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"]
+                                 Word:[dic valueForKey:@"data"]];
+                });
+            };
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getTestWordMsg_Get_H:chooseLessonView.articleId] Block:conBlk];
         }else{
             //收起选择课程界面
             [chooseLessonView removeFromSuperview];
@@ -325,12 +355,12 @@
     chooseLessonShow=!chooseLessonShow;
 
 }
--(void)showContent:(NSString*)unitname className:(NSString*)classname wordsArray:(NSArray*)wordsarray classId:(NSString*)classid{
-    
-    JobBlock myblock = ^{
+-(void)showContent:(NSString*)unitname className:(NSString*)classname classId:(NSString*)classid Word:(NSArray*)wordsArr{
+    [MyThreadPool executeJob:^{
+        
         //如果不这样做一下字典准换会出现no summary
         NSMutableArray* voiceArray = [[NSMutableArray alloc]init];
-        for (NSDictionary* dic in wordsarray) {
+        for (NSDictionary* dic in self->wordsArray) {
             NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
             [dictionary setValue:[dic valueForKey:@"engUrl"] forKey:@"url"];
             [dictionary setValue:[dic valueForKey:@"wordId"] forKey:@"id"];
@@ -345,32 +375,34 @@
             playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
             [DownloadAudioService toLoadAudio:playUrl FileName:[dic valueForKey:@"id"]];
         }
-    };
-    
-    [MyThreadPool executeJob:myblock Main:^{}];
-    
+        
+    } Main:^{
+        
+    }];
     //收起选择课程界面
     [chooseLessonView removeFromSuperview];
-    
+   
     //为当前单元课程名称赋值
     unitName=unitname;
     className=classname;
-    //调用接口获取信息
-    wordsArray=wordsarray;
-    
     classId=classid;
-    
-    [MyThreadPool executeJob:^{
-        [ConnectionFunction addUserArticleMsg:self->chooseLessonView.articleId UserKey:[self->userInfo valueForKey:@"userKey"]];
-    } Main:^{}];
-
+    wordsArray = wordsArr;
+   
     //重新加载当前单元课程标签
     [lessontitle removeFromSuperview];
     [self presentLessionView];
     //加载内容
     [self contentView];
-
     [wordsList reloadData];
+    if (wordsArray.count == 0) {
+        [self presentViewController:[WarningWindow MsgWithoutTrans:@"当前课程没有单词!"] animated:YES completion:nil];
+    }
+    [MyThreadPool executeJob:^{
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender postRequestWithHead:[[ConnectionFunction getInstance]addUserArticleMsg_Post_H:self->chooseLessonView.articleId]
+                               Head:[self->userInfo valueForKey:@"userKey"] Block:^(NSDictionary* dic){}];
+        
+    } Main:^{}];
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -411,7 +443,7 @@
     
     JobBlock playBlock =^{
         
-       
+        self->voiceplayer.sourceName = [[self->wordsArray objectAtIndex:indexPath.row] valueForKey:@"wordId"];
         NSString* playUrl=[DownloadAudioService getAudioPath:
                            [NSString stringWithFormat:@"%@",[[self->wordsArray objectAtIndex:indexPath.row]valueForKey:@"wordId"]]];
         if (self->voiceplayer!=NULL) {

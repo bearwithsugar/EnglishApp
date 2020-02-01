@@ -8,17 +8,17 @@
 
 #import "MyShelfViewController.h"
 #import "Functions/DocuOperate.h"
-#import "Functions/ConnectionFunction.h"
+#import "Functions/netOperate/ConnectionFunction.h"
 #import "UnitViewController.h"
 #import "Functions/LocalDataOperation.h"
 #import "Functions/WarningWindow.h"
-#import "Common/LoadGif.h"
 #import "Common/HeadView.h"
-#import "Functions/ConnectionInstance.h"
+#import "Functions/netOperate/NetSenderFunction.h"
 #import "Functions/MyThreadPool.h"
 #import "DiyGroup/UnloginMsgView.h"
 #import "DiyGroup/ChooseBookView.h"
 #import "AgentFunction.h"
+#import "SVProgressHUD.h"
 #import "Masonry.h"
 
 @interface MyShelfViewController (){
@@ -27,12 +27,9 @@
     NSArray* chooseBookArray;
     //用户信息字典
     NSDictionary* userInfo;
-    //请求书架返回信息字典
-    NSDictionary* shelfDic;
     //跳转单元的界面
     UnitViewController* unitMsg;
     
-    UIImageView* loadGif;
     UIView* chooseBookView;
     UIView* startChooseView;
     UIButton* cancelBtn;
@@ -52,17 +49,7 @@
     self.view.backgroundColor=[UIColor whiteColor];
     [self titleShow];
     
-    //加载gif动画
-    loadGif=[LoadGif imageViewStartAnimating];
-    [self.view addSubview:loadGif];
-    
-    [loadGif mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerY.equalTo(self.view);
-        make.centerX.equalTo(self.view);
-        make.width.equalTo(@60);
-        make.height.equalTo(@60);
-    }];
-
+    [SVProgressHUD show];
     if([DocuOperate fileExistInPath:@"process.plist"]){
         NSDictionary* dic=[DocuOperate readFromPlist:@"process.plist"];
         for (int i=0; i<[dic allKeys].count; i++) {
@@ -90,17 +77,19 @@
               }];
               return;
            }else{
-               JobBlock initBookBlock = ^{
-                      self->shelfDic=[ConnectionFunction getBookShelf:[self->userInfo valueForKey:@"userKey"]];
-                      self->bookArray=[self->shelfDic valueForKey:@"data"];
-                  };
-                  
-                  [MyThreadPool executeJob:initBookBlock Main:^{
-                      [self->shelfView removeFromSuperview];
-                      [self bookView];
-                      //k加载完成，取消动画
-                      [self->loadGif removeFromSuperview];
-                  }];
+               ConBlock myBlock = ^(NSDictionary* dic){
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       self->bookArray=[dic valueForKey:@"data"];
+                       [self->shelfView removeFromSuperview];
+                       [self bookView];
+                       //k加载完成，取消动画
+                       [SVProgressHUD dismiss];
+                   });
+               };
+               NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+               [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                     Path:[[ConnectionFunction getInstance]getBookShelf_Get_H]
+                                    Block:myBlock];
            }
     }];
     
@@ -187,38 +176,59 @@
         make.right.equalTo(self.view).with.offset(-100);
         make.height.equalTo(@40);
     }];
-
+    
+    ConBlock chooseBookBlk = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //把返回信息加入到书籍数组
+            self->chooseBookArray=[dic valueForKey:@"data"];
+            //加载显示选择书籍的页面
+            [self startChooseView];
+            //清除原有页面，添加新页面
+            [self.view addSubview:self->startChooseView];
+            [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(self->chooseBookView.mas_bottom);
+                make.left.equalTo(self.view);
+                make.right.equalTo(self.view);
+                make.bottom.equalTo(self.view);
+            }];
+        });
+    };
     
     NSIntegerBlock myBlock = ^(NSInteger row,NSArray* gradesArr){
         self->publicationMsg = [[gradesArr objectAtIndex:row]valueForKey:@"categoryId"];
-        //选择完年级和出版社之后返回的书籍信息y
-        NSDictionary* returnMsg=[ConnectionFunction getBookMsg:self->publicationMsg UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
-        //把返回信息加入到书籍数组
-        self->chooseBookArray=[returnMsg valueForKey:@"data"];
-        //加载显示选择书籍的页面
-        [self startChooseView];
-        //清除原有页面，添加新页面
-        [self.view addSubview:self->startChooseView];
-        [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self->chooseBookView.mas_bottom);
-            make.left.equalTo(self.view);
-            make.right.equalTo(self.view);
-            make.bottom.equalTo(self.view);
-        }];
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                              Path:[[ConnectionFunction getInstance]getBookMsg_Get_H:self->publicationMsg
+                                                                              UserId:[self->userInfo valueForKey:@"userId"]]
+                             Block:chooseBookBlk];
     };;
     
     [shelfView removeFromSuperview];
     
-    if (chooseBookView==nil) {
-        chooseBookView=[[ChooseBookView alloc]initWithBlock:myBlock UserKey:[userInfo valueForKey:@"userKey"]];
+    ConBlock conblock = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self->chooseBookView = [[ChooseBookView alloc]initWithBlock:myBlock User:[self->userInfo valueForKey:@"userKey"] PublicationArray:[dic valueForKey:@"data"]];
+            [self.view addSubview:self->chooseBookView];
+            [self->chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.top.equalTo(self.view).with.offset(140);
+               make.left.equalTo(self.view);
+               make.right.equalTo(self.view);
+               make.height.equalTo(@250);
+            }];
+        });
+    };
+    if (chooseBookView == nil) {
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getLineByType_Get_H:@"3"] Block:conblock];
+    }else{
+        [self.view addSubview:self->chooseBookView];
+        [chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
+           make.top.equalTo(self.view).with.offset(140);
+           make.left.equalTo(self.view);
+           make.right.equalTo(self.view);
+           make.height.equalTo(@250);
+        }];
     }
-    [self.view addSubview:chooseBookView];
-    [chooseBookView mas_makeConstraints:^(MASConstraintMaker *make) {
-       make.top.equalTo(self.view).with.offset(140);
-       make.left.equalTo(self.view);
-       make.right.equalTo(self.view);
-       make.height.equalTo(@250);
-    }];
 }
 
 -(void)startChooseView{
@@ -273,29 +283,48 @@
     NSLog(@"bookarray%@",[chooseBookArray objectAtIndex:loadBtn.tag]);
     NSLog(@"userkey%@",[userInfo valueForKey:@"userKey"]);
     NSLog(@"标号%ld",(long)loadBtn.tag);
-    NSDictionary* dataDic=[ConnectionFunction addBook:[[[chooseBookArray objectAtIndex:loadBtn.tag] valueForKey:@"book"]valueForKey:@"bookId"] BoughtState:@"2" UserKey:[userInfo valueForKey:@"userKey"]];
-    NSLog(@"添加书籍返回的结果是：%@",dataDic);
-    if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        if ([[dataDic valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
-            [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
+    ConBlock getBookBlk = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //把返回信息加入到书籍数组
+            self->chooseBookArray=[dic valueForKey:@"data"];
+            [self startChooseView];
+            [self.view addSubview:self->startChooseView];
+            [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
+               make.top.equalTo(self->chooseBookView.mas_bottom);
+               make.right.equalTo(self.view);
+               make.left.equalTo(self.view);
+               make.bottom.equalTo(self.view);
+            }];
+        });
+    };
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        NSLog(@"添加书籍返回的结果是：%@",dataDic);
+        if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+            if ([[dataDic valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self presentViewController:[WarningWindow MsgWithoutTrans:@"这本书已经在您的书架中了！!"] animated:YES completion:nil];
+                });
+            }else{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加成功!"] animated:YES completion:nil];
+                });
+                NetSenderFunction *sender1 = [[NetSenderFunction alloc]init];
+                [sender1 getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                       Path:[[ConnectionFunction getInstance]getBookMsg_Get_H:self->publicationMsg
+                                                                                       UserId:[self->userInfo valueForKey:@"userId"]]
+                                      Block:getBookBlk];
+            }
         }else{
-            [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加成功!"] animated:YES completion:nil];
-            //选择完年级和出版社之后返回的书籍信息y
-           NSDictionary* returnMsg=[ConnectionFunction getBookMsg:self->publicationMsg UserKey:[self->userInfo valueForKey:@"userKey"] UserId:[self->userInfo valueForKey:@"userId"]];
-           //把返回信息加入到书籍数组
-           self->chooseBookArray=[returnMsg valueForKey:@"data"];
-           [self startChooseView];
-           [self.view addSubview:self->startChooseView];
-           [self->startChooseView mas_makeConstraints:^(MASConstraintMaker *make) {
-              make.top.equalTo(self->chooseBookView.mas_bottom);
-              make.right.equalTo(self.view);
-              make.left.equalTo(self.view);
-              make.bottom.equalTo(self.view);
-           }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];
+            });
         }
-    }else{
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"书籍添加失败，请稍后再试!"] animated:YES completion:nil];
-    }
+    };
+    NetSenderFunction *sender = [[NetSenderFunction alloc]init];
+    [sender postRequestWithHead:[[ConnectionFunction getInstance]addBook_Post_H:[[[chooseBookArray objectAtIndex:loadBtn.tag]valueForKey:@"book"]valueForKey:@"bookId"]
+                                                                    BoughtState:@"2"]
+                           Head:[userInfo valueForKey:@"userKey"]
+                          Block:conBlk];
 }
 
 -(void)haveAdd{
@@ -310,11 +339,7 @@
 }
 
 -(void)pushToUnit:(NSString*)bookid Name:(NSString*)bookname{
-//    if (unitMsg==nil) {
-//        unitMsg = [[UnitViewController alloc]init];
-//    }
     unitMsg = [[UnitViewController alloc]init];
-    
     if(![self.navigationController.topViewController isKindOfClass:[unitMsg class]]) {
         NSLog(@"被点击的书架的id是%@",bookid);
         [processDic setValue:bookid forKey:@"picture"];
@@ -322,12 +347,16 @@
         
         unitMsg.bookId=bookid;
         unitMsg.bookName=bookname;
-        ConnectionInstance* con = [[ConnectionInstance alloc]init];
-        unitMsg.recentLesson=[[[[con recentLearnMsgByBook:[userInfo valueForKey:@"userKey"] Id:bookid] valueForKey:@"data"] valueForKey:@"article"]valueForKey:@"articleName" ];
-        NSLog(@"点击书本的最新学习信息%@",unitMsg.recentLesson);
-        [self.navigationController pushViewController:unitMsg animated:true];
+        ConBlock blk = ^(NSDictionary* dic){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self->unitMsg.recentLesson=[[[dic valueForKey:@"data"] valueForKey:@"article"]valueForKey:@"articleName" ];
+                NSLog(@"点击书本的最新学习信息%@",self->unitMsg.recentLesson);
+                [self.navigationController pushViewController:self->unitMsg animated:true];
+            });
+        };
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:[userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]recentLearnMsgByBook_Get_H:bookid] Block:blk];
     }
-
 }
 
 

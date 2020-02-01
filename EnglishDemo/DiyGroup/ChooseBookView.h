@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "../Functions/ConnectionFunction.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +19,7 @@ typedef void (^NSIntegerBlock) (NSInteger,NSArray* gradesArr);
 @property (nonatomic,copy) NSArray* gradesArray;
 @property (nonatomic,copy) NSString* userKey;
 
--(id)initWithBlock:(NSIntegerBlock)block UserKey:(NSString*)user;
+-(id)initWithBlock:(NSIntegerBlock)block User:(NSString*)user PublicationArray:(NSArray*)array;
 
 @end
 

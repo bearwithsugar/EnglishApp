@@ -10,7 +10,7 @@
 #import <AlipaySDK/AlipaySDK.h>
 #import "WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 #import "Functions/FixValues.h"
-#import "Functions/ConnectionFunction.h"
+#import "Functions/netOperate/ConnectionFunction.h"
 #import "Functions/WechatLog.h"
 #import "Functions/WarningWindow.h"
 #import <TencentOpenAPI/TencentOAuth.h>

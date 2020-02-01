@@ -8,6 +8,8 @@
 
 #import "ChooseBookView.h"
 #import "ChoosePublishTableViewCell.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "Masonry.h"
 
 @interface ChooseBookView()<UITableViewDelegate,UITableViewDataSource>{
@@ -27,16 +29,16 @@
     // Drawing code
 }
 */
--(id)initWithBlock:(NSIntegerBlock)block UserKey:(NSString*)user{
+-(id)initWithBlock:(NSIntegerBlock)block User:(NSString*)user PublicationArray:(NSArray*)array{
     self = [super init];
     if(self){
         _jobBlock = block;
         _userKey = user;
-        
-        publicationMsgDic=[ConnectionFunction getLineByType:@"3" UserKey:user];
-           //存放列表对象的数组，每个元素是一个字典
-        _publicationArray=[publicationMsgDic valueForKey:@"data"];
-        
+//
+//        publicationMsgDic=[ConnectionFunction getLineByType:@"3" UserKey:user];
+//           //存放列表对象的数组，每个元素是一个字典
+//        _publicationArray=[publicationMsgDic valueForKey:@"data"];
+        _publicationArray = array;
         choosePublishTable=[[UITableView alloc]init];
         choosePublishTable.dataSource=self;
         choosePublishTable.delegate=self;
@@ -139,12 +141,18 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (tableView.tag==4) {
-        NSDictionary* dic = [ConnectionFunction getLineByParent: [[_publicationArray objectAtIndex:indexPath.row]valueForKey:@"categoryId"] UserKey:_userKey];
-        NSLog(@"年级数组是：%@",[dic valueForKey:@"data"]);
-
-        //赋值给年级数组
-        _gradesArray=[dic valueForKey:@"data"];
-        [chooseGradeTable reloadData];
+        ConBlock conBlk = ^(NSDictionary* dic){
+            NSLog(@"年级数组是：%@",[dic valueForKey:@"data"]);
+            //赋值给年级数组
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self->_gradesArray=[dic valueForKey:@"data"];
+                [self->chooseGradeTable reloadData];
+            });
+        };
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender getRequestWithHead:_userKey
+                              Path:[[ConnectionFunction getInstance]getLineByParent_Get_H:[[_publicationArray objectAtIndex:indexPath.row]valueForKey:@"categoryId"]]
+                             Block:conBlk];
         
     }else{
         _jobBlock(indexPath.row,_gradesArray);

@@ -8,7 +8,8 @@
 
 #import "ModifyUserMsgViewController.h"
 #import "../Functions/DocuOperate.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Functions/DataFilter.h"
 #import "../Functions/LocalDataOperation.h"
 #import "../Functions/BackgroundImageWithColor.h"
@@ -289,7 +290,10 @@
             }
         }
     };
-    [ConnectionFunction getBindingMsg:[self->userInfo valueForKey:@"userKey"] Block:jobBlock];
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                          Path:[[ConnectionFunction getInstance]getBindingMsg_Get_H]
+                         Block:jobBlock];
 }
 -(void)defineBtn{
     UIButton* toModify=[[UIButton alloc]init];
@@ -318,15 +322,21 @@
                          completion:nil];
         return;
     }
-    NSDictionary* dataDic=[ConnectionFunction modifyUserMsg:nickname UserKey:[userInfo valueForKey:@"userKey"] Phone:phone Password:[userInfo valueForKey:@"password"]];
-    NSLog(@"修改用户信息返回的数据%@",dataDic);
-    //删除用户信息文件
-    if ([DocuOperate deletePlist:@"userInfo.plist"]&&
-        [DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[dataDic valueForKey:@"data"]]]) {
-        [self popBack];
-    }else{
-        [self warnMsg:@"修改失败，请稍后再试。"];
-    }
+    
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        NSLog(@"修改用户信息返回的数据%@",dataDic);
+        //删除用户信息文件
+        if ([DocuOperate deletePlist:@"userInfo.plist"]&&
+            [DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[dataDic valueForKey:@"data"]]]) {
+            [self popBack];
+        }else{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self warnMsg:@"修改失败，请稍后再试。"];
+            });
+        }
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender putRequestWithHead:[[ConnectionFunction getInstance]modifyUserMsg_Put_H:nickname Phone:phone Password:[userInfo valueForKey:@"password"]] Head:[userInfo valueForKey:@"userKey"] Block:conBlk];
     
 }
 -(void)warnMsg:(NSString*)msg{

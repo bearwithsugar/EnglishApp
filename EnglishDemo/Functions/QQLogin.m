@@ -14,6 +14,7 @@
 #import "../Functions/WarningWindow.h"
 #import "../Functions/FixValues.h"
 #import "../Functions/AgentFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 
 @interface QQLogin ()<UIApplicationDelegate,TencentSessionDelegate>{
     NSDictionary* userMsg;
@@ -52,33 +53,39 @@
     }
 }
 -(void)qqLoginReturnMsg{
-    NSDictionary* qqLoginDic=[ConnectionFunction OtherLogin:_tencentOAuth.openId
-                                                   Nickname:[userMsg valueForKey:@"nickname"]
-                                                   DeviceId:[FixValues getUniqueId]
-                                                 DeviceName:[[UIDevice currentDevice] name]
-                                                       Type:@"QQ"
-                                                        Pic:[userMsg valueForKey:@"figureurl_2"]];
-    if ([[qqLoginDic valueForKey:@"message"]isEqualToString:@"success"]) {
-       
-        if ([DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[qqLoginDic valueForKey:@"data"]]]) {
-            [[FixValues navigationViewController] popViewControllerAnimated:true];
-        }else{
-            [[AgentFunction theTopviewControler]
-             presentViewController:[WarningWindow MsgWithoutTrans:@"登录信息保存失败"] animated:YES completion:nil];
-        }
-    }else if([[qqLoginDic valueForKey:@"code"]intValue] == 400){
-         [[AgentFunction theTopviewControler]
-                presentViewController:[self forceLogin:[qqLoginDic valueForKey:@"message"]
-                                                Openid:[userMsg valueForKey:@"openid"]
-                                                  Type:@"other"
-                                               UserMsg:userMsg] animated:YES completion:nil];
-    }else{
-        [[AgentFunction theTopviewControler]
-         presentViewController:[self forceLogin:[qqLoginDic valueForKey:@"message"]
-                                         Openid:[userMsg valueForKey:@"openid"]
-                                           Type:@"other"
-                                        UserMsg:userMsg] animated:YES completion:nil];
-    }
+    ConBlock conBlk = ^(NSDictionary* qqLoginDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[qqLoginDic valueForKey:@"message"]isEqualToString:@"success"]) {
+               
+                if ([DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[qqLoginDic valueForKey:@"data"]]]) {
+                    [[FixValues navigationViewController] popViewControllerAnimated:true];
+                }else{
+                    [[AgentFunction theTopviewControler]
+                     presentViewController:[WarningWindow MsgWithoutTrans:@"登录信息保存失败"] animated:YES completion:nil];
+                }
+            }else if([[qqLoginDic valueForKey:@"code"]intValue] == 400){
+                 [[AgentFunction theTopviewControler]
+                        presentViewController:[self forceLogin:[qqLoginDic valueForKey:@"message"]
+                                                        Openid:[self->userMsg valueForKey:@"openid"]
+                                                          Type:@"other"
+                                                       UserMsg:self->userMsg] animated:YES completion:nil];
+            }else{
+                [[AgentFunction theTopviewControler]
+                 presentViewController:[self forceLogin:[qqLoginDic valueForKey:@"message"]
+                                                 Openid:[self->userMsg valueForKey:@"openid"]
+                                                   Type:@"other"
+                                                UserMsg:self->userMsg] animated:YES completion:nil];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequest:[[ConnectionFunction getInstance]OtherLogin_Post:_tencentOAuth.openId
+                                                                Nickname:[userMsg valueForKey:@"nickname"]
+                                                                DeviceId:[FixValues getUniqueId]
+                                                              DeviceName:[[UIDevice currentDevice] name]
+                                                                    Type:@"QQ"
+                                                                     Pic:[userMsg valueForKey:@"figureurl_2"]]
+                  Block:conBlk];
 }
 -(void)qqLoginReturnMsgforBinding{
     NSLog(@"usermsg%@",userMsg);
@@ -92,14 +99,18 @@
                                                           completion:nil];
         }
     };
-    [ConnectionFunction toBinding:_userKey OpenId:_tencentOAuth.appId Type:@"QQ" Picurl:[userMsg valueForKey:@"figureurl_2"] Block:jobblock];
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequestWithHead:[[ConnectionFunction getInstance]toBinding_Post_H:_tencentOAuth.appId Type:@"QQ" Picurl:[userMsg valueForKey:@"figureurl_2"]] Head:_userKey Block:jobblock];
 }
 //强制登录专用提示框
 -(UIAlertController*)forceLogin:(NSString*)message Openid:(NSString*)openid Type:(NSString*)type UserMsg:(NSDictionary*)usermsg{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:message preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"强制登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        [ConnectionFunction userOccupation:self->_tencentOAuth.openId Type:type Other_type:@"QQ"];
-        [self qqLoginReturnMsg];
+        ConBlock jobblock = ^(NSDictionary* resultDic){
+           [self qqLoginReturnMsg];
+        };
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+        [sender postRequest:[[ConnectionFunction getInstance]userOccupation_Post:self->_tencentOAuth.openId Type:type Other_type:@"QQ"] Block:jobblock];
         
     }];
     UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {

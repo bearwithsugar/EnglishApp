@@ -14,6 +14,17 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "__54-[ChooseLessonView tableView:didSelectRowAtIndexPath:]_block_invoke_4:ChooseLessonView.m">
+      </ContextState>
+      <ContextState
+         contextName = "__27-[VoiceChooseChn playVoice]_block_invoke_4:VoiceChooseChn.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "super.testArray">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "-[LearningViewController actionOfShowTranslation:]:LearningViewController.m">
          <PersistentStrings>
             <PersistentString
@@ -36,6 +47,14 @@
          contextName = "-[ConnectionInstance getScore:]:ConnectionInstance.m">
       </ContextState>
       <ContextState
+         contextName = "-[WrongNotesViewController lastAndNext]:WrongNotesViewController.m">
+         <PersistentStrings>
+            <PersistentString
+               value = "testArray.count">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "__28-[VoiceChooseChn answerView]_block_invoke:VoiceChooseChn.m">
          <PersistentStrings>
             <PersistentString
@@ -46,14 +65,6 @@
             </PersistentString>
             <PersistentString
                value = "super.testArray">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "-[WrongNotesViewController lastAndNext]:WrongNotesViewController.m">
-         <PersistentStrings>
-            <PersistentString
-               value = "testArray.count">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -168,6 +179,9 @@
                value = "self.view.subviews">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "-[WordsListeningViewController showContent:className:classId:Word:]:WordsListeningViewController.m">
       </ContextState>
       <ContextState
          contextName = "-[VoicePlayer continuePlay]:VoicePlayer.m">

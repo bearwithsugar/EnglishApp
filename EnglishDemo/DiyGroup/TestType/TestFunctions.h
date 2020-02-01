@@ -13,7 +13,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^VoidBlock) (void);
+
 @interface TestFunctions : UIView
+@property VoidBlock answerBlk;
 @property(nonatomic,copy)NSString* testType;
 @property(nonatomic,copy)NSArray* testArray;
 @property int testFlag;

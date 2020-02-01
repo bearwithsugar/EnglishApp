@@ -12,7 +12,8 @@
 #import "ForgetPassViewController.h"
 #import "../WeChatSDK/WeChatSDK1.8.3/WXApi.h"
 #import "../AppDelegate.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../Functions/DataFilter.h"
 #import "../Functions/QQLogin.h"
@@ -363,45 +364,51 @@
     [SVProgressHUD showWithStatus:@"登录中"];
     NSLog(@"设备x名称是%@",[[UIDevice currentDevice] name]);
     
-    NSDictionary* loginDic=
-    [ConnectionFunction login_password:[usernameTextField.text longLongValue]
-                                  Pass:passwordTextField.text
-                                  Name:[[UIDevice currentDevice] name]
-                                    Id:[FixValues getUniqueId]];
-    NSLog(@"登录结果是：%@",loginDic);
-    //如果登录成功，获取s用户数据并写入文件然后跳转页面
-    if ([[loginDic valueForKey:@"message"]isEqualToString:@"success"]) {
-        //dictionary：过滤字典中空值
-        if ([DocuOperate writeIntoPlist:@"userInfo.plist"
-                             dictionary:[DataFilter DictionaryFilter:[loginDic valueForKey:@"data"]]]
-            ) {
-            [SVProgressHUD dismiss];
-            [self popBack];
-            NSDictionary* usernameDic = [[NSDictionary alloc]
-                                                   initWithObjectsAndKeys:self->usernameTextField.text,@"username",
-                                                        self->passwordTextField.text,@"password", nil];
-            [MyThreadPool executeJob:^{
-                [DocuOperate writeIntoPlist:@"password.plist" dictionary:usernameDic];
-            } Main:^{
-                NSLog(@"记住密码成功");
-            }];
-            
-        }else{
-            [self warnMsg:@"写入用户信息失败，稍后再试"];
-        }
-        
-        
-    }else if([[loginDic valueForKey:@"message"]isEqualToString:@"该账号已在其他设备登录，是否确认登录？"]){
-        [SVProgressHUD dismiss];
-        [self warnMsgWithOpe:[loginDic valueForKey:@"message"]];
-    }else if([[loginDic valueForKey:@"message"]isEqualToString:@"账号或密码错误"]){
-        [SVProgressHUD dismiss];
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"账号或密码错误"] animated:YES completion:nil];
-    }else
-    {
-        [self warnMsg:[loginDic valueForKey:@"message"]];
-        [SVProgressHUD dismiss];
-    }
+    ConBlock conBlk = ^(NSDictionary* loginDic){
+        //如果登录成功，获取s用户数据并写入文件然后跳转页面
+           if ([[loginDic valueForKey:@"message"]isEqualToString:@"success"]) {
+               //dictionary：过滤字典中空值
+               if ([DocuOperate writeIntoPlist:@"userInfo.plist"
+                                    dictionary:[DataFilter DictionaryFilter:[loginDic valueForKey:@"data"]]]
+                   ) {
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       [SVProgressHUD dismiss];
+                       [self popBack];
+                       NSDictionary* usernameDic = [[NSDictionary alloc]
+                                                          initWithObjectsAndKeys:self->usernameTextField.text,@"username",
+                                                               self->passwordTextField.text,@"password", nil];
+                       [MyThreadPool executeJob:^{
+                           [DocuOperate writeIntoPlist:@"password.plist" dictionary:usernameDic];
+                       } Main:^{
+                           NSLog(@"记住密码成功");
+                       }];
+                    });
+               }else{
+                   dispatch_async(dispatch_get_main_queue(), ^{
+                       [self warnMsg:@"写入用户信息失败，稍后再试"];
+                   });
+               }
+               
+               
+           }else if([[loginDic valueForKey:@"message"]isEqualToString:@"该账号已在其他设备登录，是否确认登录？"]){
+               [SVProgressHUD dismiss];
+               [self warnMsgWithOpe:[loginDic valueForKey:@"message"]];
+           }else if([[loginDic valueForKey:@"message"]isEqualToString:@"账号或密码错误"]){
+               [SVProgressHUD dismiss];
+               [self presentViewController:[WarningWindow MsgWithoutTrans:@"账号或密码错误"] animated:YES completion:nil];
+           }else
+           {
+               [self warnMsg:[loginDic valueForKey:@"message"]];
+               [SVProgressHUD dismiss];
+           }
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequest:[[ConnectionFunction getInstance]login_password_Post:[usernameTextField.text longLongValue]
+                                                                        Pass:passwordTextField.text
+                                                                        Name:[[UIDevice currentDevice] name]
+                                                                          Id:[FixValues getUniqueId]]
+                  Block:conBlk];
+   
 
 }
 -(void)WXlogin{
@@ -436,9 +443,10 @@
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:msg preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"强制登录" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [SVProgressHUD showWithStatus:@"登录中"];
-        [ConnectionFunction userOccupation:self->usernameTextField.text Type:@"phone" Other_type:@"xxx"];
-        [self toLogin];
-        
+        NetSenderFunction *sender = [[NetSenderFunction alloc]init];
+        [sender postRequest:[[ConnectionFunction getInstance]userOccupation_Post:self->usernameTextField.text Type:@"phone" Other_type:@"xxx"] Block:^(NSDictionary * dic) {
+            [self toLogin];
+        }];
     }];
     UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         

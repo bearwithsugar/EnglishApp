@@ -7,7 +7,8 @@
 //
 
 #import "ChinSpellEnglish.h"
-#import "../../Functions/ConnectionFunction.h"
+#import "../../Functions/netOperate/ConnectionFunction.h"
+#import "../../Functions/netOperate/NetSenderFunction.h"
 #import "../../Functions/VoicePlayer.h"
 #import "../../Functions/MyThreadPool.h"
 #import "../../Functions/DownloadAudioService.h"
@@ -259,22 +260,23 @@
         NSLog(@"拼写正确");
         rightAnswer.text=@"Yes！";
         rightAnswer.textColor=[UIColor greenColor];
+        super.answerBlk();
+        [SVProgressHUD showSuccessWithStatus:@"正确!"];
         if ([super.testType isEqualToString:@"wrong"]) {
             [MyThreadPool executeJob:^{
-                 NSDictionary* dic=[[NSDictionary alloc]init];
-                 [ConnectionFunction deleteWrongMsg:[super.userInfo valueForKey:@"userKey"]
-                                              ContentId:[NSString stringWithFormat:@"%@",
-                                                         [[[super.testArray objectAtIndex:super.testFlag]
-                                                          valueForKey:@"bookWord"]valueForKey:@"wordId"]
-                                                         ]];
-                 [ConnectionFunction deleteWrongMsg:[super.userInfo valueForKey:@"userKey"]
-                                              ContentId:[NSString stringWithFormat:@"%@",
-                                                         [[[super.testArray objectAtIndex:super.testFlag]
-                                                          valueForKey:@"bookWord"]valueForKey:@"sentenceId"]
-                                                         ]];
+                NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+                [sender deleteRequestWithHead:[[ConnectionFunction getInstance]deleteWrongMsg_Delete_H:[NSString stringWithFormat:@"%@",
+                                                                                                        [[[super.testArray objectAtIndex:super.testFlag]
+                                                                                                          valueForKey:@"bookWord"]valueForKey:@"wordId"]]]
+                                         Head:[super.userInfo valueForKey:@"userKey"]
+                                        Block:^(NSDictionary* dic){}];
+                [sender deleteRequestWithHead:[[ConnectionFunction getInstance]deleteWrongMsg_Delete_H:[NSString stringWithFormat:@"%@",
+                                                                                                        [[[super.testArray objectAtIndex:super.testFlag]
+                                                                                                          valueForKey:@"bookSentence"]valueForKey:@"sentenceId"]]]
+                                         Head:[super.userInfo valueForKey:@"userKey"]
+                                        Block:^(NSDictionary* dic){}];
                 super.testFlag-=1;
-                 NSLog(@"错题添加结果%@",dic);
-             } Main:^{}];
+            } Main:^{}];
        }
     }else{
         NSLog(@"拼写错误");
@@ -283,20 +285,32 @@
         rightAnswer.textColor=ssRGBHex(0xFF7474 );
         
         if (![super.testType isEqualToString:@"wrong"]) {
-               [MyThreadPool executeJob:^{
-                     NSString* subjectType;
-                     NSDictionary* dic=[[NSDictionary alloc]init];
-                     if ([super.testType isEqualToString:@"word"]) {
-                        subjectType=@"2";
-                        dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"wordId"]] Type:subjectType];
-                    }else{
-                        subjectType=@"1";
-                        dic= [ConnectionFunction addWrongMsg:[super.userInfo valueForKey:@"userKey"] Id:[NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"sentenceId"]] Type:subjectType];
-                    }
+            [MyThreadPool executeJob:^{
+                NSString* subjectType;
+                NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+                ConBlock conBlk = ^(NSDictionary* dic){
                     NSLog(@"错题添加结果%@",dic);
-                 } Main:^{
-                     [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
-                 }];
+                };
+                if ([super.testType isEqualToString:@"word"]) {
+                    subjectType=@"2";
+                    [sender postRequestWithHead:[[ConnectionFunction getInstance]addWrongMsg_Post_H:[NSString stringWithFormat:@"%@",
+                                                                                                     [[super.testArray objectAtIndex:super.testFlag]
+                                                                                                      valueForKey:@"wordId"]]
+                                                                                            Type:subjectType]
+                                           Head:[super.userInfo valueForKey:@"userKey"]
+                                          Block:conBlk];
+                }else{
+                 subjectType=@"1";
+                 [sender postRequestWithHead:[[ConnectionFunction getInstance]addWrongMsg_Post_H:[NSString stringWithFormat:@"%@",
+                                                                                                  [[super.testArray objectAtIndex:super.testFlag]
+                                                                                                   valueForKey:@"sentenceId"]]
+                                                                                            Type:subjectType]
+                                        Head:[super.userInfo valueForKey:@"userKey"]
+                                       Block:conBlk];
+                }
+            } Main:^{
+                [SVProgressHUD showSuccessWithStatus:@"加入错题本"];
+            }];
           }
     }
     spellField.enabled=NO;

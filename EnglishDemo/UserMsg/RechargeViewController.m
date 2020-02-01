@@ -8,8 +8,8 @@
 
 #import "RechargeViewController.h"
 #import "../Functions/BackgroundImageWithColor.h"
-#import "../Functions/ConnectionFunction.h"
-#import "../Functions/ConnectionInstance.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../Functions/PayMethods.h"
 #import "../Functions/AgentFunction.h"
@@ -409,18 +409,24 @@
     if([dic[@"status"] intValue]==0){
         [SVProgressHUD dismiss];
         if (!(dic == nil)) {
+            NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+            ConBlock conBlk = ^(NSDictionary* dic){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self refreshXuefen];
+                });
+            };
              NSLog(@"购买成功！");
             NSArray* strategy = [[[dic valueForKey:@"receipt"]
                                    valueForKey:@"in_app"]
                                   valueForKey:@"product_id"];
             if ([strategy[0] isEqualToString:@"xuefen100"]) {
-                [ConnectionFunction increaseScore:[userInfo valueForKey:@"userKey"] Money:@"1" StrategyId:@"1" Block:^{[self refreshXuefen];}];
+                [sender postRequestWithHead:[[ConnectionFunction getInstance]increaseScore_Post_H:@"1" StrategyId:@"1"] Head:[userInfo valueForKey:@"userKey"] Block:conBlk];
             }else if ([strategy[0] isEqualToString:@"xuefen200"]) {
-                [ConnectionFunction increaseScore:[userInfo valueForKey:@"userKey"] Money:@"6" StrategyId:@"1" Block:^{[self refreshXuefen];}];
+                [sender postRequestWithHead:[[ConnectionFunction getInstance]increaseScore_Post_H:@"6" StrategyId:@"1"] Head:[userInfo valueForKey:@"userKey"] Block:conBlk];
             }else if ([strategy[0] isEqualToString:@"xuefen300"]) {
-                [ConnectionFunction increaseScore:[userInfo valueForKey:@"userKey"] Money:@"12" StrategyId:@"1" Block:^{[self refreshXuefen];}];
+                [sender postRequestWithHead:[[ConnectionFunction getInstance]increaseScore_Post_H:@"12" StrategyId:@"1"] Head:[userInfo valueForKey:@"userKey"] Block:conBlk];
             }else if ([strategy[0] isEqualToString:@"xuefen400"]) {
-                [ConnectionFunction increaseScore:[userInfo valueForKey:@"userKey"] Money:@"30" StrategyId:@"1" Block:^{[self refreshXuefen];}];
+                [sender postRequestWithHead:[[ConnectionFunction getInstance]increaseScore_Post_H:@"30" StrategyId:@"1"] Head:[userInfo valueForKey:@"userKey"] Block:conBlk];
             }
    
         }
@@ -478,65 +484,65 @@
 }
 //===================================================================
 
--(void)payBtn{
-    
-    UIButton* weixinBtn=[[UIButton alloc]init];
-    [weixinBtn setTitle:@"微信支付" forState:UIControlStateNormal];
-    weixinBtn.titleLabel.font=[UIFont systemFontOfSize:14];
-    [weixinBtn setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
-    weixinBtn.backgroundColor=[UIColor whiteColor];
-    weixinBtn.layer.borderColor=ssRGBHex(0x9B9B9B).CGColor;
-    weixinBtn.layer.borderWidth=1;
-    [weixinBtn addTarget:self action:@selector(WeChatpay) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:weixinBtn];
-    
-    UIImageView* weixinPic=[[UIImageView alloc]init];
-    weixinPic.image=[UIImage imageNamed:@"icon_weixinzhifu"];
-    [weixinBtn addSubview:weixinPic];
-    
-    UIButton* zhifubaoBtn=[[UIButton alloc]init];
-    [zhifubaoBtn setTitle:@"支付宝支付" forState:UIControlStateNormal];
-    zhifubaoBtn.titleLabel.font=[UIFont systemFontOfSize:14];
-    [zhifubaoBtn setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
-    zhifubaoBtn.backgroundColor=[UIColor whiteColor];
-    [zhifubaoBtn addTarget:self action:@selector(Alipay) forControlEvents:UIControlEventTouchUpInside];
-    zhifubaoBtn.layer.borderColor=ssRGBHex(0x9B9B9B).CGColor;
-    zhifubaoBtn.layer.borderWidth=1;
-    [self.view addSubview:zhifubaoBtn];
-    
-    UIImageView* zhifubaoPic=[[UIImageView alloc]init];
-    zhifubaoPic.image=[UIImage imageNamed:@"icon_zhifubaozhifu"];
-    [zhifubaoBtn addSubview:zhifubaoPic];
-    
-    [zhifubaoPic mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(zhifubaoBtn).offset(11);
-        make.height.equalTo(@28);
-        make.width.equalTo(@28);
-        make.top.equalTo(zhifubaoBtn).offset(11);
-    }];
-    
-    [zhifubaoBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(50);
-        make.height.equalTo(@50);
-        make.right.equalTo(@-50);
-        make.top.equalTo(weixinBtn.mas_bottom).offset(20);
-    }];
-
-    [weixinBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view).offset(50);
-        make.height.equalTo(@50);
-        make.right.equalTo(@-50);
-        make.bottom.equalTo(self.view).offset(-150);
-    }];
-    
-    [weixinPic mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(weixinBtn).offset(11);
-        make.height.equalTo(@28);
-        make.width.equalTo(@28);
-        make.top.equalTo(weixinBtn).offset(11);
-    }];
-    
-}
+//-(void)payBtn{
+//
+//    UIButton* weixinBtn=[[UIButton alloc]init];
+//    [weixinBtn setTitle:@"微信支付" forState:UIControlStateNormal];
+//    weixinBtn.titleLabel.font=[UIFont systemFontOfSize:14];
+//    [weixinBtn setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
+//    weixinBtn.backgroundColor=[UIColor whiteColor];
+//    weixinBtn.layer.borderColor=ssRGBHex(0x9B9B9B).CGColor;
+//    weixinBtn.layer.borderWidth=1;
+//    [weixinBtn addTarget:self action:@selector(WeChatpay) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:weixinBtn];
+//
+//    UIImageView* weixinPic=[[UIImageView alloc]init];
+//    weixinPic.image=[UIImage imageNamed:@"icon_weixinzhifu"];
+//    [weixinBtn addSubview:weixinPic];
+//
+//    UIButton* zhifubaoBtn=[[UIButton alloc]init];
+//    [zhifubaoBtn setTitle:@"支付宝支付" forState:UIControlStateNormal];
+//    zhifubaoBtn.titleLabel.font=[UIFont systemFontOfSize:14];
+//    [zhifubaoBtn setTitleColor:ssRGBHex(0x4A4A4A) forState:UIControlStateNormal];
+//    zhifubaoBtn.backgroundColor=[UIColor whiteColor];
+//    [zhifubaoBtn addTarget:self action:@selector(Alipay) forControlEvents:UIControlEventTouchUpInside];
+//    zhifubaoBtn.layer.borderColor=ssRGBHex(0x9B9B9B).CGColor;
+//    zhifubaoBtn.layer.borderWidth=1;
+//    [self.view addSubview:zhifubaoBtn];
+//
+//    UIImageView* zhifubaoPic=[[UIImageView alloc]init];
+//    zhifubaoPic.image=[UIImage imageNamed:@"icon_zhifubaozhifu"];
+//    [zhifubaoBtn addSubview:zhifubaoPic];
+//
+//    [zhifubaoPic mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(zhifubaoBtn).offset(11);
+//        make.height.equalTo(@28);
+//        make.width.equalTo(@28);
+//        make.top.equalTo(zhifubaoBtn).offset(11);
+//    }];
+//
+//    [zhifubaoBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(self.view).offset(50);
+//        make.height.equalTo(@50);
+//        make.right.equalTo(@-50);
+//        make.top.equalTo(weixinBtn.mas_bottom).offset(20);
+//    }];
+//
+//    [weixinBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(self.view).offset(50);
+//        make.height.equalTo(@50);
+//        make.right.equalTo(@-50);
+//        make.bottom.equalTo(self.view).offset(-150);
+//    }];
+//
+//    [weixinPic mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.left.equalTo(weixinBtn).offset(11);
+//        make.height.equalTo(@28);
+//        make.width.equalTo(@28);
+//        make.top.equalTo(weixinBtn).offset(11);
+//    }];
+//
+//}
 -(void)wasClicked:(UIButton*)btn{
     if (btn!= self.selectedBtn) {
         self.selectedBtn.selected = NO;
@@ -548,55 +554,55 @@
     }
     
 }
--(void)Alipay{
-    if(![self isNumber:inputMoneyField.text]){
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"输入金额格式不正确。"] animated:YES completion:nil];
-        return;
-        
-    }
-    if (userInfo==nil) {
-        NSLog(@"请先登录");
-        [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，请先登录再充值！" Navigation:self.navigationController] animated:YES completion:nil];
-    }else{
-        NSLog(@"userInfo%@",userInfo);
-        NSDictionary* payDic=[ConnectionFunction Alipay:[userInfo valueForKey:@"userKey"]
-                                                  Money:[NSString stringWithFormat:@"%d",money]
-                                               Strategy:[[AgentFunction getScore:money]
-                                                         valueForKey:@"strategy"]];
-        [PayMethods toAlipay:[payDic valueForKey:@"data"]];
-        
-    }
-}
--(void)WeChatpay{
-    if(![self isNumber:inputMoneyField.text]){
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"输入金额格式不正确。"] animated:YES completion:nil];
-        return;
-        
-    }
-    if (![WXApi isWXAppInstalled]) {
-         [self presentViewController:[WarningWindow MsgWithoutTrans:@"您未下载微信！"] animated:YES completion:nil];
-        return;
-    }
-    if (userInfo==nil) {
-        NSLog(@"请先登录");
-        [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，请先登录再充值！" Navigation:self.navigationController] animated:YES completion:nil];
-    }else{
-        NSDictionary* wxDic=[[ConnectionFunction WeChatpay:[userInfo valueForKey:@"userKey"]
-                                                     Money:[NSString stringWithFormat:@"%d",money]
-                                                  Strategy:[[AgentFunction getScore:money]
-                                                            valueForKey:@"strategy"]]valueForKey:@"data"];
-        
-        [PayMethods toWXpay:[wxDic valueForKey:@"appid"]
-                  PartnerId:[wxDic valueForKey:@"partnerid"]
-                   PrepayId:[wxDic valueForKey:@"prepayid"]
-                    Package:[wxDic valueForKey:@"package"]
-                   NonceStr:[wxDic valueForKey:@"noncestr"]
-                  TimeStamp:[[wxDic valueForKey:@"timestamp"]intValue]
-                       Sign:[wxDic valueForKey:@"sign"]];
-
-        
-    }
-}
+//-(void)Alipay{
+//    if(![self isNumber:inputMoneyField.text]){
+//        [self presentViewController:[WarningWindow MsgWithoutTrans:@"输入金额格式不正确。"] animated:YES completion:nil];
+//        return;
+//
+//    }
+//    if (userInfo==nil) {
+//        NSLog(@"请先登录");
+//        [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，请先登录再充值！" Navigation:self.navigationController] animated:YES completion:nil];
+//    }else{
+//        NSLog(@"userInfo%@",userInfo);
+//        NSDictionary* payDic=[ConnectionFunction Alipay:[userInfo valueForKey:@"userKey"]
+//                                                  Money:[NSString stringWithFormat:@"%d",money]
+//                                               Strategy:[[AgentFunction getScore:money]
+//                                                         valueForKey:@"strategy"]];
+//        [PayMethods toAlipay:[payDic valueForKey:@"data"]];
+//
+//    }
+//}
+//-(void)WeChatpay{
+//    if(![self isNumber:inputMoneyField.text]){
+//        [self presentViewController:[WarningWindow MsgWithoutTrans:@"输入金额格式不正确。"] animated:YES completion:nil];
+//        return;
+//
+//    }
+//    if (![WXApi isWXAppInstalled]) {
+//         [self presentViewController:[WarningWindow MsgWithoutTrans:@"您未下载微信！"] animated:YES completion:nil];
+//        return;
+//    }
+//    if (userInfo==nil) {
+//        NSLog(@"请先登录");
+//        [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，请先登录再充值！" Navigation:self.navigationController] animated:YES completion:nil];
+//    }else{
+//        NSDictionary* wxDic=[[ConnectionFunction WeChatpay:[userInfo valueForKey:@"userKey"]
+//                                                     Money:[NSString stringWithFormat:@"%d",money]
+//                                                  Strategy:[[AgentFunction getScore:money]
+//                                                            valueForKey:@"strategy"]]valueForKey:@"data"];
+//
+//        [PayMethods toWXpay:[wxDic valueForKey:@"appid"]
+//                  PartnerId:[wxDic valueForKey:@"partnerid"]
+//                   PrepayId:[wxDic valueForKey:@"prepayid"]
+//                    Package:[wxDic valueForKey:@"package"]
+//                   NonceStr:[wxDic valueForKey:@"noncestr"]
+//                  TimeStamp:[[wxDic valueForKey:@"timestamp"]intValue]
+//                       Sign:[wxDic valueForKey:@"sign"]];
+//
+//
+//    }
+//}
 
 - (BOOL)isNumber:(NSString *)strValue
 {

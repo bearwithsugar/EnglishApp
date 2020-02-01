@@ -7,7 +7,8 @@
 //
 
 #import "ChooseLessonView.h"
-#import "../Functions/ConnectionFunction.h"
+#import "../Functions/netOperate/ConnectionFunction.h"
+#import "../Functions/netOperate/NetSenderFunction.h"
 #import "../Functions/DocuOperate.h"
 #import "../LearningViewController.h"
 #import "../Functions/DownloadAudioService.h"
@@ -34,7 +35,7 @@
 @end
 
 @implementation ChooseLessonView
--(id)initWithBookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit ShowBlock:(ShowContentBlock)showContentBlock{
+-(id)initWithBookId:(NSString*)bookid DefaultUnit:(NSInteger)defaultunit UnitArray:(NSArray*)unitArr ShowBlock:(ShowContentBlock)showContentBlock{
     self=[super init];
     if (self) {
         self.backgroundColor=[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
@@ -42,7 +43,7 @@
         _bookId=bookid;
         _defaultUnit=defaultunit;
         _showContentBlock=showContentBlock;
-        [self unitMsgInit];
+        unitArray=unitArr;
         //初始化数组
         _lessonArray=[[NSArray alloc]init];
         _dataArray=[[NSDictionary alloc]init];
@@ -80,10 +81,6 @@
         }];
     }
     return self;
-}
--(void)unitMsgInit{
-    NSDictionary*  dataDic=[ConnectionFunction getUnitMsg:_bookId UserKey:[userInfo valueForKey:@"userKey"]];
-    unitArray=[dataDic valueForKey:@"data"];
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -152,38 +149,56 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell* celltwo=[tableView cellForRowAtIndexPath:indexPath];
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
     if (tableView.tag==1) {
         celltwo.textLabel.textColor=[UIColor blackColor];
-        NSDictionary* dataDic=[ConnectionFunction getClassMsg:[[unitArray objectAtIndex:indexPath.row] valueForKey:@"unitId"] UserKey:[userInfo valueForKey:@"userKey"]];
-        //_lessonArray=[[dataDic valueForKey:@"data"]firstObject];
-        _lessonArray = [[NSArray alloc]initWithObjects:[[dataDic valueForKey:@"data"]firstObject], nil];
-        _unitName=[[unitArray objectAtIndex:indexPath.row] valueForKey:@"unitName"];
-        [lessonList reloadData];
+        ConBlock conBlk = ^(NSDictionary* dataDic){
+            self->_lessonArray = [[NSArray alloc]initWithObjects:[[dataDic valueForKey:@"data"]firstObject], nil];
+            self->_unitName=[[self->unitArray objectAtIndex:indexPath.row] valueForKey:@"unitName"];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self->lessonList reloadData];
+            });
+        };
+        [MyThreadPool executeJob:^{
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                  Path:[[ConnectionFunction getInstance]getClassMsg_Get_H:[[self->unitArray objectAtIndex:indexPath.row] valueForKey:@"unitId"]]
+            Block:conBlk];
+        } Main:^{}];
     }else{
         celltwo.textLabel.textColor=ssRGBHex(0xFF7474);
         _articleId=[[_lessonArray objectAtIndex:indexPath.row] valueForKey:@"articleId"];
-        NSDictionary* dataDic=[ConnectionFunction getLessonMsg:_articleId UserKey:[userInfo valueForKey:@"userKey"]];
-        _dataArray=[dataDic valueForKey:@"data"];
-        NSDictionary* lessonMsg=_lessonArray[indexPath.row];
-        _className=[lessonMsg valueForKey:@"articleName"];
+        NetSenderFunction* sender2 = [[NetSenderFunction alloc]init];
         
-        NSDictionary* buyState=[ConnectionFunction articleBuyState:_articleId UserKey:[userInfo valueForKey:@"userKey"]];
-        //判断字典内容为空
-        if ([[buyState valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
-            NSLog(@"您还未购买该课程");
-            
-            [[AgentFunction theTopviewControler]
-             presentViewController:
-             [self warnWindow:@"您还未购买该课程，购买该课程需要100学分！"]
-             animated:YES
-             completion:nil];
-            
-        }else{
-            _showContentBlock([_dataArray valueForKey:@"bookPictures"],
-                              [_dataArray valueForKey:@"bookSentences"],
-                              [[[_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
-                              _unitName,_className);
-        }
+        ConBlock conBlk2 = ^(NSDictionary* buyState){
+            //判断字典内容为空
+            if ([[buyState valueForKey:@"data"] isKindOfClass:[NSNull class]]) {
+                NSLog(@"您还未购买该课程");
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [[AgentFunction theTopviewControler]
+                     presentViewController:
+                     [self warnWindow:@"您还未购买该课程，购买该课程需要100学分！"]
+                     animated:YES
+                     completion:nil];
+                });
+                
+            }else{
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    self->_showContentBlock([self->_dataArray valueForKey:@"bookPictures"],
+                                            [self->_dataArray valueForKey:@"bookSentences"],
+                                      [[[self->_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
+                                            self->_unitName,self->_className);
+                });
+            }
+        };
+        ConBlock conBlk = ^(NSDictionary* dataDic){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self->_dataArray=[dataDic valueForKey:@"data"];
+                NSDictionary* lessonMsg=self->_lessonArray[indexPath.row];
+                self->_className=[lessonMsg valueForKey:@"articleName"];
+                [sender2 getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]articleBuyState_Get_H:self->_articleId] Block:conBlk2];
+            });
+        };
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getLessonMsg_Get_H:self->_articleId] Block:conBlk];
     }
     
 }
@@ -202,18 +217,22 @@
                                                             preferredStyle:UIAlertControllerStyleAlert];
     
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"购买" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        int score=[[[ConnectionFunction getScore:[self->userInfo valueForKey:@"userKey"]]valueForKey:@"data"]intValue];
-        if (score>=100) {
-            self->_showContentBlock([self->_dataArray valueForKey:@"bookPictures"],
-                              [self->_dataArray valueForKey:@"bookSentences"],
-                              [[[self->_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
-                              self->_unitName,self->_className);
-        }
-        else{
-            [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"您的学分不足，请充值！"] animated:YES completion:nil];
-        }
+
+        NetSenderFunction* sender = [[NetSenderFunction alloc]init];
         
-        
+        ConBlock conBlk = ^(NSDictionary* dic){
+           int score=[[dic valueForKey:@"data"]intValue];
+            if (score>=100) {
+                self->_showContentBlock([self->_dataArray valueForKey:@"bookPictures"],
+                                  [self->_dataArray valueForKey:@"bookSentences"],
+                                  [[[self->_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
+                                  self->_unitName,self->_className);
+            }
+            else{
+                [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"您的学分不足，请充值！"] animated:YES completion:nil];
+            }
+        };
+        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getScore_Get_H] Block:conBlk];
         
     }];
     UIAlertAction *action2 = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
