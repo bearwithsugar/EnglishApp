@@ -399,35 +399,30 @@
     //播放声音
     //音频播放空间分配
     
-    JobBlock playBlock =^{
-        
-        NSString* playUrl;
-        if ([super.testType isEqualToString:@"wrong"]) {
-            if (super.testFlag < super.wordNum) {
-                //错题本中单词
-                playUrl=[DownloadAudioService getAudioPath:
-                         [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordId"]]];
-            }else{
-                //错题本中句子
-                playUrl=[DownloadAudioService getAudioPath:
-                         [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
-            }
-        }else if([super.testType isEqualToString:@"word"]){
-            //单词测试
-            playUrl=[DownloadAudioService getAudioPath:
-                     [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordId"]]];
-        }else{
-            //句子测试
-            playUrl=[DownloadAudioService getAudioPath:
-                     [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
-        }
-        
-        self->voiceplayer=[[VoicePlayer alloc]init];
-        self->voiceplayer.url = playUrl;
-        self->voiceplayer.myblock = stopBlock;
-        [self->voiceplayer playAudio:0];
-
-    };
+  JobBlock playBlock =^{
+       self->voiceplayer=[[VoicePlayer alloc]init];
+       if ([super.testType isEqualToString:@"wrong"]) {
+           if (super.testFlag < super.wordNum) {
+               //错题本中单词
+               self->voiceplayer.url=[[DownloadAudioService getInstance] getAudioPath:
+                        [NSString stringWithFormat:@"%@", [[[super.testArray objectAtIndex:super.testFlag]valueForKey:@"bookWord"] valueForKey:@"wordId"]]];
+           }else{
+               //错题本中句子
+               self->voiceplayer.url=[[DownloadAudioService getInstance] getAudioPath:
+                        [NSString stringWithFormat:@"%@",[[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"bookSentence"] valueForKey:@"sentenceId"]]];
+           }
+       }else if([super.testType isEqualToString:@"word"]){
+           //单词测试
+           self->voiceplayer.url=[[DownloadAudioService getInstance] getAudioPath:
+                    [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordId"]]];
+       }else{
+           //句子测试
+           self->voiceplayer.url=[[DownloadAudioService getInstance] getAudioPath:
+                    [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
+       }
+       self->voiceplayer.myblock = stopBlock;
+       [self->voiceplayer playAudio:0];
+   };
     
     [MyThreadPool executeJob:playBlock Main:^{}];
     

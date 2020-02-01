@@ -10,7 +10,8 @@
 
 @interface DownloadAudioService : NSObject
 
-+(void)toLoadAudio:(NSString*)url FileName:(NSString*)name;
-+(NSString*)getAudioPath:(NSString*)name;
++(id)getInstance;
+-(void)toLoadAudio:(NSString*)url FileName:(NSString*)name;
+-(NSString*)getAudioPath:(NSString*)name;
 
 @end

@@ -36,7 +36,7 @@
     self.process.text=label2;
     self.process.textAlignment=NSTextAlignmentCenter;
     self.process.font=[UIFont systemFontOfSize:12];
-    if ([label2 isEqualToString:@"学习进度：0%"]) {
+    if ([label2 isEqualToString:@"学习进度：0%"] ||[label2 isEqualToString:@"未购买"]) {
         self.title.textColor=ssRGBHex(0x9B9B9B);
         self.process.textColor=ssRGBHex(0x9B9B9B);
     }else{

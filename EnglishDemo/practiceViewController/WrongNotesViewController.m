@@ -87,7 +87,6 @@
 -(void)viewWillAppear:(BOOL)animated{
     if ([DocuOperate fileExistInPath:@"userInfo.plist"]) {
         [self showContent];
-       
     }
     else{
         UnloginMsgView* unloginView=[[UnloginMsgView alloc]init];

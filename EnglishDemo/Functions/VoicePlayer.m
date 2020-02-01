@@ -66,6 +66,7 @@
     if (_movePlayer.duration < 0.1) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [SVProgressHUD showErrorWithStatus:@"资源下载未完成"];
+            self->_myblock();
         });
     }
         // 3.准备播放 (音乐播放的内存空间的开辟等功能)  不写这行代码直接播放也会默认调用prepareToPlay
@@ -101,7 +102,7 @@
     
     // 1.加载本地的音乐文件
     NSURL *url = [NSURL fileURLWithPath:
-                  [DownloadAudioService getAudioPath:
+                  [[DownloadAudioService getInstance] getAudioPath:
                                          [NSString stringWithFormat:@"%@",[[_urlArray objectAtIndex:_startIndex++]valueForKey:@"id"]]]];
     // 2. 创建音乐播放对象
     _movePlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];

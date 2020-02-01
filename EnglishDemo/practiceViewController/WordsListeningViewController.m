@@ -20,6 +20,7 @@
 #import "../Functions/MyThreadPool.h"
 #import "../Common/HeadView.h"
 #import "../Common/LoadGif.h"
+#import "SVProgressHUD.h"
 #import "Masonry.h"
 
 @interface WordsListeningViewController ()<UITableViewDelegate,UITableViewDataSource>
@@ -367,14 +368,15 @@
             [voiceArray addObject:dictionary];
         }
         
-        for (NSDictionary* dic in voiceArray) {
-            NSString* playUrl=[dic valueForKey:@"url"];
-            if ([playUrl isKindOfClass:[NSNull class]]) {
-                continue;
-            }
-            playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-            [DownloadAudioService toLoadAudio:playUrl FileName:[dic valueForKey:@"id"]];
-        }
+        [voiceArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                NSString* playUrl=[obj valueForKey:@"url"];
+                if (![playUrl isKindOfClass:[NSNull class]]) {
+                    playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                    [[DownloadAudioService getInstance] toLoadAudio:playUrl FileName:[obj valueForKey:@"id"]];
+                }
+            });
+        }];
         
     } Main:^{
         
@@ -444,7 +446,7 @@
     JobBlock playBlock =^{
         
         self->voiceplayer.sourceName = [[self->wordsArray objectAtIndex:indexPath.row] valueForKey:@"wordId"];
-        NSString* playUrl=[DownloadAudioService getAudioPath:
+        NSString* playUrl=[[DownloadAudioService getInstance] getAudioPath:
                            [NSString stringWithFormat:@"%@",[[self->wordsArray objectAtIndex:indexPath.row]valueForKey:@"wordId"]]];
         if (self->voiceplayer!=NULL) {
             [self->voiceplayer interruptPlay];

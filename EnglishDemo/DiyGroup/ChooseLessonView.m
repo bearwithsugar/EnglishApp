@@ -195,7 +195,12 @@
                 self->_dataArray=[dataDic valueForKey:@"data"];
                 NSDictionary* lessonMsg=self->_lessonArray[indexPath.row];
                 self->_className=[lessonMsg valueForKey:@"articleName"];
-                [sender2 getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]articleBuyState_Get_H:self->_articleId] Block:conBlk2];
+                if ([[NSArray alloc]initWithArray:[[dataDic valueForKey:@"data"]valueForKey:@"bookSentences"]].count == 0) {
+                    [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"当前课程没有内容!"] animated:YES completion:nil];
+                    return;
+                }else{
+                    [sender2 getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]articleBuyState_Get_H:self->_articleId] Block:conBlk2];
+                }
             });
         };
         [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getLessonMsg_Get_H:self->_articleId] Block:conBlk];
@@ -222,15 +227,17 @@
         
         ConBlock conBlk = ^(NSDictionary* dic){
            int score=[[dic valueForKey:@"data"]intValue];
-            if (score>=100) {
-                self->_showContentBlock([self->_dataArray valueForKey:@"bookPictures"],
-                                  [self->_dataArray valueForKey:@"bookSentences"],
-                                  [[[self->_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
-                                  self->_unitName,self->_className);
-            }
-            else{
-                [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"您的学分不足，请充值！"] animated:YES completion:nil];
-            }
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (score>=100) {
+                    self->_showContentBlock([self->_dataArray valueForKey:@"bookPictures"],
+                                      [self->_dataArray valueForKey:@"bookSentences"],
+                                      [[[self->_dataArray valueForKey:@"bookSentences"]objectAtIndex:0] valueForKey:@"articleId"],
+                                      self->_unitName,self->_className);
+                }
+                else{
+                    [[AgentFunction theTopviewControler] presentViewController:[WarningWindow MsgWithoutTrans:@"您的学分不足，请充值！"] animated:YES completion:nil];
+                }
+            });
         };
         [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getScore_Get_H] Block:conBlk];
         

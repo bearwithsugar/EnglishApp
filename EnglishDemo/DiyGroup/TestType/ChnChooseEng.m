@@ -411,20 +411,20 @@
         if ([super.testType isEqualToString:@"wrong"]) {
             if (super.testFlag < super.wordNum) {
                 //错题本中单词
-                playUrl=[DownloadAudioService getAudioPath:
+                playUrl=[[DownloadAudioService getInstance] getAudioPath:
                          [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordId"]]];
             }else{
                 //错题本中句子
-                playUrl=[DownloadAudioService getAudioPath:
+                playUrl=[[DownloadAudioService getInstance] getAudioPath:
                          [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
             }
         }else if([super.testType isEqualToString:@"word"]){
             //单词测试
-            playUrl=[DownloadAudioService getAudioPath:
+            playUrl=[[DownloadAudioService getInstance] getAudioPath:
                      [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"wordId"]]];
         }else{
             //句子测试
-            playUrl=[DownloadAudioService getAudioPath:
+            playUrl=[[DownloadAudioService getInstance] getAudioPath:
                      [NSString stringWithFormat:@"%@",[[super.testArray objectAtIndex:super.testFlag] valueForKey:@"sentenceId"]]];
         }
         

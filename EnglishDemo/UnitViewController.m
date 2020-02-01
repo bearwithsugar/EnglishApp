@@ -162,11 +162,16 @@
     for (int i=0; i<unitArray.count;i++) {
         NSDictionary* unitMsg=unitArray[i];
         if (indexPath.row==i) {
-            NSString* processPercent=@"学习进度：";
-            //NSLog(@"unitProcessArray的值是%@",unitProcessArray);
-            NSDictionary* userUnitDic=[[unitProcessArray objectAtIndex:i]valueForKey:@"userUnit"];
-            processPercent=[processPercent stringByAppendingString:[[userUnitDic valueForKey:@"learningRate"] stringValue]];
-            processPercent=[processPercent stringByAppendingString:@"%"];
+            NSString* processPercent;
+            if ([[[unitProcessArray objectAtIndex:i]valueForKey:@"bought"]intValue] == 0) {
+                processPercent = @"未购买";
+            }else{
+                //NSLog(@"unitProcessArray的值是%@",unitProcessArray);
+                processPercent=@"学习进度：";
+                NSDictionary* userUnitDic=[[unitProcessArray objectAtIndex:i]valueForKey:@"userUnit"];
+                processPercent=[processPercent stringByAppendingString:[[userUnitDic valueForKey:@"learningRate"] stringValue]];
+                processPercent=[processPercent stringByAppendingString:@"%"];
+            }
             [cell loadData:[unitMsg valueForKey:@"unitName"] description:processPercent];
         }
     }

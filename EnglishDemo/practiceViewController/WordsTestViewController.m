@@ -31,8 +31,6 @@
     //上一题下一题
     UIView* lastAndNextPanel;
     
-    NSMutableArray* voiceArray;
-    
     //选课信息界面
     ChooseLessonView* chooseLessonView;
     //自定义问题答案界面
@@ -89,7 +87,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor=ssRGBHex(0xFCF8F7);
-    voiceArray = [[NSMutableArray alloc]init];
     [self titleShow];
     [self settingView];
     //监听键盘展示和隐藏的通知
@@ -672,6 +669,7 @@
 -(void)showContent:(NSString*)unitname className:(NSString*)classname testArray:(NSArray*)testarray classId:(NSString*)classid{
     setBtn.hidden = NO;
     JobBlock myblock = ^{
+        NSMutableArray* voiceArray;
         for (NSDictionary* dic in testarray) {
             NSMutableDictionary* dictionary = [[NSMutableDictionary alloc]init];
             [dictionary setValue:[dic valueForKey:@"engUrl"] forKey:@"url"];
@@ -680,23 +678,23 @@
             }else{
                 [dictionary setValue:[dic valueForKey:@"sentenceId"] forKey:@"id"];
             }
-            [self->voiceArray addObject:dictionary];
+            [voiceArray addObject:dictionary];
         }
         
-        [self->voiceArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            NSString* playUrl=[obj valueForKey:@"url"];
-            if ([playUrl isKindOfClass:[NSNull class]]) {
-                return ;
-            }
-            playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-            [DownloadAudioService toLoadAudio:playUrl FileName:[obj valueForKey:@"id"]];
+        [voiceArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                NSString* playUrl=[obj valueForKey:@"url"];
+                if (![playUrl isKindOfClass:[NSNull class]]) {
+                    playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                    [[DownloadAudioService getInstance] toLoadAudio:playUrl FileName:[obj valueForKey:@"id"]];
+                }
+            });
         }];
     };
-    [MyThreadPool executeJob:myblock Main:^{}];
     
     //收起选择课程界面
     [chooseLessonView removeFromSuperview];
-    
+    [MyThreadPool executeJob:myblock Main:^{}];
     //清除页面
     [questionAndAnswerView removeFromSuperview];
     
@@ -730,9 +728,6 @@
     [self lastAndNext];
     
     [self addQAview];
-    if (testarray.count == 0) {
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"当前课程没有内容!"] animated:YES completion:nil];
-    }
 
 }
 

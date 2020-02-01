@@ -454,7 +454,6 @@
                     [theBook sd_setImageWithURL:imagePath];
                     [theBook addSubview:showBigPic];
                     [self->bookPicView addSubview:theBook];
-                    //[[SDImageCache sharedImageCache] clearMemory];
                     
                     UITapGestureRecognizer* clickClassPic=[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showContent:)];
                     [theBook addGestureRecognizer:clickClassPic];
@@ -553,12 +552,9 @@
             [voiceArray addObject:dic];
         }
     }
-    [SVProgressHUD show];
-    [MyThreadPool executeJob:^{
-        [self loadAudioMsg:self->voiceArray];
-    } Main:^{
-        [SVProgressHUD dismiss];
-    }];
+
+    [self loadAudioMsg:self->voiceArray];
+
     //添加滚动页面长度
     if (sentenceArray.count<8) {
         contentDetailHeight=600;
@@ -568,6 +564,8 @@
         if (contentDetailHeight==130) {
             //如果没有句子显示大图
             [self showBigPic:picTag];
+        }else{
+            [SVProgressHUD showWithStatus:@"资源加载中.."];
         }
     }
     [contentView addSubview:contentDetailScrollView];
@@ -596,7 +594,10 @@
     [followReadBtn setImageEdgeInsets:UIEdgeInsetsMake(0.0, -10, 0.0, 0.0)];
     [followReadBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, 0, 0, -10)];
     //录音按钮
-    [followReadBtn addTarget:self action:@selector(startRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
+    //[followReadBtn addTarget:self action:@selector(startRecordBtnAction) forControlEvents:UIControlEventTouchUpInside];
+    
+    UILongPressGestureRecognizer* longPressGes = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longBtnAction:)];
+    [followReadBtn addGestureRecognizer:longPressGes];
 
     for (int i=0; i<titleArray.count; i++) {
         NSDictionary* titleDic=titleArray[i];
@@ -695,6 +696,14 @@
         [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"] Path:[[ConnectionFunction getInstance]getUserSentenceMsg_Get_H:self->chooseLessonView.articleId] Block:jobBlock];
     } Main:^{}];
 
+}
+-(void)longBtnAction:(UILongPressGestureRecognizer*)ges{
+    if ([ges state] == UIGestureRecognizerStateBegan) {
+        NSLog(@"长按开始");
+    }else if([ges state] == UIGestureRecognizerStateEnded){
+        NSLog(@"长按结束");
+    }
+    
 }
 //点击内容展示收缩
 -(void)clickContent:(UITapGestureRecognizer*)sender{
@@ -842,7 +851,7 @@
     //音频播放空间分配
     
     playBlock =^{
-        NSString* playUrl=[DownloadAudioService getAudioPath:
+        NSString* playUrl=[[DownloadAudioService getInstance] getAudioPath:
                            [NSString stringWithFormat:@"%@",[[self->voiceArray objectAtIndex:id]valueForKey:@"id"]]];
         if ([DocuOperate isExitInPath:playUrl]) {
             if (self->voiceplayer!=NULL) {
@@ -1154,7 +1163,6 @@
     className=classname;
 
     voiceFlag = picFlag = false;
-    [SVProgressHUD show];
     //添加学习进度信息
     //加载gif动画
     [MyThreadPool executeJob:^{
@@ -1165,23 +1173,33 @@
     [lessontitle removeFromSuperview];
     [self presentLessionView];
     [self learningBook];
-
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        [self loadAudioMsg:self->sentenceArray];
-    });
+    [SVProgressHUD showWithStatus:@"资源加载中.."];
+    [self loadAudioMsg:self->sentenceArray];
+    
 }
 
 -(void)loadAudioMsg:(NSArray*)array{
-    if (array != nil) {
-        for (NSObject *object in array) {
-            NSString* playUrl=[object valueForKey:@"engUrl"];
-            if([playUrl isKindOfClass:[NSNull class]]){
-                continue;
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        if (array != nil) {
+            __block NSUInteger count = array.count;
+            for (NSObject *object in array) {
+                [MyThreadPool executeJob:^{
+                    NSString* playUrl=[object valueForKey:@"engUrl"];
+                    if(![playUrl isKindOfClass:[NSNull class]]){
+                        playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                        [[DownloadAudioService getInstance] toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
+                    }
+                } Main:^{
+                    count-=1;
+                    if (count == 0) {
+                        [SVProgressHUD dismiss];
+                    }
+                }];
             }
-            playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-            [DownloadAudioService toLoadAudio:playUrl FileName:[NSString stringWithFormat:@"%@", [object valueForKey:@"id"]]];
+        }else{
+            [SVProgressHUD dismiss];
         }
-    }
+    });
 }
 
 #pragma mark --chooseLesson

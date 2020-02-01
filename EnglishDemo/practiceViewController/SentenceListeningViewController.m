@@ -346,14 +346,15 @@
             [voiceArray addObject:dictionary];
         }
         
-        for (NSDictionary* dic in voiceArray) {
-            NSString* playUrl=[dic valueForKey:@"url"];
-            if ([playUrl isKindOfClass:[NSNull class]]) {
-                continue;
-            }
-            playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
-            [DownloadAudioService toLoadAudio:playUrl FileName:[dic valueForKey:@"id"]];
-        }
+        [voiceArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            dispatch_async(dispatch_get_global_queue(0, 0), ^{
+                NSString* playUrl=[obj valueForKey:@"url"];
+                if (![playUrl isKindOfClass:[NSNull class]]) {
+                    playUrl=[playUrl stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+                    [[DownloadAudioService getInstance] toLoadAudio:playUrl FileName:[obj valueForKey:@"id"]];
+                }
+            });
+        }];
     };
     [MyThreadPool executeJob:myblock Main:^{}];
     
@@ -378,9 +379,6 @@
     //加载内容
     [self contentView];
     [sentencesList reloadData];
-    if (sentenceArray.count == 0) {
-        [self presentViewController:[WarningWindow MsgWithoutTrans:@"当前课程没有句子!"] animated:YES completion:nil];
-    }
 }
 
 -(void)contentView{
@@ -437,7 +435,7 @@
     [cell addPicForLaba:[LoadGif imageViewfForPracticePlaying]];
     
     JobBlock playBlock =^{
-        NSString* playUrl=[DownloadAudioService getAudioPath:
+        NSString* playUrl=[[DownloadAudioService getInstance] getAudioPath:
                            [NSString stringWithFormat:@"%@",[[self->sentenceArray objectAtIndex:indexPath.row]valueForKey:@"sentenceId"]]];
         if (self->voiceplayer!=NULL) {
             [self->voiceplayer interruptPlay];
