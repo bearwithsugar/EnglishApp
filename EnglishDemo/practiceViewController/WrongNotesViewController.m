@@ -177,10 +177,19 @@
     };
     [SVProgressHUD show];
     [MyThreadPool executeJob:^{
-        NetSenderFunction *sender = [[NetSenderFunction alloc]init];
-        [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
-                              Path:[[ConnectionFunction getInstance]getWrongMsgWithBlock_Get_H:self->_recentBookId]
-                             Block:myBlock];
+        if ([self->_recentBookId isKindOfClass:[NSNull class]]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [SVProgressHUD dismiss];
+            });
+            [self presentViewController:[WarningWindow MsgWithBlock:@"您还没有错题!先去做题吧！" Block:^{
+                [self popBack];
+            }] animated:YES completion:nil];
+        }else{
+            NetSenderFunction *sender = [[NetSenderFunction alloc]init];
+            [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
+                                  Path:[[ConnectionFunction getInstance]getWrongMsgWithBlock_Get_H:self->_recentBookId]
+                                 Block:myBlock];
+        }
     } Main:^{    }];
 }
 
