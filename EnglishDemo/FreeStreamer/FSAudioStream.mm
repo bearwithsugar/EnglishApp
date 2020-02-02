@@ -927,10 +927,12 @@ public:
     if (self.onStateChange) {
         self.onStateChange(streamerState);
     }
-    
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wshorten-64-to-32"
     NSDictionary *userInfo = @{FSAudioStreamNotificationKey_State: [NSNumber numberWithInt:streamerState],
                                FSAudioStreamNotificationKey_Stream: [NSValue valueWithPointer:_audioStream]};
     NSNotification *notification = [NSNotification notificationWithName:FSAudioStreamStateChangeNotification object:self.stream userInfo:userInfo];
+    #pragma clang diagnostic pop
     
     [[NSNotificationCenter defaultCenter] postNotification:notification];
 }

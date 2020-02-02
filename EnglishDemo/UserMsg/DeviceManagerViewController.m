@@ -159,25 +159,24 @@
 }
 -(void)releaseDevice:(UIButton*)btn{
     ConBlock conBlk = ^(NSDictionary* dic){
+        dispatch_async(dispatch_get_main_queue(), ^{
         //此处判断条件在重写代码后未验证！！
-        if ([[dic valueForKey:@"code"]intValue]==200) {
-            NSLog(@"解除绑定成功");
-            if ([[[self->deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
-                   //如果是当前设备
-                   NSLog(@"是当前设备");
-                   [DocuOperate deletePlist:@"userInfo.plist"];
-                   [self pushToLogin];
-               }else{
-                   [self popBack];
-               }
-               
-           }else{
-               NSLog(@"不是当前设备");
-               NSLog(@"解除绑定成功");
-               dispatch_async(dispatch_get_main_queue(), ^{
-                   [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定失败！"] animated:YES completion:nil];
-               });
-           }
+            if ([[dic valueForKey:@"code"]intValue]==200) {
+                NSLog(@"解除绑定成功");
+                if ([[[self->deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]isEqualToString:[[[UIDevice currentDevice] identifierForVendor] UUIDString]]) {
+                    //如果是当前设备
+                    NSLog(@"是当前设备");
+                    [DocuOperate deletePlist:@"userInfo.plist"];
+                    [self pushToLogin];
+                }else{
+                    [self popBack];
+                }
+            }else{
+                NSLog(@"不是当前设备");
+                NSLog(@"解除绑定成功");
+                [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"解除绑定失败！"] animated:YES completion:nil];
+            }
+        });
     };
     NetSenderFunction* sender = [[NetSenderFunction alloc]init];
     [sender deleteRequestWithHead:[[ConnectionFunction getInstance]deleteBinding_Delete_H:[[deviceArray objectAtIndex:btn.tag]valueForKey:@"deviceId"]] Head:[userInfo valueForKey:@"userKey"] Block:conBlk];
