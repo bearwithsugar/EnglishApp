@@ -212,8 +212,6 @@
                                   Path:[[ConnectionFunction getInstance]getTestSentenceMsg_Get_H:self->chooseLessonView.articleId]
                                  Block:conBlk];
         }
-
-       
     };
     ConBlock conBlk = ^(NSDictionary* dic){
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -703,24 +701,30 @@
     className=classname;
     //调用接口获取信息
     testArray=testarray;
-
     classId=classid;
     
     if (![DocuOperate fileExistInPath:@"testDetails.plist"]) {
         testFlagDic = [[NSMutableDictionary alloc]init];
         [testFlagDic setObject:@"0" forKey:classId];
-        NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",testFlagDic,@"testFlag", nil];
+        NSDictionary* dic=[[NSDictionary alloc]initWithObjectsAndKeys:@"0",@"testFunc",testFlagDic,@"testFlagForWord",testFlagDic,@"testFlagForSentence", nil];
         [DocuOperate writeIntoPlist:@"testDetails.plist" dictionary:dic];
     }
 
     testDetails=[DocuOperate readFromPlist:@"testDetails.plist"];
-    testFlagDic = [testDetails valueForKey:@"testFlag"];
-    NSLog(@"teatdetail：%@",testDetails);
-    
-    if (![[testDetails valueForKey:@"testFlag"]valueForKey:classId]) {
-        [testFlagDic setObject:@"0" forKey:classId];
+    if([_testType isEqualToString:@"word"]){
+        testFlagDic = [testDetails valueForKey:@"testFlagForWord"];
+        if (![[testDetails valueForKey:@"testFlagForWord"]valueForKey:classId]) {
+            [testFlagDic setObject:@"0" forKey:classId];
+        }
+        testFlag=[[testFlagDic valueForKey:classId]intValue];
+    }else{
+        testFlagDic = [testDetails valueForKey:@"testFlagForSentence"];
+        if (![[testDetails valueForKey:@"testFlagForSentence"]valueForKey:classId]) {
+            [testFlagDic setObject:@"0" forKey:classId];
+        }
+        testFlag=[[testFlagDic valueForKey:classId]intValue];
     }
-    testFlag=[[testFlagDic valueForKey:classId]intValue];
+    NSLog(@"teatdetail：%@",testDetails);
     
     [lessontitle removeFromSuperview];
     [self presentLessionView];
@@ -765,7 +769,6 @@
 -(void)storeProcess{
     if (testFlagDic!=nil) {
         [MyThreadPool executeJob:^{
-            [self->testDetails setValue:self->testFlagDic forKey:@"testFlag"];
             [DocuOperate replacePlist:@"testDetails.plist" dictionary:self->testDetails];
         } Main:^{}];
     }
