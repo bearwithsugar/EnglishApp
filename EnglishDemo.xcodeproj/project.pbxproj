@@ -32,7 +32,6 @@
 		59341BA122FD54B100838941 /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 59341B9522FD54B100838941 /* MASConstraint.m */; };
 		59341BA222FD54B100838941 /* MASViewConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 59341B9722FD54B100838941 /* MASViewConstraint.m */; };
 		59341BA322FD54B100838941 /* MASViewAttribute.m in Sources */ = {isa = PBXBuildFile; fileRef = 59341B9822FD54B100838941 /* MASViewAttribute.m */; };
-		59344ADB21C24AF700198E8F /* load.gif in Resources */ = {isa = PBXBuildFile; fileRef = 59344ADA21C24AF700198E8F /* load.gif */; };
 		593D8EF422D2205A0064FBD1 /* DownloadAudioService.m in Sources */ = {isa = PBXBuildFile; fileRef = 593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */; };
 		593F6968230BB87000582A8B /* SDWebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; };
 		593F696A230BF6CB00582A8B /* SDWebImage.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 593F6967230BB86F00582A8B /* SDWebImage.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -199,7 +198,6 @@
 		59341B9622FD54B100838941 /* ViewController+MASAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ViewController+MASAdditions.h"; sourceTree = "<group>"; };
 		59341B9722FD54B100838941 /* MASViewConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewConstraint.m; sourceTree = "<group>"; };
 		59341B9822FD54B100838941 /* MASViewAttribute.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASViewAttribute.m; sourceTree = "<group>"; };
-		59344ADA21C24AF700198E8F /* load.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = load.gif; sourceTree = "<group>"; };
 		593D8EF222D2205A0064FBD1 /* DownloadAudioService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DownloadAudioService.h; sourceTree = "<group>"; };
 		593D8EF322D2205A0064FBD1 /* DownloadAudioService.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DownloadAudioService.m; sourceTree = "<group>"; };
 		593F6962230BB7A000582A8B /* SDWebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDWebImage.framework; path = ../SDWebImage/Products/Library/Frameworks/SDWebImage.framework; sourceTree = "<group>"; };
@@ -475,14 +473,6 @@
 			path = ../../../Desktop/Masonry/Masonry;
 			sourceTree = "<group>";
 		};
-		59344ADC21C24B0F00198E8F /* loadgif */ = {
-			isa = PBXGroup;
-			children = (
-				59344ADA21C24AF700198E8F /* load.gif */,
-			);
-			path = loadgif;
-			sourceTree = "<group>";
-		};
 		593F6965230BB84000582A8B /* Vendor */ = {
 			isa = PBXGroup;
 			children = (
@@ -528,7 +518,6 @@
 				598E16A2226972F300DDF959 /* UUID */,
 				59A88A69221BB34200F16742 /* Common */,
 				5973927A21C63B080050CA1B /* FreeStreamer */,
-				59344ADC21C24B0F00198E8F /* loadgif */,
 				59E3F35721B3F1B400DA4B01 /* Record */,
 				5910AC8D2187D1110024768A /* Functions */,
 				59477BC0216F3FC6000205A5 /* main.m */,
@@ -875,7 +864,6 @@
 			files = (
 				59477BBE216F3FC6000205A5 /* LaunchScreen.storyboard in Resources */,
 				5910AC62218063F30024768A /* NewVersonTableViewCell.xib in Resources */,
-				59344ADB21C24AF700198E8F /* load.gif in Resources */,
 				59DE4237217C189D008D65CC /* WordsListeningTableViewCell.xib in Resources */,
 				59DE42062174A22F008D65CC /* UserMsg.plist in Resources */,
 				59477BBB216F3FC6000205A5 /* Assets.xcassets in Resources */,

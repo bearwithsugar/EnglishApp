@@ -84,14 +84,16 @@ static WechatLog* instance = nil;
 
 -(void)WXtoBinding:(NSDictionary*)userMsg{
     ConBlock jobblock = ^(NSDictionary* resultDic){
-        if ([resultDic valueForKey:@"code"] && [[resultDic valueForKey:@"code"]intValue]==200) {
-            self->_myBlock();
-        }else{
-            [[AgentFunction theTopviewControler]presentViewController:
-             [WarningWindow MsgWithoutTrans:[resultDic valueForKey:@"message"]]
-                                                             animated:YES
-                                                           completion:nil];
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([resultDic valueForKey:@"code"] && [[resultDic valueForKey:@"code"]intValue]==200) {
+                self->_myBlock();
+            }else{
+                [[AgentFunction theTopviewControler]presentViewController:
+                 [WarningWindow MsgWithoutTrans:[resultDic valueForKey:@"message"]]
+                                                                 animated:YES
+                                                               completion:nil];
+            }
+        });
     };
     NetSenderFunction* sender = [[NetSenderFunction alloc]init];
     [sender postRequestWithHead:[[ConnectionFunction getInstance]toBinding_Post_H:[userMsg valueForKey:@"openid"] Type:@"WEIXIN" Picurl:[userMsg valueForKey:@"headimgurl"]]
