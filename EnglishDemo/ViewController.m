@@ -1067,6 +1067,10 @@
 
 }
 -(void)addBook:(UIButton*)loadBtn{
+    if (userInfo == nil) {
+        [self presentViewController:[WarningWindow MsgWithoutTrans:@"您还未登录~"] animated:YES completion:nil];
+        return;
+    }
     //NSDictionary* userInfo=[DocuOperate readFromPlist:@"userInfo.plist"];
     NSLog(@"bookarray%@",[bookArray objectAtIndex:loadBtn.tag]);
     NSLog(@"userkey%@",[userInfo valueForKey:@"userKey"]);
@@ -1131,6 +1135,7 @@
 
 #pragma mark --otherFunction
 -(void)cleanMsg{
+    userInfo = nil;
     recentBook = nil;
     bookpicImageView.image=[UIImage imageNamed:@"group_book_learning_unlogged"];
     [self loadBookShelfResume:NO];
