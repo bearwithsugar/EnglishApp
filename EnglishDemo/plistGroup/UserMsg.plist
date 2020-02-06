@@ -31,12 +31,6 @@
 	<array>
 		<dict>
 			<key>title</key>
-			<string>软件版本</string>
-			<key>picture</key>
-			<string>icon_banben</string>
-		</dict>
-		<dict>
-			<key>title</key>
 			<string>分享本软件</string>
 			<key>picture</key>
 			<string>icon_fenxiangbenruanjian</string>

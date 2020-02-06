@@ -16,7 +16,6 @@
 #import "DeviceManagerViewController.h"
 #import "../DiyGroup/UserMsgTableViewCell.h"
 #import "../DiyGroup/XuefenTableViewCell.h"
-#import "../DiyGroup/NewVersonTableViewCell.h"
 #import "../Functions/DocuOperate.h"
 #import "../Functions/netOperate/ConnectionFunction.h"
 #import "../Functions/netOperate/NetSenderFunction.h"
@@ -280,45 +279,10 @@
     NSDictionary* dic=[subArray objectAtIndex:indexPath.row];
     NSString* name=[dic valueForKey:@"title"];
     NSString* image=[dic valueForKey:@"picture"];
-    if (indexPath.row==0) {
-        if (indexPath.section==0) {
-            xuefenCell=[XuefenTableViewCell createCellWithTableView:tableView];
-            [xuefenCell loadData:[NSString stringWithFormat:@"%d", score]];
-            return xuefenCell;
-        }else{
-            NewVersonTableViewCell* cell=[NewVersonTableViewCell createCellWithTableView:tableView];
-            if(userInfo==nil){
-                [cell loadData:@""];
-                [cell setNoVersion];
-            }else{
-                ConBlock conBlk = ^(NSDictionary* dic){
-                    self->versionMsg = [[dic valueForKey:@"data"]firstObject];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if([DocuOperate fileExistInPath:@"version.plist"]){
-                            NSDictionary* oldVersion = [DocuOperate readFromPlist:@"version.plist"];
-                        if ([[oldVersion valueForKey:@"version"]isEqualToString:[self->versionMsg valueForKey:@"versionId"]]) {
-                            [cell setNoVersion];
-                        }else{
-                            [cell setNewVersion];
-                        }
-                        }else{
-                            [DocuOperate writeIntoPlist:@"version.plist" dictionary:[NSDictionary dictionaryWithObjectsAndKeys:[self->versionMsg valueForKey:@"versionId"],@"version", nil]];
-                            [cell setNoVersion];
-                        }
-                        [cell loadData:[self->versionMsg valueForKey:@"versionName"]];
-                    });
-                };
-    
-                [MyThreadPool executeJob:^{
-                    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
-                    [sender getRequestWithHead:[self->userInfo valueForKey:@"userKey"]
-                                          Path:[[ConnectionFunction getInstance]getVersionMsg_Get_H]
-                                         Block:conBlk];
-                } Main:^{}];
-            }
-
-            return cell;
-        }
+    if (indexPath.row==0 && indexPath.section==0) {
+        xuefenCell=[XuefenTableViewCell createCellWithTableView:tableView];
+        [xuefenCell loadData:[NSString stringWithFormat:@"%d", score]];
+        return xuefenCell;
     }else{
         UserMsgTableViewCell* cell=[UserMsgTableViewCell createCellWithTableView:tableView];
         [cell loadData:name logoImg:image];
@@ -351,13 +315,11 @@
             [self pushToDeviceManager];
         }
     }else if(indexPath.section==1){
-        if (indexPath.row==0) {
-            
-        }else if (indexPath.row==1){
+        if (indexPath.row==0){
             [self shareView];
-        }else if (indexPath.row==2){
+        }else if (indexPath.row==1){
             [self pushToAboutSoftware];
-        }else if (indexPath.row==3){
+        }else if (indexPath.row==2){
             [self pushToOpinion];
         }
     }

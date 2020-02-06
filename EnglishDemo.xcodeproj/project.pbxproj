@@ -17,8 +17,6 @@
 		5910AC58218050F40024768A /* UserMsgTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5910AC56218050F40024768A /* UserMsgTableViewCell.xib */; };
 		5910AC5C21805C520024768A /* XuefenTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC5A21805C520024768A /* XuefenTableViewCell.m */; };
 		5910AC5D21805C520024768A /* XuefenTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5910AC5B21805C520024768A /* XuefenTableViewCell.xib */; };
-		5910AC61218063F30024768A /* NewVersonTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC5F218063F30024768A /* NewVersonTableViewCell.m */; };
-		5910AC62218063F30024768A /* NewVersonTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5910AC60218063F30024768A /* NewVersonTableViewCell.xib */; };
 		5910AC6621806A4E0024768A /* ChoosePublishTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5910AC6421806A4E0024768A /* ChoosePublishTableViewCell.m */; };
 		5910AC6721806A4E0024768A /* ChoosePublishTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5910AC6521806A4E0024768A /* ChoosePublishTableViewCell.xib */; };
 		5927B1CD22E95A8800742182 /* MyThreadPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 5927B1CC22E95A8800742182 /* MyThreadPool.m */; };
@@ -64,8 +62,6 @@
 		5967215121F3107B00409403 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967215021F3107B00409403 /* Foundation.framework */; };
 		5967215321F3108400409403 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967215221F3108400409403 /* CFNetwork.framework */; };
 		5967215521F3108F00409403 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967215421F3108F00409403 /* CoreMotion.framework */; };
-		5967215721F310A400409403 /* AlipaySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5967215621F310A300409403 /* AlipaySDK.framework */; };
-		5967215A21F310F100409403 /* PayMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 5967215921F310F100409403 /* PayMethods.m */; };
 		596721AC21F386B400409403 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 596721AB21F386B400409403 /* Security.framework */; };
 		596721B421F3876A00409403 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 596721B321F3876A00409403 /* libsqlite3.0.tbd */; };
 		596721B921F40FEE00409403 /* OrderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 596721B721F40FEE00409403 /* OrderTableViewCell.m */; };
@@ -164,9 +160,6 @@
 		5910AC5921805C520024768A /* XuefenTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XuefenTableViewCell.h; sourceTree = "<group>"; };
 		5910AC5A21805C520024768A /* XuefenTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = XuefenTableViewCell.m; sourceTree = "<group>"; };
 		5910AC5B21805C520024768A /* XuefenTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = XuefenTableViewCell.xib; sourceTree = "<group>"; };
-		5910AC5E218063F30024768A /* NewVersonTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NewVersonTableViewCell.h; sourceTree = "<group>"; };
-		5910AC5F218063F30024768A /* NewVersonTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NewVersonTableViewCell.m; sourceTree = "<group>"; };
-		5910AC60218063F30024768A /* NewVersonTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewVersonTableViewCell.xib; sourceTree = "<group>"; };
 		5910AC6321806A4E0024768A /* ChoosePublishTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ChoosePublishTableViewCell.h; sourceTree = "<group>"; };
 		5910AC6421806A4E0024768A /* ChoosePublishTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ChoosePublishTableViewCell.m; sourceTree = "<group>"; };
 		5910AC6521806A4E0024768A /* ChoosePublishTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChoosePublishTableViewCell.xib; sourceTree = "<group>"; };
@@ -246,9 +239,6 @@
 		5967215021F3107B00409403 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5967215221F3108400409403 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		5967215421F3108F00409403 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
-		5967215621F310A300409403 /* AlipaySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AlipaySDK.framework; sourceTree = "<group>"; };
-		5967215821F310F100409403 /* PayMethods.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PayMethods.h; sourceTree = "<group>"; };
-		5967215921F310F100409403 /* PayMethods.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PayMethods.m; sourceTree = "<group>"; };
 		596721AB21F386B400409403 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		596721AF21F3871F00409403 /* WeChatSDK1.8.3 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = WeChatSDK1.8.3; sourceTree = "<group>"; };
 		596721B321F3876A00409403 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
@@ -387,7 +377,6 @@
 				596E4B8621F980760046F215 /* TencentOpenAPI.framework in Frameworks */,
 				5967214121F3101600409403 /* libc++.tbd in Frameworks */,
 				596721AC21F386B400409403 /* Security.framework in Frameworks */,
-				5967215721F310A400409403 /* AlipaySDK.framework in Frameworks */,
 				5967215521F3108F00409403 /* CoreMotion.framework in Frameworks */,
 				5967215321F3108400409403 /* CFNetwork.framework in Frameworks */,
 				5967215121F3107B00409403 /* Foundation.framework in Frameworks */,
@@ -416,8 +405,6 @@
 				5973927821C627470050CA1B /* VoicePlayer.m */,
 				5967212121F2E88300409403 /* BackgroundImageWithColor.h */,
 				5967212221F2E88300409403 /* BackgroundImageWithColor.m */,
-				5967215821F310F100409403 /* PayMethods.h */,
-				5967215921F310F100409403 /* PayMethods.m */,
 				596721BB21F4927E00409403 /* LocalDataOperation.h */,
 				596721BC21F4927E00409403 /* LocalDataOperation.m */,
 				59D4616C21F6CB7E00CF29D8 /* FixValues.h */,
@@ -590,7 +577,6 @@
 				593F6962230BB7A000582A8B /* SDWebImage.framework */,
 				596721B321F3876A00409403 /* libsqlite3.0.tbd */,
 				596721AB21F386B400409403 /* Security.framework */,
-				5967215621F310A300409403 /* AlipaySDK.framework */,
 				5967215421F3108F00409403 /* CoreMotion.framework */,
 				5967215221F3108400409403 /* CFNetwork.framework */,
 				5967215021F3107B00409403 /* Foundation.framework */,
@@ -770,9 +756,6 @@
 				5910AC5921805C520024768A /* XuefenTableViewCell.h */,
 				5910AC5A21805C520024768A /* XuefenTableViewCell.m */,
 				5910AC5B21805C520024768A /* XuefenTableViewCell.xib */,
-				5910AC5E218063F30024768A /* NewVersonTableViewCell.h */,
-				5910AC5F218063F30024768A /* NewVersonTableViewCell.m */,
-				5910AC60218063F30024768A /* NewVersonTableViewCell.xib */,
 				5910AC6321806A4E0024768A /* ChoosePublishTableViewCell.h */,
 				5910AC6421806A4E0024768A /* ChoosePublishTableViewCell.m */,
 				5910AC6521806A4E0024768A /* ChoosePublishTableViewCell.xib */,
@@ -863,7 +846,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				59477BBE216F3FC6000205A5 /* LaunchScreen.storyboard in Resources */,
-				5910AC62218063F30024768A /* NewVersonTableViewCell.xib in Resources */,
 				59DE4237217C189D008D65CC /* WordsListeningTableViewCell.xib in Resources */,
 				59DE42062174A22F008D65CC /* UserMsg.plist in Resources */,
 				59477BBB216F3FC6000205A5 /* Assets.xcassets in Resources */,
@@ -906,7 +888,6 @@
 				596E4B8121F8C5AD0046F215 /* AgentFunction.m in Sources */,
 				594B249021ECADAE00807A4A /* EngChooseChi.m in Sources */,
 				597392A821C63B2F0050CA1B /* FSXMLHttpRequest.m in Sources */,
-				5967215A21F310F100409403 /* PayMethods.m in Sources */,
 				59A88A6C221BB36C00F16742 /* LoadGif.m in Sources */,
 				597392AC21C63B2F0050CA1B /* FSCheckContentTypeRequest.m in Sources */,
 				59477BC1216F3FC6000205A5 /* main.m in Sources */,
@@ -969,7 +950,6 @@
 				59DE4246217D5ECE008D65CC /* ChooseLessonView.m in Sources */,
 				59DE42102175C10F008D65CC /* RechargeViewController.m in Sources */,
 				59477C162172D339000205A5 /* PhonenumberLoginViewController.m in Sources */,
-				5910AC61218063F30024768A /* NewVersonTableViewCell.m in Sources */,
 				59DE41FB2172DF11008D65CC /* RegisterViewController.m in Sources */,
 				59341B9E22FD54B100838941 /* MASLayoutConstraint.m in Sources */,
 				59B1C60423C7089D009943FB /* SVProgressHUD.m in Sources */,
@@ -1122,7 +1102,7 @@
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = FF3W9T8H43;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1160,7 +1140,7 @@
 				CODE_SIGN_ENTITLEMENTS = EnglishDemo/EnglishDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = FF3W9T8H43;
 				FRAMEWORK_SEARCH_PATHS = (

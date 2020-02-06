@@ -101,95 +101,7 @@
         make.width.equalTo(@110);
         make.centerX.equalTo(self->surfaceView);
     }];
-    
-//    UIButton* pushHeadBtn=[[UIButton alloc]init];
-//    pushHeadBtn.layer.cornerRadius=55;
-//    //把多余部分去掉
-//    pushHeadBtn.layer.masksToBounds = YES;
-//    [pushHeadBtn setTitle:@"点击上传" forState:UIControlStateNormal];
-//    UIImage* backImg=[BackgroundImageWithColor imageWithColor:[UIColor blackColor]];
-//    [pushHeadBtn setBackgroundImage:[BackgroundImageWithColor imageByApplyingAlpha:0.5 image:backImg] forState:UIControlStateNormal];
-//    [pushHeadBtn addTarget:self action:@selector(pushTheHeadPic) forControlEvents:UIControlEventTouchUpInside];
-//    [surfaceView addSubview:pushHeadBtn];
-//    
-//    [pushHeadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(self->surfaceView).with.offset(90);
-//        make.height.equalTo(@110);
-//        make.width.equalTo(@110);
-//        make.centerX.equalTo(self->surfaceView.mas_centerX);
-//    }];
 }
-//-(void)pushTheHeadPic{
-//
-//    [self warnMsg:@"此功能暂未开放"];
-//    return;
-//}
-#pragma mark <2>相册协议中方法，选中某张图片后调用方法
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    
-    UIImage *image= [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-
-    //让界面的imageview中图片换成得到选中的图片
-    headPic.image = image;
-    
-    //保存图片到Document目录下
-    
-    [DocuOperate saveImage:[LocalDataOperation imageWithImageSimple:image scaledToSize:CGSizeMake(50.0f, 50.0f)] WithName:@"picNeedToPush.jpg"];
-    [self pushPic:[userInfo valueForKey:@"userKey"] FileUrl:[[DocuOperate documentsDirectory]stringByAppendingString:@"/picNeedToPush.jpg"]];
-
-    [self dismissViewControllerAnimated:YES completion:nil];
-    
-}
--(void)pushPic:(NSString*)headMsg FileUrl:(NSString*)fileUrl
-{
-    NSDictionary *headers = @{ @"content-type": @"multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW",
-                               @"English-user": headMsg,
-                               @"cache-control": @"no-cache",
-                               @"Postman-Token": @"420f0a09-d82f-46fa-aa37-db36654d1286"
-                               };
-    NSArray *parameters = @[ @{ @"name": @"picture", @"fileName": fileUrl } ];
-    NSString *boundary = @"----WebKitFormBoundary7MA4YWxkTrZu0gW";
-    
-    NSError *error;
-    NSMutableString *body = [NSMutableString string];
-    for (NSDictionary *param in parameters) {
-        [body appendFormat:@"--%@\r\n", boundary];
-        if (param[@"fileName"]) {
-            [body appendFormat:@"Content-Disposition:form-data; name=\"%@\"; filename=\"%@\"\r\n", param[@"name"], param[@"fileName"]];
-            [body appendFormat:@"%@",[NSString stringWithContentsOfFile:param[@"fileName"] encoding:NSUTF8StringEncoding error:&error]];
-            if (error) {
-                NSLog(@"body的内容是%@",body);
-                NSLog(@"转换信息时报错%@", error);
-            }
-        } else {
-            [body appendFormat:@"Content-Disposition:form-data; name=\"%@\"\r\n\r\n", param[@"name"]];
-            [body appendFormat:@"%@", param[@"value"]];
-        }
-    }
-    [body appendFormat:@"\r\n--%@--\r\n", boundary];
-    NSData *postData = [body dataUsingEncoding:NSUTF8StringEncoding];
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://www.suuben.com/english/api/account/picture"]
-                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
-                                                       timeoutInterval:10.0];
-    [request setHTTPMethod:@"PUT"];
-    [request setAllHTTPHeaderFields:headers];
-    [request setHTTPBody:postData];
-    
-    NSURLSession *session = [NSURLSession sharedSession];
-    NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
-                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                                    if (error) {
-                                                        NSLog(@"上传图片的错误%@", error);
-                                                    } else {
-                                                        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *) response;
-                                                        NSLog(@"图片上传响应%@", httpResponse);
-                                                    }
-                                                }];
-    [dataTask resume];
-}
-
 
 -(void)detailMsg{
     UILabel* nicknameLabel=[[UILabel alloc]init];
@@ -263,25 +175,25 @@
         make.left.equalTo(self->surfaceView);
     }];
     
-    UILabel* wechatLabel=[[UILabel alloc]init];
-    wechatLabel.text=@"微信绑定：";
-    wechatLabel.font=[UIFont systemFontOfSize:14];
-    [surfaceView addSubview:wechatLabel];
-    [wechatLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->surfaceView).with.offset(350);
-        make.height.equalTo(@49);
-        make.width.equalTo(@100);
-        make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
+    UILabel* qqLabel=[[UILabel alloc]init];
+    qqLabel.text=@"QQ绑定：";
+    qqLabel.font=[UIFont systemFontOfSize:14];
+    [surfaceView addSubview:qqLabel];
+    [qqLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+       make.top.equalTo(self->surfaceView).with.offset(350);
+       make.height.equalTo(@49);
+       make.width.equalTo(@100);
+       make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
     }];
     
-    wechatBinding=[[UIButton alloc]init];
-    [wechatBinding removeFromSuperview];
-    wechatBinding.titleLabel.font=[UIFont systemFontOfSize:14];
-    [wechatBinding setTitle:@"未绑定" forState:UIControlStateNormal];
-    [wechatBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
-    [wechatBinding addTarget:self action:@selector(WXBinding) forControlEvents:UIControlEventTouchUpInside];
-    [surfaceView addSubview:wechatBinding];
-    [wechatBinding mas_makeConstraints:^(MASConstraintMaker *make) {
+    QQBinding=[[UIButton alloc]init];
+    [QQBinding removeFromSuperview];
+    [QQBinding setTitle:@"未绑定" forState:UIControlStateNormal];
+    [QQBinding addTarget:self action:@selector(QQBinding) forControlEvents:UIControlEventTouchUpInside];
+    QQBinding.titleLabel.font=[UIFont systemFontOfSize:14];
+    [QQBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
+    [surfaceView addSubview:QQBinding];
+    [QQBinding mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self->surfaceView).with.offset(350);
         make.height.equalTo(@49);
         make.width.equalTo(@100);
@@ -299,43 +211,45 @@
         make.width.equalTo(self->surfaceView);
         make.left.equalTo(self->surfaceView);
     }];
-    
-    UILabel* qqLabel=[[UILabel alloc]init];
-    qqLabel.text=@"QQ绑定：";
-    qqLabel.font=[UIFont systemFontOfSize:14];
-    [surfaceView addSubview:qqLabel];
-    [qqLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->surfaceView).with.offset(400);
-        make.height.equalTo(@49);
-        make.width.equalTo(@100);
-        make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
-    }];
-    
-    QQBinding=[[UIButton alloc]init];
-    [QQBinding removeFromSuperview];
-    [QQBinding setTitle:@"未绑定" forState:UIControlStateNormal];
-    [QQBinding addTarget:self action:@selector(QQBinding) forControlEvents:UIControlEventTouchUpInside];
-    QQBinding.titleLabel.font=[UIFont systemFontOfSize:14];
-    [QQBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
-    [surfaceView addSubview:QQBinding];
-    [QQBinding mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->surfaceView).with.offset(400);
-        make.height.equalTo(@49);
-        make.width.equalTo(@100);
-        make.left.equalTo(self->surfaceView.mas_centerX).offset(50);
-    }];
-    
-    //中部横线
-    UIView* lineView4=[[UIView alloc]init];
-    lineView4.layer.borderColor=ssRGBHex(0x979797).CGColor;
-    lineView4.layer.borderWidth=1;
-    [surfaceView addSubview:lineView4];
-    [lineView4 mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self->surfaceView).with.offset(449);
-        make.height.equalTo(@1);
-        make.width.equalTo(self->surfaceView);
-        make.left.equalTo(self->surfaceView);
-    }];
+
+    if([WXApi isWXAppInstalled]){
+        UILabel* wechatLabel=[[UILabel alloc]init];
+        wechatLabel.text=@"微信绑定：";
+        wechatLabel.font=[UIFont systemFontOfSize:14];
+        [surfaceView addSubview:wechatLabel];
+        [wechatLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->surfaceView).with.offset(400);
+            make.height.equalTo(@49);
+            make.width.equalTo(@100);
+            make.left.equalTo(self->surfaceView.mas_centerX).offset(-100);
+        }];
+        
+        wechatBinding=[[UIButton alloc]init];
+        [wechatBinding removeFromSuperview];
+        wechatBinding.titleLabel.font=[UIFont systemFontOfSize:14];
+        [wechatBinding setTitle:@"未绑定" forState:UIControlStateNormal];
+        [wechatBinding setTitleColor:ssRGBHex(0x979797) forState:UIControlStateNormal];
+        [wechatBinding addTarget:self action:@selector(WXBinding) forControlEvents:UIControlEventTouchUpInside];
+        [surfaceView addSubview:wechatBinding];
+        [wechatBinding mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->surfaceView).with.offset(400);
+            make.height.equalTo(@49);
+            make.width.equalTo(@100);
+            make.left.equalTo(self->surfaceView.mas_centerX).offset(50);
+        }];
+        
+        //中部横线
+        UIView* lineView4=[[UIView alloc]init];
+        lineView4.layer.borderColor=ssRGBHex(0x979797).CGColor;
+        lineView4.layer.borderWidth=1;
+        [surfaceView addSubview:lineView4];
+        [lineView4 mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self->surfaceView).with.offset(449);
+            make.height.equalTo(@1);
+            make.width.equalTo(self->surfaceView);
+            make.left.equalTo(self->surfaceView);
+        }];
+    }
 }
 -(void)loadData{
     ConBlock jobBlock = ^(NSDictionary* resultDic){

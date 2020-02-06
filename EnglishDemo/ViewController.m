@@ -155,7 +155,12 @@
         [self myProgressFixed];
         [self initForFirstLogin];
     }
-    
+    if (![DocuOperate fileExistInPath:@"userInfo.plist"]) {
+        //提示框
+         [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，您可以点击‘选择课本’查看本软件包含的书本！" Navigation:self.navigationController]
+                            animated:YES
+                          completion:nil];
+    }
 }
 -(void)viewWillAppear:(BOOL)animated{
     if (![self updateInterfaceWithReachability:self.conn]) {
@@ -1150,11 +1155,6 @@
     
     [processFixView removeFromSuperview];
     [refreshPanelProcess removeFromSuperview];
-
-    //提示框
-    [self presentViewController:[WarningWindow transToLogin:@"您尚未登录，您可以点击‘选择课本’查看本软件包含的书本！" Navigation:self.navigationController]
-                       animated:YES
-                     completion:nil];
 }
 
 #pragma mark --push

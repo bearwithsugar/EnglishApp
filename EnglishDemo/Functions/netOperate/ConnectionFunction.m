@@ -497,31 +497,6 @@ static ConnectionFunction* instance = nil;
     return url;
 }
 
-//// 支付宝支付
-// -(NSURL*)Alipay_Post_H:(NSString*)money Strategy:(NSString*)strategy_id {
-//    NSURL* url=[FixValues getUrl];
-//    url=[url URLByAppendingPathComponent:@"payments/ali"];
-//    NSString* str=[NSString stringWithFormat:@"%@",url];
-//    str=[str stringByAppendingString:@"?money="];
-//    str=[str stringByAppendingString:money];
-//    str=[str stringByAppendingString:@"&strategy_id="];
-//    str=[str stringByAppendingString:strategy_id];
-//    url=[NSURL URLWithString:str];
-//
-//    return url;
-//}
-////微信支付
-//-(NSURL*)WeChatpay_Post_H:(NSString*)money  Strategy:(NSString*)strategy_id {
-//    NSURL* url=[FixValues getUrl];
-//    url=[url URLByAppendingPathComponent:@"payments/weixin"];
-//    NSString* str=[NSString stringWithFormat:@"%@",url];
-//    str=[str stringByAppendingString:@"?money="];
-//    str=[str stringByAppendingString:money];
-//    str=[str stringByAppendingString:@"&strategy_id="];
-//    str=[str stringByAppendingString:strategy_id];
-//    url=[NSURL URLWithString:str];
-//    return url;
-//}
 //订单查询
  -(NSURL*)orderMsg_Get_H{
     NSURL* url=[FixValues getUrl];
