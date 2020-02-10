@@ -22,12 +22,14 @@
 #import "../Functions/FixValues.h"
 #import "../Functions/MyThreadPool.h"
 #import "../Functions/WechatLog.h"
+#import "../Functions/AgentFunction.h"
 #import "../Common/HeadView.h"
 #import "../SVProgressHUD/SVProgressHUD.h"
 #import "Masonry.h"
+#import <AuthenticationServices/AuthenticationServices.h>
 #import <objc/runtime.h>
 
-@interface LoginViewController (){
+@interface LoginViewController ()<ASAuthorizationControllerDelegate,ASAuthorizationControllerPresentationContextProviding>{
 
     PhonenumberLoginViewController* phonenumberLogin;
     RegisterViewController* registerView;
@@ -36,18 +38,19 @@
     UITextField* usernameTextField;
     UITextField* passwordTextField;
     
+    UIView* buttonView;
     UIButton* weixinBtn;
-    UILabel* weixinlabel;
     UIButton* qqBtn;
-    UILabel* qqlabel;
     
     NSDictionary* userDic;
 }
 
 @end
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wprotocol"
+//去除协议方法未实现的警告
 @implementation LoginViewController
-
+#pragma clang diagnostic pop
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor=[UIColor whiteColor];
@@ -280,78 +283,79 @@
     }];
 }
 -(void)otherLogin{
-    [weixinBtn removeFromSuperview];
-    [weixinlabel removeFromSuperview];
-    [qqBtn removeFromSuperview];
-    [qqlabel removeFromSuperview];
+    [buttonView removeFromSuperview];
+    buttonView = [[UIView alloc]init];
+    [self.view addSubview:buttonView];
     
+    [buttonView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.bottom.equalTo(self.view).offset(-120);
+        make.centerX.equalTo(self.view);
+        make.size.mas_equalTo(CGSizeMake(300, 40));
+    }];
+ 
     weixinBtn=[[UIButton alloc]init];
     [weixinBtn setBackgroundImage:[UIImage imageNamed:@"icon_weixindenglu"] forState:UIControlStateNormal];
     [weixinBtn addTarget:self action:@selector(WXlogin) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:weixinBtn];
-    
-    weixinlabel=[[UILabel alloc]init];
-    weixinlabel.text=@"微信登录";
-    weixinlabel.textColor=ssRGBHex(0x50B674);
-    weixinlabel.font=[UIFont systemFontOfSize:12];
-    weixinlabel.textAlignment=NSTextAlignmentCenter;
-    [self.view addSubview:weixinlabel];
+    [buttonView addSubview:weixinBtn];
     
     qqBtn=[[UIButton alloc]init];
     [qqBtn setBackgroundImage:[UIImage imageNamed:@"icon_qqdenglu"] forState:UIControlStateNormal];
     [qqBtn addTarget:self action:@selector(QQlogin) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:qqBtn];
-    
-    qqlabel=[[UILabel alloc]init];
-    qqlabel.text=@"QQ登录";
-    qqlabel.textColor=ssRGBHex(0x4A90E2);
-    qqlabel.font=[UIFont systemFontOfSize:12];
-    qqlabel.textAlignment=NSTextAlignmentCenter;
-    [self.view addSubview:qqlabel];
-
+    [buttonView addSubview:qqBtn];
     
     if ([WXApi isWXAppInstalled]) {
         [weixinBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self.view).with.offset(-80);
-            make.bottom.equalTo(self.view).with.offset(-120);
-            make.width.equalTo(@70);
-            make.height.equalTo(@70);
+            make.left.equalTo(buttonView);
+            make.top.equalTo(buttonView);
+            make.size.mas_equalTo(CGSizeMake(40, 40));
         }];
-        [weixinlabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self.view).with.offset(-80);
-            make.bottom.equalTo(self.view).with.offset(-60);
-            make.width.equalTo(@70);
-            make.height.equalTo(@19);
-        }];
-        
+     
         [qqBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self.view).with.offset(80);
-            make.bottom.equalTo(self.view).with.offset(-120);
-            make.width.equalTo(@70);
-            make.height.equalTo(@70);
+            make.left.equalTo(weixinBtn.mas_right).with.offset(40);
+            make.top.equalTo(buttonView);
+            make.size.mas_equalTo(CGSizeMake(40, 40));
         }];
         
-        [qqlabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self.view).with.offset(80);
-            make.bottom.equalTo(self.view).with.offset(-60);
-            make.width.equalTo(@70);
-            make.height.equalTo(@19);
-        }];
+        if (@available(iOS 13.0, *)) {
+            ASAuthorizationAppleIDButton* appleLogBtn ;
+            [appleLogBtn removeFromSuperview];
+            appleLogBtn = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeSignIn style:ASAuthorizationAppleIDButtonStyleBlack];
+
+            [buttonView addSubview:appleLogBtn];
+
+            [appleLogBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.right.equalTo(buttonView);
+                make.centerY.equalTo(buttonView);
+                make.size.mas_equalTo(CGSizeMake(140, 40));
+            }];
+            
+            [appleLogBtn addTarget:self action:@selector(appleLog) forControlEvents:UIControlEventTouchUpInside];
+            
+        } else {
+        // Fallback on earlier versions
+        }
         
     }else {
         [qqBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self.view);
-            make.bottom.equalTo(self.view).with.offset(-120);
-            make.width.equalTo(@70);
-            make.height.equalTo(@70);
+            make.left.equalTo(buttonView).with.offset(40);
+            make.top.equalTo(buttonView);
+            make.size.mas_equalTo(CGSizeMake(40, 40));
         }];
-        
-        [qqlabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self.view);
-            make.bottom.equalTo(self.view).with.offset(-60);
-            make.width.equalTo(@70);
-            make.height.equalTo(@19);
-        }];
+        if (@available(iOS 13.0, *)) {
+            ASAuthorizationAppleIDButton* appleLogBtn ;
+            [appleLogBtn removeFromSuperview];
+            appleLogBtn = [ASAuthorizationAppleIDButton buttonWithType:ASAuthorizationAppleIDButtonTypeSignIn style:ASAuthorizationAppleIDButtonStyleBlack];
+            [buttonView addSubview:appleLogBtn];
+            
+            [appleLogBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.centerY.equalTo(buttonView);
+                make.right.equalTo(buttonView).with.offset(-40);
+                make.size.mas_equalTo(CGSizeMake(140, 40));
+            }];
+            [appleLogBtn addTarget:self action:@selector(appleLog) forControlEvents:UIControlEventTouchUpInside];
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
 }
@@ -427,6 +431,17 @@
     qqlogin.type = @"FORLOGIN";
     [qqlogin toQQlogin];
 }
+-(void)appleLog{
+    if (@available(iOS 13.0,*)) {
+        ASAuthorizationAppleIDProvider* appleIdProvider = [[ASAuthorizationAppleIDProvider alloc]init];
+        ASAuthorizationOpenIDRequest* appleRequest = appleIdProvider.createRequest;
+        appleRequest.requestedScopes = @[ASAuthorizationScopeEmail,ASAuthorizationScopeFullName];
+        ASAuthorizationController* controller = [[ASAuthorizationController alloc]initWithAuthorizationRequests:@[appleRequest]];
+        controller.delegate = self;
+        controller.presentationContextProvider = self;
+        [controller performRequests];
+    }
+}
 -(void)warnMsg:(NSString*)msg{
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示信息" message:msg preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:@"好的" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -488,5 +503,45 @@
     }
 }
 
+-(void)authorizationController:(ASAuthorizationController *)controller didCompleteWithAuthorization:(ASAuthorization *)authorization API_AVAILABLE(ios(13.0)){
+    ASAuthorizationAppleIDCredential* credential = authorization.credential;
+    NSString* user = credential.user;
+    NSPersonNameComponents* fullname = credential.fullName;
+    [self appleLogRequestSend:user Name:fullname];
+}
+-(void)appleLogRequestSend:(NSString*)user Name:(NSPersonNameComponents*)fullname{
+    ConBlock conBlk = ^(NSDictionary* dataDic){
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([[dataDic valueForKey:@"message"]isEqualToString:@"success"]) {
+                if ([DocuOperate writeIntoPlist:@"userInfo.plist" dictionary:[DataFilter DictionaryFilter:[dataDic valueForKey:@"data"]]]) {
+                    [[FixValues navigationViewController] popViewControllerAnimated:true];
+                }else{
+                    [[AgentFunction theTopviewControler]presentViewController:[WarningWindow MsgWithoutTrans:@"登录信息保存失败"] animated:YES completion:nil];
+                }
+            }else if([[dataDic valueForKey:@"code"]intValue] == 400){
+                VoidBlock warnBlk = ^{
+                    ConBlock jobblock = ^(NSDictionary* resultDic){
+                        [self appleLogRequestSend:user Name:fullname];
+                    };
+                    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+                    [sender postRequest:[[ConnectionFunction getInstance]userOccupation_Post:user Type:@"other" Other_type:@"APPLE"] Block:jobblock];
+                };
+                [[AgentFunction theTopviewControler]
+                presentViewController:[WarningWindow MsgWithBlock2:[dataDic valueForKey:@"message"] Msg:@"强制登录" Block1:warnBlk Msg2:@"取消" Block2:^{}] animated:YES completion:nil];
+            }else{
+                [[AgentFunction theTopviewControler]
+                presentViewController:[WarningWindow MsgWithoutTrans:[dataDic valueForKey:@"message"]] animated:YES completion:nil];
+            }
+        });
+    };
+    NetSenderFunction* sender = [[NetSenderFunction alloc]init];
+    [sender postRequest:[[ConnectionFunction getInstance]OtherLogin_Post:user
+                                                               Nickname:[fullname.familyName stringByAppendingString:fullname.givenName]
+                                                               DeviceId:[FixValues getUniqueId]
+                                                             DeviceName:[[UIDevice currentDevice] name]
+                                                                   Type:@"APPLE"
+                                                                    Pic:@""]
+                 Block:conBlk];
+}
 @end
 

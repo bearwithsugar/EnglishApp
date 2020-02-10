@@ -534,6 +534,9 @@ static ConnectionFunction* instance = nil;
 
 //第三方登录
  -(NSURL*)OtherLogin_Post:(NSString*)openid Nickname:(NSString*)nickname DeviceId:(NSString*)device_id DeviceName:(NSString*)device_name Type:(NSString*)type Pic:(NSString*)picurl{
+     if (nickname == nil) {
+         nickname = @"";
+     }
     NSURL* url=[FixValues getUrl];
     url=[url URLByAppendingPathComponent:@"user/login_other"];
     NSString* str=[NSString stringWithFormat:@"%@",url];
