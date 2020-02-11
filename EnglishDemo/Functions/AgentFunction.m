@@ -37,7 +37,7 @@
 
 //微信分享
 +(void)WXshare{
-    NSString *kLinkURL = @"https://a.app.qq.com/o/simple.jsp?pkgname=com.suuben.xxenglish";
+    NSString *kLinkURL = @"https://apps.apple.com/cn/app/%E5%AD%A6%E4%BC%B4%E8%8B%B1%E8%AF%ADapp/id1475506231";
     NSString *kLinkTitle = @"小学英语辅导神器";
     NSString *kLinkDescription = @"还在为学好英语而苦恼，还在为辅导孩子而爆炸?学伴英语帮您解决困惑，伴随孩子成长！本应用整合了当前小学英语各个版本教材，与教材同步的朗读与联系。";
     SendMessageToWXReq *req = [[SendMessageToWXReq alloc]init];

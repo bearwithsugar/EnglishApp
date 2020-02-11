@@ -279,8 +279,8 @@
     NSString *bodyString = [NSString stringWithFormat:@"{\"receipt-data\" : \"%@\"}", receiptString];//拼接请求数据
     NSData *bodyData = [bodyString dataUsingEncoding:NSUTF8StringEncoding];
     //创建请求到苹果官方进行购买验证
-    NSURL *url=[NSURL URLWithString:SANDBOX];
-    //NSURL *url=[NSURL URLWithString:AppStore];
+    //NSURL *url=[NSURL URLWithString:SANDBOX];
+    NSURL *url=[NSURL URLWithString:AppStore];
     
 //网络请求而已。。
     NSURLSession *session=[NSURLSession sharedSession];

@@ -161,7 +161,7 @@
     _tencentOAuth = [[TencentOAuth alloc]initWithAppId:@"101537865" andDelegate:self];
     
     
-    NSString *utf8String = @"https://a.app.qq.com/o/simple.jsp?pkgname=com.suuben.xxenglish";
+    NSString *utf8String = @"https://apps.apple.com/cn/app/%E5%AD%A6%E4%BC%B4%E8%8B%B1%E8%AF%ADapp/id1475506231";
     
     NSString *title = @"小学英语辅导神器";
     NSString *description = @"还在为学号英语而苦恼，还在为辅导孩子而爆炸?学伴英语帮您解决困惑，伴随孩子成长！本应用整合了当前小学英语各个版本教材，与教材同步的朗读与联系。";
